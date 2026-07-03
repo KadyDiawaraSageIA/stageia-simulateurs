@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Microfinance & Crédit Mali</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#15803D);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#86EFAC;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#15803D;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+.box{background:#F0FDF4;border-left:3px solid #15803D;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.ok{background:#D1FAE5;border-left-color:#10B981;color:#065F46}
+.warn{background:#FEF3C7;border-left-color:#F59E0B;color:#92400E}
+.err{background:#FEE2E2;border-left-color:#EF4444;color:#991B1B}
+.info{background:#DBEAFE;border-left-color:#3B82F6;color:#1E40AF}
+.purple{background:#F5F3FF;border-left-color:#8B5CF6;color:#5B21B6}
+label{font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:4px}
+input,select{width:100%;padding:7px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;font-family:Arial;background:#fff}
+input:focus,select:focus{outline:none;border-color:#15803D}
+.hint{font-size:10px;color:#888;margin-top:3px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.row.r3{grid-template-columns:1fr 1fr 1fr}
+.section-title{font-size:13px;font-weight:700;color:#0D0B2E;margin:14px 0 8px;border-bottom:2px solid #15803D;padding-bottom:5px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:12px 0}
+.kpi{background:#f5f5f5;border-radius:8px;padding:10px;text-align:center;border:1px solid #e0e0e0}
+.kpi b{display:block;font-size:17px;color:#15803D;margin-bottom:2px}
+.kpi.g b{color:#065F46}.kpi.r b{color:#A32D2D}.kpi.o b{color:#BA7517}.kpi.b b{color:#185FA5}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+th{background:#15803D;color:#fff;padding:8px;text-align:left;font-weight:600}
+td{padding:8px;border-bottom:1px solid #eee}
+tr:nth-child(even) td{background:#F0FDF4}
+tr.tot td{background:#F0FDF4;font-weight:700;color:#15803D}
+/* IMF CARDS */
+.imf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0}
+.imf-card{border:2px solid #e0e0e0;border-radius:12px;padding:14px;cursor:pointer;transition:all .2s}
+.imf-card:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.imf-card.sel{border-color:#15803D;background:#F0FDF4}
+.imf-emoji{font-size:26px;margin-bottom:6px}
+.imf-nom{font-size:13px;font-weight:700;margin-bottom:4px}
+.imf-taux{font-size:11px;color:#15803D;font-weight:600}
+.btn{padding:8px 16px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600}
+.btn-green{background:#15803D;color:#fff}
+.btn-red{background:#EF4444;color:#fff}
+.btn-blue{background:#3B82F6;color:#fff}
+.btn-orange{background:#F59E0B;color:#fff}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+/* TONTINE */
+.tontine-member{display:grid;grid-template-columns:1fr 100px 100px auto;gap:8px;align-items:center;padding:8px 12px;border:1px solid #eee;border-radius:8px;margin-bottom:6px}
+.tontine-member.recu{background:#D1FAE5;border-color:#10B981}
+/* QUIZ */
+.quiz-q{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:12px}
+.q-num{font-size:10px;color:#15803D;font-weight:700;margin-bottom:5px}
+.q-text{font-size:13px;font-weight:600;color:#0D0B2E;margin-bottom:10px;line-height:1.5}
+.q-tip{font-size:11px;color:#888;background:#fff;border:1px solid #eee;border-radius:6px;padding:6px 10px;margin-bottom:10px}
+.opt{width:100%;padding:9px 14px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;font-size:12px;background:#fff;text-align:left;margin-bottom:5px;font-family:Arial;line-height:1.5}
+.opt:hover{border-color:#15803D;background:#F0FDF4}
+.opt.good{border-color:#10B981;background:#D1FAE5;pointer-events:none;color:#065F46}
+.opt.bad{border-color:#EF4444;background:#FEE2E2;pointer-events:none;color:#991B1B}
+.opt.dis{pointer-events:none;opacity:.5}
+.fb{border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;line-height:1.6;display:none}
+.fb.show{display:block}
+.fb.ok{background:#D1FAE5;color:#065F46}
+.fb.ko{background:#FEE2E2;color:#991B1B}
+@media(max-width:600px){.row,.row.r3{grid-template-columns:1fr}.tontine-member{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<h1>🤝 Microfinance & Crédit Mali — Stageia
+<small>IMF Mali · Simulateur de prêt · Tontine · Taux d'intérêt · Exercices · Quiz</small></h1>
+
+<div class="tabs">
+  <button class="tab on" onclick="show(0)">📚 Leçons</button>
+  <button class="tab" onclick="show(1)">🏦 Les IMF du Mali</button>
+  <button class="tab" onclick="show(2)">💵 Simulateur de Prêt</button>
+  <button class="tab" onclick="show(3)">🔄 Simulateur Tontine</button>
+  <button class="tab" onclick="show(4)">✏️ Exercices</button>
+  <button class="tab" onclick="show(5)">🎯 Quiz</button>
+</div>
+
+<!-- PANE 0: LEÇONS -->
+<div class="pane on" id="p0">
+  <div class="section-title">🤝 Qu'est-ce que la microfinance ?</div>
+  <div class="box">💡 <b>Microfinance</b> = Services financiers (épargne, crédit, assurance) destinés aux personnes exclues du système bancaire classique : petits commerçants, agriculteurs, artisans, femmes entrepreneures.<br><br>
+  <b>Au Mali :</b> Plus de 130 Institutions de Microfinance (IMF) actives, touchant plus de 1 million de clients.</div>
+
+  <div class="section-title">🏦 Pourquoi la microfinance plutôt qu'une banque classique ?</div>
+  <div class="box info">📊 <b>Comparaison :</b><br>
+  <b>Banque classique :</b> Garanties élevées, dossiers complexes, montants > 1M FCFA, délai long<br>
+  <b>Microfinance :</b> Garanties sociales (caution solidaire), procédure simple, montants 25 000 - 5 000 000 FCFA, délai rapide (souvent &lt; 1 semaine)</div>
+
+  <div class="section-title">🔄 La tontine — Tradition malienne formalisée</div>
+  <div class="box purple">🤝 <b>Tontine</b> = Groupe de personnes qui cotisent régulièrement, chacune recevant à son tour la totalité de la collecte.<br><br>
+  <b>Exemple :</b> 10 personnes cotisent 50 000 FCFA/mois = 500 000 FCFA collectés. Chaque mois, une personne différente reçoit les 500 000 FCFA. Après 10 mois, tout le monde a reçu une fois.<br><br>
+  <b>Avantages :</b> Discipline d'épargne forcée, pas d'intérêts, lien social fort<br>
+  <b>Risques :</b> Si un membre arrête de cotiser après avoir reçu, les autres perdent</div>
+
+  <div class="section-title">🧮 Comprendre le coût réel d'un crédit</div>
+  <div class="box warn">⚠️ <b>Attention au TEG (Taux Effectif Global) !</b><br>
+  Le taux affiché n'est pas toujours le coût réel. Le TEG inclut :<br>
+  • Le taux d'intérêt nominal<br>
+  • Les frais de dossier<br>
+  • Les assurances obligatoires<br>
+  • Les frais de gestion<br><br>
+  <b>Exemple :</b> Un prêt "à 12%/an" peut avoir un TEG réel de 18-22% avec tous les frais !</div>
+
+  <div class="section-title">📋 Les types de crédits en microfinance</div>
+  <table>
+    <thead><tr><th>Type de crédit</th><th>Usage</th><th>Montant typique</th><th>Durée</th></tr></thead>
+    <tbody>
+      <tr><td><b>Crédit de campagne</b></td><td>Agriculture (semences, intrants)</td><td>50 000 - 500 000 F</td><td>6-12 mois</td></tr>
+      <tr><td><b>Crédit commerce</b></td><td>Achat de stock, fonds de roulement</td><td>100 000 - 2 000 000 F</td><td>3-12 mois</td></tr>
+      <tr><td><b>Crédit équipement</b></td><td>Machine, matériel professionnel</td><td>500 000 - 5 000 000 F</td><td>12-36 mois</td></tr>
+      <tr><td><b>Crédit habitat</b></td><td>Construction, rénovation logement</td><td>1 000 000 - 10 000 000 F</td><td>24-60 mois</td></tr>
+      <tr><td><b>Crédit solidaire</b></td><td>Groupe de 5-10 personnes, caution mutuelle</td><td>25 000 - 200 000 F/pers</td><td>3-6 mois</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">⚠️ Signaux d'alerte pour éviter le surendettement</div>
+  <div class="box err">🚨 <b>Méfiez-vous si :</b><br>
+  • Vous emprunter pour rembourser un autre prêt<br>
+  • Votre mensualité dépasse 30% de vos revenus<br>
+  • Vous ne comprenez pas le TEG réel du crédit<br>
+  • L'IMF n'est pas agréée par la BCEAO/Ministère des Finances<br>
+  • On vous promet un crédit "sans aucune vérification"<br>
+  • Les pénalités de retard ne sont pas clairement expliquées</div>
+</div>
+
+<!-- PANE 1: IMF MALI -->
+<div class="pane" id="p1">
+  <div class="box" style="margin-bottom:12px">🏦 <span>Cliquez sur une institution pour découvrir ses produits et conditions.</span></div>
+  <div class="imf-grid" id="imfGrid"></div>
+  <div id="imfDetail"></div>
+</div>
+
+<!-- PANE 2: SIMULATEUR DE PRÊT -->
+<div class="pane" id="p2">
+  <div class="box" style="margin-bottom:12px">💵 <span>Simulez votre prêt et découvrez le TEG réel, le tableau d'amortissement et votre capacité de remboursement.</span></div>
+  <div class="row r3">
+    <div><label>Montant du prêt (FCFA)</label><input type="number" id="prCapital" value="1000000" oninput="calcPret()"></div>
+    <div><label>Taux d'intérêt annuel (%)</label><input type="number" id="prTaux" value="15" step="0.5" oninput="calcPret()"></div>
+    <div><label>Durée (mois)</label><input type="number" id="prDuree" value="12" oninput="calcPret()"></div>
+  </div>
+  <div class="row">
+    <div><label>Frais de dossier (FCFA)</label><input type="number" id="prFrais" value="20000" oninput="calcPret()"></div>
+    <div><label>Votre revenu mensuel (FCFA)</label><input type="number" id="prRevenu" value="250000" oninput="calcPret()"><div class="hint">Pour calculer votre capacité d'endettement</div></div>
+  </div>
+  <div class="kpis" id="kpiPret"></div>
+  <div id="alertePret"></div>
+  <div class="section-title">📅 Tableau d'amortissement</div>
+  <div style="overflow-x:auto"><div id="amortTable"></div></div>
+  <div class="btn-row">
+    <button class="btn btn-orange" onclick="exemplesPret()">📋 Charger un exemple</button>
+  </div>
+</div>
+
+<!-- PANE 3: TONTINE -->
+<div class="pane" id="p3">
+  <div class="box" style="margin-bottom:12px">🔄 <span>Simulez une tontine entre amis/famille/collègues. Calculez les cotisations et l'ordre de rotation.</span></div>
+  <div class="row r3">
+    <div><label>Nombre de membres</label><input type="number" id="tNbMembres" value="10" min="2" oninput="calcTontine()"></div>
+    <div><label>Cotisation par membre (FCFA)</label><input type="number" id="tCotisation" value="50000" oninput="calcTontine()"></div>
+    <div><label>Fréquence</label>
+    <select id="tFreq" onchange="calcTontine()">
+      <option value="mensuelle">Mensuelle</option>
+      <option value="hebdo">Hebdomadaire</option>
+      <option value="bimensuelle">Bimensuelle</option>
+    </select></div>
+  </div>
+  <div class="kpis" id="kpiTontine"></div>
+  <div class="section-title">📋 Ordre de rotation (tirage au sort)</div>
+  <div id="tontineList"></div>
+  <div class="btn-row">
+    <button class="btn btn-green" onclick="genererTontine()">🎲 Générer l'ordre de rotation</button>
+  </div>
+  <div id="tontineAnalyse"></div>
+</div>
+
+<!-- PANE 4: EXERCICES -->
+<div class="pane" id="p4">
+  <div class="section-title">✏️ Exercice 1 — Calculer le TEG réel</div>
+  <div class="box info" style="margin-bottom:10px">📝 Une IMF vous propose un prêt de 500 000 FCFA sur 6 mois à un taux nominal de 10% sur la période, avec 15 000 FCFA de frais de dossier et 5 000 FCFA d'assurance.</div>
+  <div class="row r3">
+    <div><label>Intérêts nominaux (FCFA)</label><input type="number" id="e1_int" placeholder="500000×10%" oninput="checkE1()"></div>
+    <div><label>Coût total du crédit (FCFA)</label><input type="number" id="e1_cout" placeholder="Intérêts+Frais+Assur." oninput="checkE1()"></div>
+    <div><label>TEG réel approximatif (%)</label><input type="number" id="e1_teg" placeholder="CoûtTotal/Capital×100" step="0.1" oninput="checkE1()"></div>
+  </div>
+  <div id="e1_res"></div>
+
+  <div class="section-title" style="margin-top:16px">✏️ Exercice 2 — Capacité d'endettement</div>
+  <div class="box info" style="margin-bottom:10px">📝 Awa gagne 200 000 FCFA/mois. La règle prudente recommande de ne pas dépasser 30% du revenu en mensualités de crédit. Elle a déjà 30 000 FCFA de mensualité sur un crédit en cours.</div>
+  <div class="row">
+    <div><label>Capacité d'endettement max (FCFA)</label><input type="number" id="e2_cap" placeholder="200000×30%" oninput="checkE2()"></div>
+    <div><label>Marge disponible pour nouveau crédit (FCFA)</label><input type="number" id="e2_marge" placeholder="Capacité - Mensualité actuelle" oninput="checkE2()"></div>
+  </div>
+  <div id="e2_res"></div>
+
+  <div class="section-title" style="margin-top:16px">✏️ Exercice 3 — Tontine</div>
+  <div class="box info" style="margin-bottom:10px">📝 Un groupe de 8 personnes forme une tontine avec une cotisation de 25 000 FCFA/mois chacune.</div>
+  <div class="row">
+    <div><label>Montant total collecté chaque mois (FCFA)</label><input type="number" id="e3_total" placeholder="8×25000" oninput="checkE3()"></div>
+    <div><label>Durée totale du cycle (mois)</label><input type="number" id="e3_duree" placeholder="Nb membres" oninput="checkE3()"></div>
+  </div>
+  <div id="e3_res"></div>
+</div>
+
+<!-- PANE 5: QUIZ -->
+<div class="pane" id="p5">
+  <div id="quizArea"></div>
+</div>
+
+<script>
+var imfSel=null;
+var tontineMembers=[];
+var qStep=0,qScore=0,qAnswers=[];
+
+var IMFS=[
+  {id:'kafo',emoji:'🌾',nom:'Kafo Jiginew',taux:'13-18%/an',desc:'Plus grand réseau mutualiste du Mali, fondé en 1987. Spécialisé dans le financement agricole et rural.',
+   produits:['Crédit campagne agricole','Crédit petit commerce','Épargne à vue et à terme','Crédit warrantage (stockage)'],
+   conditions:'Adhésion obligatoire comme membre coopérateur. Caution solidaire pour les groupes. Montants : 25 000 à 3 000 000 FCFA.',
+   zone:'Présent dans toutes les régions du Mali, fort ancrage rural.'},
+  {id:'soro',emoji:'🏪',nom:'Soro Yiriwaso',taux:'15-20%/an',desc:'IMF urbaine et péri-urbaine, spécialisée dans le financement des femmes entrepreneures et petits commerces.',
+   produits:['Crédit solidaire de groupe','Crédit individuel commerce','Épargne obligatoire','Microassurance santé'],
+   conditions:'Garantie sociale (groupe de 5-7 femmes). Montants : 50 000 à 1 000 000 FCFA. Remboursement hebdomadaire ou mensuel.',
+   zone:'Bamako et grandes villes (Sikasso, Ségou).'},
+  {id:'nyesigiso',emoji:'🏦',nom:'Nyèsigiso',taux:'12-16%/an',desc:'Réseau de caisses mutualistes d\'épargne et de crédit, l\'un des plus anciens du Mali.',
+   produits:['Crédit habitat','Crédit équipement professionnel','Épargne-logement','Crédit scolaire'],
+   conditions:'Système mutualiste — il faut épargner avant d\'emprunter (généralement 20-30% du montant souhaité).',
+   zone:'Bamako et grandes villes, réseau de caisses locales.'},
+  {id:'bndaMicro',emoji:'🏛️',nom:'BNDA (volet microfinance)',taux:'10-14%/an',desc:'Banque Nationale de Développement Agricole — propose aussi des produits microfinance pour agriculteurs.',
+   produits:['Crédit agricole subventionné','Crédit warrantage','Financement coopératives','Crédit équipement agricole'],
+   conditions:'Souvent via des projets gouvernementaux ou bailleurs (FIDA, BAD). Taux préférentiels pour l\'agriculture.',
+   zone:'National, avec accent sur les zones agricoles (Ségou, Sikasso, Mopti).'},
+  {id:'orangeFinance',emoji:'📱',nom:'Orange Money / Mobile Crédit',taux:'5-10%/mois (court terme)',desc:'Microcrédit digital via mobile money. Très rapide mais taux élevés sur le court terme.',
+   produits:['Avance sur salaire mobile','Microcrédit express (7-30 jours)','Crédit marchand (POS)'],
+   conditions:'100% digital via l\'app Orange Money. Montants : 5 000 à 200 000 FCFA. Décision en quelques minutes.',
+   zone:'Disponible partout où Orange Money fonctionne (national).'},
+  {id:'tontineInfo',emoji:'🤝',nom:'Tontine Communautaire',taux:'0% (pas d\'intérêt)',desc:'Système traditionnel informel d\'épargne rotative entre membres d\'un groupe de confiance.',
+   produits:['Tontine simple (rotation)','Tontine à enchères','Caisse de solidarité (urgences)'],
+   conditions:'Aucune institution formelle requise. Basé sur la confiance et les statuts internes du groupe.',
+   zone:'Partout au Mali — pratique culturelle ancrée.'},
+];
+
+var QUESTIONS=[
+  {q:"Quelle est la principale différence entre une banque classique et une IMF (Institution de Microfinance) ?",tip:"Pensez aux garanties et aux montants.",
+   opts:["Les IMF n'existent pas légalement au Mali","Les IMF utilisent des garanties sociales (caution solidaire) et acceptent des montants plus petits que les banques classiques","Les banques sont toujours moins chères","Les IMF ne font que de l'épargne, jamais de crédit"],
+   correct:1,fb:"✅ Les IMF ciblent les personnes exclues du système bancaire classique avec des garanties sociales (groupe, caution solidaire) plutôt que des garanties matérielles, et des montants plus petits (25 000 à 5 000 000 FCFA).",pts:10},
+  {q:"Qu'est-ce que le TEG (Taux Effectif Global) ?",tip:"Il inclut plus que le simple taux d'intérêt affiché.",
+   opts:["Le taux d'intérêt nominal uniquement","Le coût réel total du crédit incluant intérêts + frais de dossier + assurances + frais de gestion","Le taux pratiqué par la BCEAO","Un impôt sur les crédits"],
+   correct:1,fb:"✅ Le TEG est le VRAI coût de votre crédit. Un prêt affiché à 12% peut avoir un TEG réel de 18-22% avec tous les frais cachés. Demandez toujours le TEG avant de signer un contrat de crédit !",pts:15},
+  {q:"Dans une tontine de 10 personnes cotisant 40 000 FCFA/mois, combien reçoit chaque personne à son tour ?",tip:"Tontine = collecte totale reversée à un membre.",
+   opts:["40 000 FCFA","400 000 FCFA","4 000 FCFA","Cela dépend du taux d'intérêt"],
+   correct:1,fb:"✅ Chaque membre reçoit la collecte totale = 10 × 40 000 = 400 000 FCFA. La tontine n'a PAS d'intérêt — c'est un système de solidarité et de discipline d'épargne, pas un placement financier.",pts:15},
+  {q:"Quelle est la règle prudente de capacité d'endettement (taux d'endettement maximum recommandé) ?",tip:"Pourcentage du revenu consacré aux mensualités de crédit.",
+   opts:["10% du revenu mensuel","30% du revenu mensuel","60% du revenu mensuel","100% du revenu mensuel"],
+   correct:1,fb:"✅ La règle prudente est de ne pas dépasser 30% de ses revenus en mensualités de crédit (toutes dettes confondues). Au-delà, le risque de surendettement augmente fortement.",pts:15},
+  {q:"Quel est le principal risque d'une tontine ?",tip:"Pensez à ce qui se passe après qu'un membre ait reçu sa part.",
+   opts:["Les taux d'intérêt sont trop élevés","Un membre peut arrêter de cotiser après avoir reçu sa part, faisant perdre de l'argent aux autres","Les tontines sont illégales au Mali","Les tontines nécessitent un compte bancaire"],
+   correct:1,fb:"✅ Le risque principal : un membre qui a déjà reçu sa part peut cesser de cotiser, faisant perdre de l'argent au groupe. Solution : choisir des membres de confiance, formaliser avec des statuts écrits, et faire cotiser les nouveaux membres avant les anciens.",pts:15},
+  {q:"Kafo Jiginew est connue pour être spécialisée dans quel secteur ?",tip:"C'est le plus grand réseau mutualiste du Mali.",
+   opts:["Le financement immobilier urbain uniquement","Le financement agricole et rural","Les crédits automobiles","Le commerce international"],
+   correct:1,fb:"✅ Kafo Jiginew, fondée en 1987, est le plus grand réseau mutualiste du Mali avec un fort ancrage dans le financement agricole et rural (crédit campagne, warrantage).",pts:10},
+  {q:"Pourquoi un crédit avec caution solidaire de groupe est-il souvent accordé plus facilement qu'un crédit individuel ?",tip:"Pensez à la garantie offerte à l'IMF.",
+   opts:["Les taux sont toujours plus bas","Le groupe se porte garant collectivement, réduisant le risque pour l'IMF même sans garantie matérielle","Les membres du groupe paient pour les autres systématiquement","Ce type de crédit n'existe pas réellement"],
+   correct:1,fb:"✅ Avec la caution solidaire, si un membre du groupe ne rembourse pas, les autres membres sont responsables collectivement. Cela réduit le risque pour l'IMF, qui peut alors prêter sans garantie matérielle classique (terrain, véhicule...).",pts:15},
+];
+
+function show(i){
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+  document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+  if(i===1) renderIMF();
+  if(i===2) calcPret();
+  if(i===3) calcTontine();
+  if(i===5) renderQuiz();
+}
+
+function gn(id,d){return parseFloat(document.getElementById(id)?.value)||d||0;}
+function fm(n){return Math.round(n).toLocaleString('fr-FR');}
+
+// IMF
+function renderIMF(){
+  var ig=document.getElementById('imfGrid');
+  if(!ig) return;
+  ig.innerHTML=IMFS.map(function(i){
+    return '<div class="imf-card'+(imfSel===i.id?' sel':'')+'" onclick="selIMF(\''+i.id+'\')">'+
+      '<div class="imf-emoji">'+i.emoji+'</div>'+
+      '<div class="imf-nom">'+i.nom+'</div>'+
+      '<div class="imf-taux">📊 '+i.taux+'</div>'+
+      '</div>';
+  }).join('');
+  renderIMFDetail();
+}
+
+function selIMF(id){imfSel=id;renderIMF();}
+
+function renderIMFDetail(){
+  var el=document.getElementById('imfDetail');
+  if(!el) return;
+  if(!imfSel){el.innerHTML='<div class="box" style="margin-top:10px">👆 Cliquez sur une institution pour voir le détail.</div>';return;}
+  var i=IMFS.find(function(x){return x.id===imfSel;});
+  if(!i) return;
+  el.innerHTML='<div style="margin-top:14px;border:2px solid #15803D;border-radius:12px;overflow:hidden">'+
+    '<div style="background:#15803D;padding:12px 16px;display:flex;align-items:center;gap:12px">'+
+    '<span style="font-size:28px">'+i.emoji+'</span>'+
+    '<div><div style="font-size:15px;font-weight:700;color:#fff">'+i.nom+'</div>'+
+    '<div style="font-size:12px;color:rgba(255,255,255,.85)">'+i.desc+'</div></div>'+
+    '</div>'+
+    '<div style="padding:14px">'+
+    '<div style="font-size:11px;font-weight:700;color:#15803D;margin-bottom:6px">📦 Produits proposés</div>'+
+    i.produits.map(function(p){return '<div class="box" style="padding:5px 8px;font-size:11px;margin-bottom:4px">• '+p+'</div>';}).join('')+
+    '<div class="box info" style="margin-top:8px">📋 <b>Conditions :</b> '+i.conditions+'</div>'+
+    '<div class="box purple">📍 <b>Zone de couverture :</b> '+i.zone+'</div>'+
+    '</div></div>';
+}
+
+// SIMULATEUR PRÊT
+function calcPret(){
+  var capital=gn('prCapital',1000000);
+  var taux=gn('prTaux',15)/100;
+  var duree=gn('prDuree',12);
+  var frais=gn('prFrais',20000);
+  var revenu=gn('prRevenu',250000);
+  var tauxM=taux/12;
+  var mensualite=Math.round(capital*tauxM/(1-Math.pow(1+tauxM,-duree)));
+  var totalRembourse=mensualite*duree;
+  var coutTotal=totalRembourse-capital+frais;
+  var teg=Math.round((coutTotal/capital)*100*10)/10;
+  var tauxEndettement=revenu>0?Math.round(mensualite/revenu*100):0;
+  var kpi=document.getElementById('kpiPret');
+  if(kpi) kpi.innerHTML=
+    '<div class="kpi"><b>'+fm(mensualite)+'</b><span>Mensualité (F)</span></div>'+
+    '<div class="kpi"><b>'+fm(totalRembourse)+'</b><span>Total remboursé (F)</span></div>'+
+    '<div class="kpi r"><b>'+fm(coutTotal)+'</b><span>Coût total crédit (F)</span></div>'+
+    '<div class="kpi o"><b>'+teg+'%</b><span>TEG réel approx.</span></div>'+
+    '<div class="kpi '+(tauxEndettement<=30?'g':'r')+'"><b>'+tauxEndettement+'%</b><span>Taux endettement</span></div>';
+
+  var al=document.getElementById('alertePret');
+  if(al){
+    var msgs=[];
+    if(tauxEndettement>30) msgs.push('<div class="box err">🚨 Taux d\'endettement de '+tauxEndettement+'% — dépasse le seuil prudent de 30%. Risque de surendettement.</div>');
+    else msgs.push('<div class="box ok">✅ Taux d\'endettement raisonnable ('+tauxEndettement+'%) — dans la limite des 30% recommandés.</div>');
+    if(teg-taux*100>5) msgs.push('<div class="box warn">⚠️ Le TEG réel ('+teg+'%) est nettement supérieur au taux nominal affiché ('+(taux*100)+'%) — les frais pèsent lourd.</div>');
+    al.innerHTML=msgs.join('');
+  }
+
+  // Tableau amortissement
+  var tab=document.getElementById('amortTable');
+  if(tab){
+    var capitalRestant=capital;
+    var h='<table><thead><tr><th>Mois</th><th>Mensualité</th><th>Intérêts</th><th>Capital remboursé</th><th>Capital restant</th></tr></thead><tbody>';
+    var maxRows=Math.min(duree,24);
+    for(var m=1;m<=maxRows;m++){
+      var interets=Math.round(capitalRestant*tauxM);
+      var capRemb=mensualite-interets;
+      capitalRestant=Math.max(0,capitalRestant-capRemb);
+      h+='<tr><td>'+m+'</td><td>'+fm(mensualite)+'</td><td style="color:#991B1B">'+fm(interets)+'</td><td style="color:#065F46">'+fm(capRemb)+'</td><td>'+fm(capitalRestant)+'</td></tr>';
+    }
+    if(duree>24) h+='<tr><td colspan="5" style="text-align:center;color:#888">... ('+(duree-24)+' mois supplémentaires non affichés)</td></tr>';
+    h+='</tbody></table>';
+    tab.innerHTML=h;
+  }
+}
+
+function exemplesPret(){
+  document.getElementById('prCapital').value=750000;
+  document.getElementById('prTaux').value=16;
+  document.getElementById('prDuree').value=18;
+  document.getElementById('prFrais').value=25000;
+  document.getElementById('prRevenu').value=200000;
+  calcPret();
+}
+
+// TONTINE
+function calcTontine(){
+  var nb=gn('tNbMembres',10);
+  var cot=gn('tCotisation',50000);
+  var freq=document.getElementById('tFreq')?.value||'mensuelle';
+  var total=nb*cot;
+  var freqLabel={mensuelle:'mois',hebdo:'semaines',bimensuelle:'quinzaines'}[freq];
+  var kpi=document.getElementById('kpiTontine');
+  if(kpi) kpi.innerHTML=
+    '<div class="kpi"><b>'+nb+'</b><span>Membres</span></div>'+
+    '<div class="kpi"><b>'+fm(cot)+'</b><span>Cotisation/membre (F)</span></div>'+
+    '<div class="kpi g"><b>'+fm(total)+'</b><span>Collecte totale (F)</span></div>'+
+    '<div class="kpi b"><b>'+nb+' '+freqLabel+'</b><span>Durée du cycle</span></div>';
+}
+
+function genererTontine(){
+  var nb=gn('tNbMembres',10);
+  var cot=gn('tCotisation',50000);
+  var total=nb*cot;
+  var noms=[];
+  for(var i=1;i<=nb;i++) noms.push('Membre '+i);
+  // Shuffle
+  for(var i=noms.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=noms[i];noms[i]=noms[j];noms[j]=t;}
+  var el=document.getElementById('tontineList');
+  if(el) el.innerHTML=noms.map(function(n,i){
+    return '<div class="tontine-member"><div><b>Tour '+(i+1)+'</b> — '+n+'</div>'+
+      '<div style="text-align:right">'+fm(cot)+' F</div>'+
+      '<div style="text-align:right;color:#15803D;font-weight:700">Reçoit : '+fm(total)+' F</div>'+
+      '<div></div></div>';
+  }).join('');
+  var an=document.getElementById('tontineAnalyse');
+  if(an) an.innerHTML='<div class="box ok" style="margin-top:10px">✅ Ordre généré par tirage au sort équitable. Chaque membre cotise '+fm(cot)+' FCFA et reçoit '+fm(total)+' FCFA une seule fois durant le cycle complet.</div>'+
+    '<div class="box purple">💡 <b>Conseil :</b> Formalisez la tontine avec un règlement écrit signé par tous les membres, précisant les pénalités en cas d\'abandon après réception.</div>';
+}
+
+// EXERCICES
+function checkE1(){
+  var int=parseFloat(document.getElementById('e1_int')?.value)||0;
+  var cout=parseFloat(document.getElementById('e1_cout')?.value)||0;
+  var teg=parseFloat(document.getElementById('e1_teg')?.value)||0;
+  var intOk=Math.abs(int-50000)<1;
+  var coutOk=Math.abs(cout-70000)<1;
+  var tegOk=Math.abs(teg-14)<0.5;
+  var el=document.getElementById('e1_res');
+  if(el) el.innerHTML='<div class="box '+(intOk&&coutOk&&tegOk?'ok':'warn')+'" style="margin-top:8px">'+
+    (intOk?'✅ Intérêts = 50 000 F ':'❌ Intérêts = 500 000×10% = <b>50 000 FCFA</b><br>')+
+    (coutOk?'✅ Coût total = 70 000 F ':'❌ Coût total = 50 000+15 000+5 000 = <b>70 000 FCFA</b><br>')+
+    (tegOk?'✅ TEG ≈ 14% (sur 6 mois) !':'❌ TEG ≈ 70 000/500 000×100 = <b>14%</b> sur 6 mois (soit ~28%/an !)')+
+    '<br>💡 Le taux nominal (10%) cache un TEG réel bien plus élevé une fois les frais inclus.'+'</div>';
+}
+
+function checkE2(){
+  var cap=parseFloat(document.getElementById('e2_cap')?.value)||0;
+  var marge=parseFloat(document.getElementById('e2_marge')?.value)||0;
+  var capOk=Math.abs(cap-60000)<1;
+  var margeOk=Math.abs(marge-30000)<1;
+  var el=document.getElementById('e2_res');
+  if(el) el.innerHTML='<div class="box '+(capOk&&margeOk?'ok':'warn')+'" style="margin-top:8px">'+
+    (capOk?'✅ Capacité max = 60 000 F ':'❌ Capacité = 200 000×30% = <b>60 000 FCFA</b><br>')+
+    (margeOk?'✅ Marge disponible = 30 000 F !':'❌ Marge = 60 000−30 000 = <b>30 000 FCFA</b> disponible pour un nouveau crédit')+
+    '</div>';
+}
+
+function checkE3(){
+  var total=parseFloat(document.getElementById('e3_total')?.value)||0;
+  var duree=parseFloat(document.getElementById('e3_duree')?.value)||0;
+  var totalOk=Math.abs(total-200000)<1;
+  var dureeOk=Math.abs(duree-8)<0.5;
+  var el=document.getElementById('e3_res');
+  if(el) el.innerHTML='<div class="box '+(totalOk&&dureeOk?'ok':'warn')+'" style="margin-top:8px">'+
+    (totalOk?'✅ Collecte mensuelle = 200 000 F ':'❌ Collecte = 8×25 000 = <b>200 000 FCFA</b><br>')+
+    (dureeOk?'✅ Durée du cycle = 8 mois !':'❌ Durée = 8 membres = <b>8 mois</b> pour que tous reçoivent une fois')+
+    '</div>';
+}
+
+// QUIZ
+function renderQuiz(){
+  if(qStep>=QUESTIONS.length){showResult();return;}
+  var q=QUESTIONS[qStep];
+  var ans=qAnswers[qStep]!==undefined;
+  var html='<div style="text-align:center;margin-bottom:10px;font-size:12px;color:#666">Question '+(qStep+1)+'/'+QUESTIONS.length+' · Score : <b>'+qScore+' pts</b></div>'+
+    '<div class="quiz-q"><div class="q-num">Question '+(qStep+1)+' — '+q.pts+' points</div>'+
+    '<div class="q-text">'+q.q+'</div>'+
+    '<div class="q-tip">💡 '+q.tip+'</div>'+
+    q.opts.map(function(o,i){
+      var cls='opt';
+      if(ans) cls+=(i===q.correct?' good':(i===qAnswers[qStep]?' bad':' dis'));
+      return '<button class="'+cls+'" onclick="ansQ('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+    }).join('')+
+    (ans?'<div class="fb show '+(qAnswers[qStep]===q.correct?'ok':'ko')+'">'+q.fb+'</div>':'')+
+    (ans?'<button class="btn btn-green" style="margin-top:8px" onclick="nextQ()">'+( qStep<QUESTIONS.length-1?'Question suivante →':'Voir mon score →')+'</button>':'')+
+    '</div>';
+  document.getElementById('quizArea').innerHTML=html;
+}
+function ansQ(i){if(qAnswers[qStep]!==undefined)return;qAnswers[qStep]=i;if(i===QUESTIONS[qStep].correct)qScore+=QUESTIONS[qStep].pts;renderQuiz();}
+function nextQ(){qStep++;renderQuiz();}
+function showResult(){
+  var max=QUESTIONS.reduce(function(s,q){return s+q.pts;},0);
+  var p=Math.round(qScore/max*100);
+  var msg=p>=80?'🏆 Expert en microfinance !':p>=60?'👍 Bonne maîtrise !':'📚 Continuez à apprendre !';
+  document.getElementById('quizArea').innerHTML=
+    '<div style="text-align:center;background:linear-gradient(135deg,#F0FDF4,#D1FAE5);border-radius:12px;padding:20px;margin-bottom:14px;border:2px solid #15803D">'+
+    '<div style="font-size:36px;font-weight:700;color:#15803D">'+qScore+'/'+max+'</div>'+
+    '<div style="font-size:14px;font-weight:700;margin:6px 0">'+msg+'</div>'+
+    '<div style="font-size:12px;color:#666">Score : '+p+'%</div></div>'+
+    '<button onclick="qStep=0;qScore=0;qAnswers=[];renderQuiz()" class="btn btn-green" style="width:100%;padding:12px">🔄 Recommencer le quiz</button>';
+}
+</script>
+</body>
+</html>

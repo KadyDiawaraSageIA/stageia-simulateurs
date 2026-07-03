@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Gestion de Trésorerie & Cash Flow</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#1E40AF);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#93C5FD;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#2563EB;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+.box{background:#EFF6FF;border-left:3px solid #2563EB;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.ok{background:#D1FAE5;border-left-color:#10B981;color:#065F46}
+.warn{background:#FEF3C7;border-left-color:#F59E0B;color:#92400E}
+.err{background:#FEE2E2;border-left-color:#EF4444;color:#991B1B}
+.purple{background:#F5F3FF;border-left-color:#8B5CF6;color:#5B21B6}
+label{font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:4px}
+input,select{width:100%;padding:7px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;font-family:Arial;background:#fff}
+input:focus,select:focus{outline:none;border-color:#2563EB}
+.hint{font-size:10px;color:#888;margin-top:3px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.row.r3{grid-template-columns:1fr 1fr 1fr}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:12px 0}
+.kpi{background:#f5f5f5;border-radius:8px;padding:10px;text-align:center;border:1px solid #e0e0e0}
+.kpi b{display:block;font-size:17px;color:#2563EB;margin-bottom:2px}
+.kpi.g b{color:#065F46}.kpi.r b{color:#A32D2D}.kpi.o b{color:#BA7517}
+.section-title{font-size:13px;font-weight:700;color:#0D0B2E;margin:14px 0 8px;border-bottom:2px solid #2563EB;padding-bottom:5px}
+/* TABLEAU TRÉSO */
+.trreso-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:12px;overflow-x:auto;display:block}
+.trreso-table th{background:#1E3A8A;color:#fff;padding:7px 8px;text-align:center;white-space:nowrap;font-size:10px;position:sticky;top:0}
+.trreso-table th:first-child{text-align:left;width:180px}
+.trreso-table td{padding:6px 8px;border-bottom:1px solid #f5f5f5;white-space:nowrap}
+.trreso-table td:first-child{font-size:11px;background:#f8f8f8;font-weight:500;border-right:1px solid #e0e0e0}
+.trreso-table td input{width:90px;padding:4px 6px;border:1px solid #ddd;border-radius:5px;font-size:11px;text-align:right;font-family:Arial;background:#FFFDE7}
+.trreso-table td input:focus{outline:none;border-color:#2563EB;background:#EFF6FF}
+.trreso-table tr.section-row td{background:#1E40AF;color:#fff;font-weight:700;font-size:11px;padding:5px 8px}
+.trreso-table tr.subtotal-row td{background:#DBEAFE;color:#1E3A8A;font-weight:700}
+.trreso-table tr.solde-row td{background:#1E3A8A;color:#fff;font-weight:700;font-size:12px}
+.trreso-table tr.solde-row td.pos{color:#86EFAC}
+.trreso-table tr.solde-row td.neg{color:#FCA5A5}
+.trreso-table tr.cumul-row td{background:#EFF6FF;color:#1E3A8A;font-weight:600}
+/* QUIZ */
+.quiz-q{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:12px}
+.q-num{font-size:10px;color:#2563EB;font-weight:700;margin-bottom:5px}
+.q-text{font-size:13px;font-weight:600;color:#0D0B2E;margin-bottom:10px;line-height:1.5}
+.q-tip{font-size:11px;color:#888;background:#fff;border:1px solid #eee;border-radius:6px;padding:6px 10px;margin-bottom:10px}
+.opt{width:100%;padding:9px 14px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;font-size:12px;background:#fff;text-align:left;margin-bottom:5px;font-family:Arial;line-height:1.5}
+.opt:hover{border-color:#2563EB;background:#EFF6FF}
+.opt.good{border-color:#10B981;background:#D1FAE5;pointer-events:none;color:#065F46}
+.opt.bad{border-color:#EF4444;background:#FEE2E2;pointer-events:none;color:#991B1B}
+.opt.dis{pointer-events:none;opacity:.5}
+.fb{border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;line-height:1.6;display:none}
+.fb.show{display:block}
+.fb.ok{background:#D1FAE5;color:#065F46}
+.fb.ko{background:#FEE2E2;color:#991B1B}
+.btn{padding:8px 16px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600}
+.btn-blue{background:#2563EB;color:#fff}
+.btn-red{background:#EF4444;color:#fff}
+.btn-green{background:#10B981;color:#fff}
+.btn-orange{background:#F59E0B;color:#fff}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+/* SIMUL CASHFLOW */
+.cf-block{border:1px solid #e0e0e0;border-radius:10px;overflow:hidden;margin-bottom:10px}
+.cf-header{padding:10px 14px;font-size:12px;font-weight:700;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.cf-body{padding:12px 14px}
+.cf-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+.cf-label{flex:1;color:#444}
+.cf-input{width:140px;padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:12px;text-align:right;font-family:Arial;background:#FFFDE7;flex-shrink:0}
+.cf-input:focus{outline:none;border-color:#2563EB}
+.cf-total{font-size:13px;font-weight:700;padding:8px 12px;border-radius:7px;text-align:right}
+@media(max-width:600px){.row,.row.r3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<h1>💰 Gestion de Trésorerie & Cash Flow — Stageia
+<small>Plan de trésorerie 12 mois · Tableau de flux · Leçons · Exercices · Quiz</small></h1>
+
+<div class="tabs">
+  <button class="tab on" onclick="show(0)">📚 Leçons</button>
+  <button class="tab" onclick="show(1)">📅 Plan Trésorerie</button>
+  <button class="tab" onclick="show(2)">💧 Flux de Trésorerie</button>
+  <button class="tab" onclick="show(3)">✏️ Exercices</button>
+  <button class="tab" onclick="show(4)">🎯 Quiz</button>
+</div>
+
+<!-- PANE 0: LEÇONS -->
+<div class="pane on" id="p0">
+  <div class="section-title">💡 Qu'est-ce que la trésorerie ?</div>
+  <div class="box">💰 <b>Trésorerie = Argent disponible immédiatement</b><br>
+  C'est l'ensemble des liquidités dont dispose une entreprise à un instant T : caisse + comptes bancaires.<br><br>
+  <b>Formule :</b> Trésorerie = Encaissements − Décaissements<br>
+  <b>Règle d'or :</b> On peut avoir un bénéfice comptable ET manquer de trésorerie !</div>
+
+  <div class="box warn">⚠️ <b>Attention : Bénéfice ≠ Trésorerie</b><br>
+  Exemple : Vous vendez 1 000 000 FCFA à crédit (payable dans 60 jours). Comptablement vous avez un produit de 1 000 000 FCFA, mais votre trésorerie est toujours à 0 FCFA ! C'est le piège de nombreuses PME maliennes.</div>
+
+  <div class="section-title">📊 Les 3 flux de trésorerie</div>
+  <div class="box">🏭 <b>Flux d'exploitation (CFO)</b><br>
+  Cash généré par l'activité principale de l'entreprise.<br>
+  = Encaissements clients − Paiements fournisseurs − Salaires − Charges<br>
+  <b>→ Doit être positif</b> pour une entreprise saine</div>
+  <div class="box">🏗️ <b>Flux d'investissement (CFI)</b><br>
+  Cash lié aux achats et ventes d'actifs (machines, locaux, etc.).<br>
+  = Cessions d'actifs − Acquisitions d'actifs<br>
+  <b>→ Souvent négatif</b> car l'entreprise investit pour grandir</div>
+  <div class="box">🏦 <b>Flux de financement (CFF)</b><br>
+  Cash lié aux emprunts, remboursements et dividendes.<br>
+  = Emprunts reçus − Remboursements − Dividendes versés<br>
+  <b>→ Variable</b> selon la phase de développement</div>
+
+  <div class="section-title">🧮 Indicateurs clés à maîtriser</div>
+  <div class="box purple">📌 <b>Formules essentielles :</b><br>
+  • <b>CAF</b> (Capacité d'Autofinancement) = Résultat net + Amortissements<br>
+  • <b>BFR</b> = Stocks + Créances − Dettes fournisseurs<br>
+  • <b>Trésorerie nette</b> = Fonds de Roulement − BFR<br>
+  • <b>Délai moyen paiement clients</b> = (Créances / CA) × 360 jours<br>
+  • <b>Délai moyen paiement fournisseurs</b> = (Dettes fourn. / Achats) × 360 jours<br>
+  • <b>Délai de rotation stocks</b> = (Stocks / CMV) × 360 jours</div>
+
+  <div class="section-title">🚨 Signaux d'alarme de la trésorerie</div>
+  <div class="box err">🚨 <b>Signes d'une trésorerie en danger :</b><br>
+  • Solde bancaire proche de zéro régulièrement<br>
+  • Délais de paiement clients > 90 jours<br>
+  • Recours fréquent au découvert bancaire<br>
+  • Fournisseurs qui relancent pour impayés<br>
+  • Incapacité à payer salaires à temps<br>
+  • BFR en hausse rapide sans croissance du CA</div>
+
+  <div class="section-title">💡 6 stratégies pour améliorer la trésorerie</div>
+  <div class="box ok">✅ <b>Actions pour améliorer votre trésorerie :</b><br>
+  1. <b>Facturer rapidement</b> — Ne pas attendre la fin du mois pour envoyer les factures<br>
+  2. <b>Réduire les délais clients</b> — Exiger 30% d'acompte, proposer escompte pour paiement rapide<br>
+  3. <b>Négocier délais fournisseurs</b> — Payer à 60 jours plutôt que comptant<br>
+  4. <b>Réduire les stocks</b> — Juste-à-temps, commandes fréquentes en petites quantités<br>
+  5. <b>Prévoir les pics de dépenses</b> — Constituer une réserve de trésorerie (3 mois de charges)<br>
+  6. <b>Avoir une ligne de crédit</b> — Négocier un découvert autorisé avec BMS ou Coris Bank</div>
+</div>
+
+<!-- PANE 1: PLAN TRÉSORERIE 12 MOIS -->
+<div class="pane" id="p1">
+  <div class="box" style="margin-bottom:12px">📅 <span>Saisissez vos prévisions mensuelles. Le solde cumulé se calcule automatiquement. <b>Cases jaunes</b> = à remplir.</span></div>
+  <div class="row">
+    <div><label>Solde initial (trésorerie de départ) (FCFA)</label><input type="number" id="soldeInit" value="500000" oninput="calcTreso()"></div>
+    <div><label>Nom de l'entreprise</label><input id="socTreso" placeholder="Ex: MALI TECH SARL"></div>
+  </div>
+  <div style="overflow-x:auto;margin-bottom:12px">
+  <table class="trreso-table" id="tresoTable"></table>
+  </div>
+  <div class="kpis" id="kpiTreso"></div>
+  <div id="alerteTreso"></div>
+  <div class="btn-row">
+    <button class="btn btn-orange" onclick="exemplesTreso()">📋 Charger un exemple</button>
+    <button class="btn btn-red" onclick="resetTreso()">🗑️ Effacer</button>
+  </div>
+</div>
+
+<!-- PANE 2: FLUX DE TRÉSORERIE -->
+<div class="pane" id="p2">
+  <div class="box" style="margin-bottom:12px">💧 <span>Le tableau des flux de trésorerie explique comment votre trésorerie a évolué sur la période. Saisissez vos données pour chaque section.</span></div>
+
+  <!-- FLUX EXPLOITATION -->
+  <div class="cf-block">
+    <div class="cf-header" style="background:#1E3A8A">🏭 FLUX D'EXPLOITATION (CFO) <span id="cfo_total" style="font-size:14px">0 F</span></div>
+    <div class="cf-body">
+      <div class="cf-row"><span class="cf-label">Résultat net de l'exercice</span><input class="cf-input" id="cfo_rn" type="number" placeholder="0" oninput="calcCF()"></div>
+      <div class="cf-row"><span class="cf-label">(+) Amortissements et provisions</span><input class="cf-input" id="cfo_amort" type="number" placeholder="0" oninput="calcCF()"></div>
+      <div class="cf-row"><span class="cf-label">(−) Augmentation créances clients</span><input class="cf-input" id="cfo_creances" type="number" placeholder="0" oninput="calcCF()"><div style="font-size:10px;color:#888">Positif si créances augmentent</div></div>
+      <div class="cf-row"><span class="cf-label">(−) Augmentation stocks</span><input class="cf-input" id="cfo_stocks" type="number" placeholder="0" oninput="calcCF()"></div>
+      <div class="cf-row"><span class="cf-label">(+) Augmentation dettes fournisseurs</span><input class="cf-input" id="cfo_fourn" type="number" placeholder="0" oninput="calcCF()"></div>
+      <div class="cf-row"><span class="cf-label">(+) Augmentation autres dettes CT</span><input class="cf-input" id="cfo_autres_dettes" type="number" placeholder="0" oninput="calcCF()"></div>
+      <div class="cf-total" id="cfo_result" style="background:#DBEAFE;color:#1E3A8A">CFO = 0 FCFA</div>
+    </div>
+  </div>
+
+  <!-- FLUX INVESTISSEMENT -->
+  <div class="cf-block">
+    <div class="cf-header" style="background:#7C3AED">🏗️ FLUX D'INVESTISSEMENT (CFI) <span id="cfi_total" style="font-size:14px">0 F</span></div>
+    <div class="cf-body">
+      <div class="cf-row"><span class="cf-label">(−) Acquisitions immobilisations</span><input class="cf-input" id="cfi_acqui" type="number" placeholder="0" oninput="calcCF()"><div style="font-size:10px;color:#888">Achat machines, véhicules...</div></div>
+      <div class="cf-row"><span class="cf-label">(+) Cessions d'immobilisations</span><input class="cf-input" id="cfi_cession" type="number" placeholder="0" oninput="calcCF()"></div>
+      <div class="cf-row"><span class="cf-label">(−) Acquisitions financières</span><input class="cf-input" id="cfi_fin" type="number" placeholder="0" oninput="calcCF()"></div>
+      <div class="cf-total" id="cfi_result" style="background:#EDE9FE;color:#7C3AED">CFI = 0 FCFA</div>
+    </div>
+  </div>
+
+  <!-- FLUX FINANCEMENT -->
+  <div class="cf-block">
+    <div class="cf-header" style="background:#059669">🏦 FLUX DE FINANCEMENT (CFF) <span id="cff_total" style="font-size:14px">0 F</span></div>
+    <div class="cf-body">
+      <div class="cf-row"><span class="cf-label">(+) Augmentation capital</span><input class="cf-input" id="cff_capital" type="number" placeholder="0" oninput="calcCF()"></div>
+      <div class="cf-row"><span class="cf-label">(+) Nouveaux emprunts</span><input class="cf-input" id="cff_emprunts" type="number" placeholder="0" oninput="calcCF()"></div>
+      <div class="cf-row"><span class="cf-label">(−) Remboursements d'emprunts</span><input class="cf-input" id="cff_remb" type="number" placeholder="0" oninput="calcCF()"></div>
+      <div class="cf-row"><span class="cf-label">(−) Dividendes versés</span><input class="cf-input" id="cff_div" type="number" placeholder="0" oninput="calcCF()"></div>
+      <div class="cf-total" id="cff_result" style="background:#D1FAE5;color:#065F46">CFF = 0 FCFA</div>
+    </div>
+  </div>
+
+  <!-- RÉSULTAT GLOBAL -->
+  <div style="background:#1E3A8A;border-radius:10px;padding:14px;margin-bottom:12px">
+    <div class="cf-row" style="color:#fff;font-size:13px;font-weight:700;margin-bottom:8px">
+      <span class="cf-label">Trésorerie d'ouverture</span>
+      <input class="cf-input" id="cf_ouverture" type="number" placeholder="0" oninput="calcCF()" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff">
+    </div>
+    <div class="cf-total" id="cf_final" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.3);font-size:14px">Variation nette de trésorerie = 0 FCFA</div>
+    <div class="cf-total" id="cf_cloture" style="background:#FCD34D;color:#1E3A8A;margin-top:6px;font-size:15px">Trésorerie de clôture = 0 FCFA</div>
+  </div>
+
+  <div id="cfAnalyse"></div>
+</div>
+
+<!-- PANE 3: EXERCICES -->
+<div class="pane" id="p3">
+  <div class="section-title">✏️ Exercice 1 — Calculer les délais de paiement</div>
+  <div class="box" style="background:#EFF6FF;border-color:#2563EB;margin-bottom:12px">
+    📝 <b>Données :</b> CA annuel = 12 000 000 FCFA · Créances clients = 2 000 000 FCFA · Achats annuels = 6 000 000 FCFA · Dettes fournisseurs = 1 500 000 FCFA · Stock moyen = 800 000 FCFA · CMV = 5 000 000 FCFA
+  </div>
+  <div class="row r3">
+    <div><label>Délai moyen clients (jours)</label><input type="number" id="ex1_dmc" placeholder="Créances/CA×360" oninput="checkEx1()"><div class="hint">= (Créances / CA) × 360</div></div>
+    <div><label>Délai moyen fournisseurs (jours)</label><input type="number" id="ex1_dmf" placeholder="Dettes/Achats×360" oninput="checkEx1()"><div class="hint">= (Dettes fourn. / Achats) × 360</div></div>
+    <div><label>Rotation des stocks (jours)</label><input type="number" id="ex1_rs" placeholder="Stocks/CMV×360" oninput="checkEx1()"><div class="hint">= (Stock moyen / CMV) × 360</div></div>
+  </div>
+  <div id="ex1_res"></div>
+
+  <div class="section-title" style="margin-top:16px">✏️ Exercice 2 — Calculer la CAF</div>
+  <div class="box" style="background:#EFF6FF;border-color:#2563EB;margin-bottom:12px">
+    📝 <b>Données :</b> Résultat net = 350 000 FCFA · Amortissements = 80 000 FCFA · Provisions = 20 000 FCFA · Plus-value de cession = 15 000 FCFA
+  </div>
+  <div class="row">
+    <div><label>CAF méthode additive (FCFA)</label><input type="number" id="ex2_caf" placeholder="RN + Amort + Prov - PV cession" oninput="checkEx2()"><div class="hint">= RN + Amortissements + Provisions − Plus-values de cession</div></div>
+    <div><label>Interprétation</label><select id="ex2_interp" onchange="checkEx2()">
+      <option value="">— Choisissez —</option>
+      <option value="ok">La CAF est positive = l'entreprise génère de la trésorerie</option>
+      <option value="nok">La CAF est négative = l'entreprise détruit de la trésorerie</option>
+      <option value="neutre">La CAF est nulle = l'entreprise est à l'équilibre</option>
+    </select></div>
+  </div>
+  <div id="ex2_res"></div>
+
+  <div class="section-title" style="margin-top:16px">✏️ Exercice 3 — Analyser un plan de trésorerie</div>
+  <div class="box" style="background:#EFF6FF;border-color:#2563EB;margin-bottom:12px">
+    📝 <b>Situation :</b> La société BOUTIQUE AMINATA a les données suivantes pour janvier : Solde initial = 200 000 FCFA · Encaissements clients = 800 000 FCFA · Achats payés = 400 000 FCFA · Salaires = 150 000 FCFA · Loyer = 50 000 FCFA · Remboursement emprunt = 80 000 FCFA
+  </div>
+  <div class="row r3">
+    <div><label>Total encaissements (FCFA)</label><input type="number" id="ex3_enc" placeholder="?" oninput="checkEx3()"></div>
+    <div><label>Total décaissements (FCFA)</label><input type="number" id="ex3_dec" placeholder="?" oninput="checkEx3()"></div>
+    <div><label>Solde final janvier (FCFA)</label><input type="number" id="ex3_sol" placeholder="Solde init + Enc - Dec" oninput="checkEx3()"></div>
+  </div>
+  <div id="ex3_res"></div>
+</div>
+
+<!-- PANE 4: QUIZ -->
+<div class="pane" id="p4">
+  <div id="quizArea"></div>
+</div>
+
+<script>
+var qStep=0,qScore=0,qAnswers=[];
+var MOIS=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+
+// LIGNES DU PLAN DE TRÉSORERIE
+var LIGNES_ENC=[
+  {id:'enc_clients',label:'Encaissements clients'},
+  {id:'enc_subv',label:'Subventions reçues'},
+  {id:'enc_autres',label:'Autres encaissements'},
+  {id:'enc_emprunt',label:'Emprunts reçus'},
+  {id:'enc_cession',label:'Cessions d\'actifs'},
+];
+var LIGNES_DEC=[
+  {id:'dec_achats',label:'Achats marchandises/MP'},
+  {id:'dec_salaires',label:'Salaires et charges sociales'},
+  {id:'dec_loyer',label:'Loyer et charges locatives'},
+  {id:'dec_energie',label:'Eau, électricité, téléphone'},
+  {id:'dec_marketing',label:'Publicité et marketing'},
+  {id:'dec_transport',label:'Transports et déplacements'},
+  {id:'dec_impots',label:'Impôts et taxes'},
+  {id:'dec_remb',label:'Remboursements emprunts'},
+  {id:'dec_invest',label:'Investissements'},
+  {id:'dec_autres',label:'Autres décaissements'},
+];
+
+var QUESTIONS=[
+  {q:"Quelle est la différence entre trésorerie et bénéfice ?",tip:"Une entreprise peut être bénéficiaire et manquer de cash.",
+   opts:["Ce sont deux mots synonymes","Le bénéfice est comptable (ventes − charges). La trésorerie est le cash réellement disponible. On peut avoir un bénéfice sans cash si les clients n'ont pas encore payé.","La trésorerie est toujours supérieure au bénéfice","Le bénéfice mesure les actifs de l'entreprise"],
+   correct:1,fb:"✅ C'est LE principe fondamental ! Exemple : Vous vendez 1M FCFA à crédit à 60 jours. Comptablement vous avez 1M de produit, mais votre trésorerie est à 0. C'est pourquoi de nombreuses PME rentables font faillite.",pts:15},
+  {q:"La CAF (Capacité d'Autofinancement) se calcule comment ?",tip:"CAF = méthode additive à partir du résultat net.",
+   opts:["CAF = Chiffre d'affaires − Charges","CAF = Résultat net + Amortissements + Provisions − Plus-values de cession","CAF = Actif − Passif","CAF = Encaissements − Décaissements"],
+   correct:1,fb:"✅ CAF = RN + Amortissements + Provisions − Plus-values. Elle mesure la capacité de l'entreprise à générer des liquidités par son activité. C'est l'argent disponible pour rembourser dettes, investir ou distribuer dividendes.",pts:15},
+  {q:"Le délai moyen de paiement clients est de 75 jours. Que cela signifie-t-il ?",tip:"Délai client = (Créances / CA) × 360",
+   opts:["Les clients paient en avance","En moyenne, les clients paient 75 jours après la facture — c'est long et nuit à la trésorerie","Les clients ne paient jamais","Le délai est excellent et très court"],
+   correct:1,fb:"✅ Un délai client de 75 jours signifie que vous attendez 2,5 mois pour encaisser vos ventes. Pendant ce temps, vous devez quand même payer vos fournisseurs et salaires. L'objectif est de réduire ce délai à 30 jours maximum.",pts:10},
+  {q:"Comment calculer le BFR (Besoin en Fonds de Roulement) ?",tip:"BFR = ce que vous avancez pour financer votre cycle d'exploitation.",
+   opts:["BFR = Total Actif − Total Passif","BFR = Stocks + Créances clients − Dettes fournisseurs","BFR = Chiffre d'affaires − Charges fixes","BFR = Capitaux propres − Dettes LT"],
+   correct:1,fb:"✅ BFR = Stocks + Créances − Dettes fournisseurs. C'est l'argent que vous devez avancer pour financer votre activité. Un BFR positif signifie que vous payez vos fournisseurs AVANT d'encaisser vos clients.",pts:15},
+  {q:"Quelle action améliore DIRECTEMENT la trésorerie à court terme ?",tip:"Pensez à ce qui fait rentrer du cash rapidement.",
+   opts:["Acheter plus de stock pour profiter de remises volume","Exiger un acompte de 30-50% à la commande de vos clients","Augmenter vos délais de paiement clients","Investir dans du matériel neuf"],
+   correct:1,fb:"✅ Exiger un acompte fait rentrer du cash AVANT même de livrer. C'est la technique la plus efficace pour améliorer la trésorerie immédiatement. Combinez avec : délais fournisseurs négociés et réduction des stocks.",pts:15},
+  {q:"La trésorerie nette d'une entreprise est de −200 000 FCFA. Que cela signifie-t-il ?",tip:"Trésorerie nette = FR − BFR",
+   opts:["L'entreprise a 200 000 FCFA de réserves","L'entreprise est en situation de tension de trésorerie — son BFR dépasse son fonds de roulement","L'entreprise a fait 200 000 FCFA de bénéfice","L'entreprise a remboursé 200 000 FCFA d'emprunts"],
+   correct:1,fb:"✅ Trésorerie nette négative = le BFR est supérieur au Fonds de Roulement. L'entreprise doit utiliser des financements courts (découvert, escompte) pour couvrir son cycle d'exploitation. C'est un signal d'alarme.",pts:15},
+  {q:"Parmi ces flux, lequel appartient aux flux d'investissement (CFI) ?",tip:"CFI = acquisitions et cessions d'actifs immobilisés.",
+   opts:["Paiement des salaires de janvier","Achat d'une machine de production pour 2 000 000 FCFA","Remboursement d'un emprunt bancaire","Encaissement d'une créance client"],
+   correct:1,fb:"✅ L'achat de machine = flux d'investissement. Les salaires = flux d'exploitation. Le remboursement d'emprunt = flux de financement. L'encaissement client = flux d'exploitation.",pts:15},
+];
+
+function show(i){
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+  document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+  if(i===1) buildTable();
+  if(i===4) renderQuiz();
+}
+
+function gn(id){return parseFloat(document.getElementById(id)?.value)||0;}
+function fm(n){return Math.round(n).toLocaleString('fr-FR');}
+function pct(a,b){return b?Math.round(a/b*100):0;}
+
+// ===== PLAN DE TRÉSORERIE =====
+function buildTable(){
+  var t=document.getElementById('tresoTable');
+  if(!t) return;
+  var h='<thead><tr><th>Poste</th>';
+  MOIS.forEach(function(m){h+='<th>'+m+'</th>';});
+  h+='<th>TOTAL</th></tr></thead><tbody>';
+  // Encaissements
+  h+='<tr class="section-row"><td>📈 ENCAISSEMENTS</td>'+MOIS.map(function(){return '<td></td>';}).join('')+'<td></td></tr>';
+  LIGNES_ENC.forEach(function(l){
+    h+='<tr><td>'+l.label+'</td>';
+    MOIS.forEach(function(m,i){h+='<td><input type="number" placeholder="0" id="'+l.id+'_'+i+'" oninput="calcTreso()"></td>';});
+    h+='<td id="'+l.id+'_tot" style="font-weight:600;color:#1E3A8A;text-align:right">0</td></tr>';
+  });
+  h+='<tr class="subtotal-row"><td>TOTAL ENCAISSEMENTS</td>';
+  MOIS.forEach(function(m,i){h+='<td id="enc_total_'+i+'" style="text-align:right">0</td>';});
+  h+='<td id="enc_grand_tot" style="text-align:right">0</td></tr>';
+  // Décaissements
+  h+='<tr class="section-row"><td>📉 DÉCAISSEMENTS</td>'+MOIS.map(function(){return '<td></td>';}).join('')+'<td></td></tr>';
+  LIGNES_DEC.forEach(function(l){
+    h+='<tr><td>'+l.label+'</td>';
+    MOIS.forEach(function(m,i){h+='<td><input type="number" placeholder="0" id="'+l.id+'_'+i+'" oninput="calcTreso()"></td>';});
+    h+='<td id="'+l.id+'_tot" style="font-weight:600;color:#991B1B;text-align:right">0</td></tr>';
+  });
+  h+='<tr class="subtotal-row"><td>TOTAL DÉCAISSEMENTS</td>';
+  MOIS.forEach(function(m,i){h+='<td id="dec_total_'+i+'" style="text-align:right">0</td>';});
+  h+='<td id="dec_grand_tot" style="text-align:right">0</td></tr>';
+  // Soldes
+  h+='<tr class="solde-row"><td>SOLDE DU MOIS</td>';
+  MOIS.forEach(function(m,i){h+='<td id="solde_mois_'+i+'" style="text-align:right">0</td>';});
+  h+='<td></td></tr>';
+  h+='<tr class="cumul-row"><td>SOLDE CUMULÉ</td>';
+  MOIS.forEach(function(m,i){h+='<td id="solde_cumul_'+i+'" style="text-align:right">0</td>';});
+  h+='<td></td></tr>';
+  h+='</tbody>';
+  t.innerHTML=h;
+}
+
+function calcTreso(){
+  var init=gn('soldeInit');
+  var grandEncTotal=0,grandDecTotal=0;
+  var cumul=init;
+  // Totaux par ligne
+  LIGNES_ENC.forEach(function(l){
+    var tot=0;
+    MOIS.forEach(function(m,i){tot+=gn(l.id+'_'+i);});
+    var el=document.getElementById(l.id+'_tot');
+    if(el) el.textContent=fm(tot);
+    grandEncTotal+=tot;
+  });
+  LIGNES_DEC.forEach(function(l){
+    var tot=0;
+    MOIS.forEach(function(m,i){tot+=gn(l.id+'_'+i);});
+    var el=document.getElementById(l.id+'_tot');
+    if(el) el.textContent=fm(tot);
+    grandDecTotal+=tot;
+  });
+  // Totaux par mois
+  var minSolde=Infinity,moisMin=-1;
+  MOIS.forEach(function(m,i){
+    var enc=0,dec=0;
+    LIGNES_ENC.forEach(function(l){enc+=gn(l.id+'_'+i);});
+    LIGNES_DEC.forEach(function(l){dec+=gn(l.id+'_'+i);});
+    var solde=enc-dec;
+    cumul+=solde;
+    var eEl=document.getElementById('enc_total_'+i);
+    var dEl=document.getElementById('dec_total_'+i);
+    var sEl=document.getElementById('solde_mois_'+i);
+    var cEl=document.getElementById('solde_cumul_'+i);
+    if(eEl) eEl.textContent=fm(enc);
+    if(dEl) dEl.textContent=fm(dec);
+    if(sEl){sEl.textContent=fm(solde);sEl.className=solde>=0?'pos':'neg';}
+    if(cEl){cEl.textContent=fm(cumul);cEl.style.color=cumul>=0?'#86EFAC':'#FCA5A5';}
+    if(cumul<minSolde){minSolde=cumul;moisMin=i;}
+  });
+  var eGT=document.getElementById('enc_grand_tot');
+  var dGT=document.getElementById('dec_grand_tot');
+  if(eGT) eGT.textContent=fm(grandEncTotal);
+  if(dGT) dGT.textContent=fm(grandDecTotal);
+  // KPIs
+  var kpi=document.getElementById('kpiTreso');
+  if(kpi) kpi.innerHTML=
+    '<div class="kpi"><b>'+fm(grandEncTotal)+'</b><span>Total encaissements (F)</span></div>'+
+    '<div class="kpi r"><b>'+fm(grandDecTotal)+'</b><span>Total décaissements (F)</span></div>'+
+    '<div class="kpi '+(grandEncTotal-grandDecTotal>=0?'g':'r')+'"><b>'+fm(grandEncTotal-grandDecTotal)+'</b><span>Cash net annuel (F)</span></div>'+
+    '<div class="kpi '+(minSolde>=0?'g':'r')+'"><b>'+fm(minSolde)+'</b><span>Solde minimum ('+(moisMin>=0?MOIS[moisMin]:'—')+')</span></div>';
+  // Alertes
+  var al=document.getElementById('alerteTreso');
+  if(al){
+    var msgs=[];
+    if(minSolde<0) msgs.push('<div class="box err">🚨 Solde négatif en '+MOIS[moisMin]+' ('+fm(minSolde)+' FCFA). Anticipez ce besoin de financement.</div>');
+    if(minSolde<100000&&minSolde>=0) msgs.push('<div class="box warn">⚠️ Solde très bas en '+MOIS[moisMin]+' ('+fm(minSolde)+' FCFA). Constituez une réserve.</div>');
+    if(grandEncTotal>grandDecTotal) msgs.push('<div class="box ok">✅ Plan de trésorerie excédentaire sur l\'année : +'+fm(grandEncTotal-grandDecTotal)+' FCFA</div>');
+    al.innerHTML=msgs.join('');
+  }
+}
+
+function exemplesTreso(){
+  var data={
+    enc_clients:[800000,900000,750000,1000000,850000,950000,1100000,800000,900000,1050000,800000,1200000],
+    enc_subv:[0,0,0,500000,0,0,0,0,0,0,0,0],
+    enc_emprunt:[1000000,0,0,0,0,0,0,0,0,0,0,0],
+    dec_achats:[350000,380000,320000,400000,360000,390000,450000,330000,370000,420000,330000,500000],
+    dec_salaires:[200000,200000,200000,200000,200000,200000,200000,200000,200000,200000,200000,200000],
+    dec_loyer:[60000,60000,60000,60000,60000,60000,60000,60000,60000,60000,60000,60000],
+    dec_energie:[15000,15000,15000,20000,20000,25000,25000,20000,15000,15000,15000,20000],
+    dec_remb:[50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000],
+  };
+  document.getElementById('soldeInit').value=500000;
+  Object.keys(data).forEach(function(k){
+    data[k].forEach(function(v,i){var e=document.getElementById(k+'_'+i);if(e)e.value=v;});
+  });
+  calcTreso();
+}
+
+function resetTreso(){
+  LIGNES_ENC.concat(LIGNES_DEC).forEach(function(l){
+    MOIS.forEach(function(m,i){var e=document.getElementById(l.id+'_'+i);if(e)e.value='';});
+  });
+  calcTreso();
+}
+
+// ===== FLUX DE TRÉSORERIE =====
+function calcCF(){
+  var rn=gn('cfo_rn'),amort=gn('cfo_amort'),creances=gn('cfo_creances'),stocks=gn('cfo_stocks'),fourn=gn('cfo_fourn'),autresDettes=gn('cfo_autres_dettes');
+  var cfo=rn+amort-creances-stocks+fourn+autresDettes;
+  var acqui=gn('cfi_acqui'),cession=gn('cfi_cession'),fin=gn('cfi_fin');
+  var cfi=-acqui+cession-fin;
+  var capital=gn('cff_capital'),emprunts=gn('cff_emprunts'),remb=gn('cff_remb'),div=gn('cff_div');
+  var cff=capital+emprunts-remb-div;
+  var ouv=gn('cf_ouverture');
+  var variation=cfo+cfi+cff;
+  var cloture=ouv+variation;
+  document.getElementById('cfo_total').textContent=fm(cfo)+' F';
+  document.getElementById('cfi_total').textContent=fm(cfi)+' F';
+  document.getElementById('cff_total').textContent=fm(cff)+' F';
+  document.getElementById('cfo_result').textContent='CFO = '+fm(cfo)+' FCFA';
+  document.getElementById('cfi_result').textContent='CFI = '+fm(cfi)+' FCFA';
+  document.getElementById('cff_result').textContent='CFF = '+fm(cff)+' FCFA';
+  document.getElementById('cf_final').textContent='Variation nette = '+fm(variation)+' FCFA (CFO + CFI + CFF)';
+  document.getElementById('cf_cloture').textContent='Trésorerie de clôture = '+fm(cloture)+' FCFA';
+  var an=document.getElementById('cfAnalyse');
+  if(an){
+    var msgs=[];
+    if(cfo>0) msgs.push('<div class="box ok">✅ CFO positif ('+fm(cfo)+' F) : L\'activité génère du cash — excellent signe de santé !</div>');
+    else msgs.push('<div class="box err">🚨 CFO négatif ('+fm(cfo)+' F) : L\'exploitation consomme du cash. Analysez le BFR.</div>');
+    if(cfi<0) msgs.push('<div class="box">📌 CFI négatif ('+fm(cfi)+' F) : L\'entreprise investit — normal en phase de croissance.</div>');
+    if(cloture<0) msgs.push('<div class="box err">🚨 Trésorerie de clôture négative ('+fm(cloture)+' F) — Besoin de financement urgent !</div>');
+    else if(cloture<200000) msgs.push('<div class="box warn">⚠️ Trésorerie de clôture faible ('+fm(cloture)+' F) — Constituez une réserve.</div>');
+    an.innerHTML=msgs.join('');
+  }
+}
+
+// ===== EXERCICES =====
+function checkEx1(){
+  var dmc=parseFloat(document.getElementById('ex1_dmc')?.value)||0;
+  var dmf=parseFloat(document.getElementById('ex1_dmf')?.value)||0;
+  var rs=parseFloat(document.getElementById('ex1_rs')?.value)||0;
+  var dmcOk=Math.abs(dmc-60)<1;
+  var dmfOk=Math.abs(dmf-90)<1;
+  var rsOk=Math.abs(rs-57.6)<1;
+  var el=document.getElementById('ex1_res');
+  if(el) el.innerHTML='<div class="box '+(dmcOk&&dmfOk&&rsOk?'ok':'warn')+'" style="margin-top:8px">'+
+    (dmcOk?'✅ Délai clients = 60 jours ':'❌ Délai clients = 2 000 000/12 000 000×360 = <b>60 jours</b><br>')+(dmfOk?'✅ Délai fournisseurs = 90 jours ':'❌ Délai fourn. = 1 500 000/6 000 000×360 = <b>90 jours</b><br>')+(rsOk?'✅ Rotation stocks = 57,6 jours ':'❌ Rotation stocks = 800 000/5 000 000×360 = <b>57,6 jours</b><br>')+
+    '<br>💡 <b>Analyse :</b> Le délai fournisseurs (90j) > délai clients (60j) → bonne situation ! Les fournisseurs financent une partie du cycle d\'exploitation.'+'</div>';
+}
+
+function checkEx2(){
+  var caf=parseFloat(document.getElementById('ex2_caf')?.value)||0;
+  var interp=document.getElementById('ex2_interp')?.value;
+  var cafOk=Math.abs(caf-435000)<1;
+  var interpOk=interp==='ok';
+  var el=document.getElementById('ex2_res');
+  if(el) el.innerHTML='<div class="box '+(cafOk&&interpOk?'ok':'warn')+'" style="margin-top:8px">'+
+    (cafOk?'✅ CAF = 435 000 FCFA ':'❌ CAF = 350 000 + 80 000 + 20 000 − 15 000 = <b>435 000 FCFA</b><br>')+
+    (interpOk?'✅ Interprétation correcte !':'❌ La CAF est positive (435 000 > 0) donc l\'entreprise génère de la trésorerie.')+
+    '</div>';
+}
+
+function checkEx3(){
+  var enc=parseFloat(document.getElementById('ex3_enc')?.value)||0;
+  var dec=parseFloat(document.getElementById('ex3_dec')?.value)||0;
+  var sol=parseFloat(document.getElementById('ex3_sol')?.value)||0;
+  var encOk=Math.abs(enc-800000)<1;
+  var decOk=Math.abs(dec-680000)<1;
+  var solOk=Math.abs(sol-320000)<1;
+  var el=document.getElementById('ex3_res');
+  if(el) el.innerHTML='<div class="box '+(encOk&&decOk&&solOk?'ok':'warn')+'" style="margin-top:8px">'+
+    (encOk?'✅ Encaissements = 800 000 FCFA ':'❌ Encaissements = 800 000 FCFA (clients uniquement)<br>')+
+    (decOk?'✅ Décaissements = 680 000 FCFA ':'❌ Décaissements = 400 000 + 150 000 + 50 000 + 80 000 = <b>680 000 FCFA</b><br>')+
+    (solOk?'✅ Solde final = 320 000 FCFA !':'❌ Solde = 200 000 + 800 000 − 680 000 = <b>320 000 FCFA</b>')+
+    '</div>';
+}
+
+// ===== QUIZ =====
+function renderQuiz(){
+  if(qStep>=QUESTIONS.length){showResult();return;}
+  var q=QUESTIONS[qStep];
+  var ans=qAnswers[qStep]!==undefined;
+  var html='<div style="text-align:center;margin-bottom:10px;font-size:12px;color:#666">Question '+(qStep+1)+'/'+QUESTIONS.length+' · Score : <b>'+qScore+' pts</b></div>'+
+    '<div class="quiz-q"><div class="q-num">Question '+(qStep+1)+' — '+q.pts+' points</div>'+
+    '<div class="q-text">'+q.q+'</div>'+
+    '<div class="q-tip">💡 '+q.tip+'</div>'+
+    q.opts.map(function(o,i){
+      var cls='opt';
+      if(ans) cls+=(i===q.correct?' good':(i===qAnswers[qStep]?' bad':' dis'));
+      return '<button class="'+cls+'" onclick="ansQ('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+    }).join('')+
+    (ans?'<div class="fb show '+(qAnswers[qStep]===q.correct?'ok':'ko')+'">'+q.fb+'</div>':'')+
+    (ans?'<button class="btn btn-blue" style="margin-top:8px" onclick="nextQ()">'+( qStep<QUESTIONS.length-1?'Question suivante →':'Voir mon score →')+'</button>':'')+
+    '</div>';
+  document.getElementById('quizArea').innerHTML=html;
+}
+
+function ansQ(i){
+  if(qAnswers[qStep]!==undefined) return;
+  qAnswers[qStep]=i;
+  if(i===QUESTIONS[qStep].correct) qScore+=QUESTIONS[qStep].pts;
+  renderQuiz();
+}
+function nextQ(){qStep++;renderQuiz();}
+
+function showResult(){
+  var max=QUESTIONS.reduce(function(s,q){return s+q.pts;},0);
+  var p=Math.round(qScore/max*100);
+  var msg=p>=80?'🏆 Excellent ! Vous maîtrisez la trésorerie !':p>=60?'👍 Bon niveau. Relisez les leçons.':'📚 Continuez à vous entraîner !';
+  document.getElementById('quizArea').innerHTML=
+    '<div style="text-align:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-radius:12px;padding:20px;margin-bottom:14px">'+
+    '<div style="font-size:36px;font-weight:700;color:#2563EB">'+qScore+'/'+max+'</div>'+
+    '<div style="font-size:14px;font-weight:700;margin:6px 0">'+msg+'</div>'+
+    '<div style="font-size:12px;color:#666">Score : '+p+'%</div></div>'+
+    '<button onclick="qStep=0;qScore=0;qAnswers=[];renderQuiz()" class="btn btn-blue" style="width:100%;padding:12px">🔄 Recommencer le quiz</button>';
+}
+</script>
+</body>
+</html>

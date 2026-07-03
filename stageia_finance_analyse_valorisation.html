@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Analyse Financière & Valorisation</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#4C1D95);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#C4B5FD;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#7C3AED;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+.box{background:#F5F3FF;border-left:3px solid #7C3AED;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.ok{background:#D1FAE5;border-left-color:#10B981;color:#065F46}
+.warn{background:#FEF3C7;border-left-color:#F59E0B;color:#92400E}
+.err{background:#FEE2E2;border-left-color:#EF4444;color:#991B1B}
+.info{background:#DBEAFE;border-left-color:#3B82F6;color:#1E40AF}
+label{font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:4px}
+input,select{width:100%;padding:7px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;font-family:Arial;background:#fff}
+input:focus,select:focus{outline:none;border-color:#7C3AED}
+.hint{font-size:10px;color:#888;margin-top:3px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.row.r3{grid-template-columns:1fr 1fr 1fr}
+.section-title{font-size:13px;font-weight:700;color:#0D0B2E;margin:14px 0 8px;border-bottom:2px solid #7C3AED;padding-bottom:5px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:12px 0}
+.kpi{background:#f5f5f5;border-radius:8px;padding:10px;text-align:center;border:1px solid #e0e0e0}
+.kpi b{display:block;font-size:17px;color:#7C3AED;margin-bottom:2px}
+.kpi.g b{color:#065F46}.kpi.r b{color:#A32D2D}.kpi.o b{color:#BA7517}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+th{background:#4C1D95;color:#fff;padding:8px;text-align:left;font-weight:600}
+td{padding:8px;border-bottom:1px solid #eee}
+tr:nth-child(even) td{background:#F5F3FF}
+tr.tot td{background:#F5F3FF;font-weight:700;color:#7C3AED}
+.btn{padding:8px 16px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600}
+.btn-purple{background:#7C3AED;color:#fff}
+.btn-red{background:#EF4444;color:#fff}
+.btn-orange{background:#F59E0B;color:#fff}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.quiz-q{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:12px}
+.q-num{font-size:10px;color:#7C3AED;font-weight:700;margin-bottom:5px}
+.q-text{font-size:13px;font-weight:600;color:#0D0B2E;margin-bottom:10px;line-height:1.5}
+.q-tip{font-size:11px;color:#888;background:#fff;border:1px solid #eee;border-radius:6px;padding:6px 10px;margin-bottom:10px}
+.opt{width:100%;padding:9px 14px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;font-size:12px;background:#fff;text-align:left;margin-bottom:5px;font-family:Arial;line-height:1.5}
+.opt:hover{border-color:#7C3AED;background:#F5F3FF}
+.opt.good{border-color:#10B981;background:#D1FAE5;pointer-events:none;color:#065F46}
+.opt.bad{border-color:#EF4444;background:#FEE2E2;pointer-events:none;color:#991B1B}
+.opt.dis{pointer-events:none;opacity:.5}
+.fb{border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;line-height:1.6;display:none}
+.fb.show{display:block}
+.fb.ok{background:#D1FAE5;color:#065F46}
+.fb.ko{background:#FEE2E2;color:#991B1B}
+@media(max-width:600px){.row,.row.r3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<h1>📉 Analyse Financière & Valorisation — Stageia
+<small>Valoriser une entreprise · Méthodes DCF, Comparables, Patrimoniale · Exercices · Quiz</small></h1>
+
+<div class="tabs">
+  <button class="tab on" onclick="show(0)">📚 Leçons</button>
+  <button class="tab" onclick="show(1)">🧮 Méthode des Multiples</button>
+  <button class="tab" onclick="show(2)">💎 Méthode DCF</button>
+  <button class="tab" onclick="show(3)">✏️ Exercices</button>
+  <button class="tab" onclick="show(4)">🎯 Quiz</button>
+</div>
+
+<!-- PANE 0: LEÇONS -->
+<div class="pane on" id="p0">
+  <div class="section-title">💡 Pourquoi valoriser une entreprise ?</div>
+  <div class="box">📊 <b>La valorisation</b> = estimer combien vaut réellement une entreprise. Essentiel pour :<br>
+  • Vendre ou acheter une entreprise<br>
+  • Lever des fonds auprès d'investisseurs (combien de % céder pour X FCFA ?)<br>
+  • Entrer ou sortir un associé<br>
+  • Évaluer un investissement en bourse</div>
+
+  <div class="section-title">🧮 Les 3 grandes méthodes de valorisation</div>
+  <div class="box info">1️⃣ <b>Méthode Patrimoniale (Actif Net)</b><br>
+  Valeur = Total Actif − Total Dettes<br>
+  Simple mais ignore le potentiel futur de l'entreprise. Utile pour entreprises avec beaucoup d'actifs (immobilier, usines).</div>
+  <div class="box info">2️⃣ <b>Méthode des Multiples (Comparables)</b><br>
+  On compare avec des entreprises similaires déjà valorisées.<br>
+  Valeur = Indicateur (EBE ou CA) × Multiple du secteur<br>
+  Rapide et utilisée en pratique, mais dépend de bons comparables.</div>
+  <div class="box info">3️⃣ <b>Méthode DCF (Discounted Cash Flow)</b><br>
+  On estime tous les flux de cash futurs et on les ramène à aujourd'hui (actualisation).<br>
+  La plus rigoureuse mais aussi la plus complexe — sensible aux hypothèses.</div>
+
+  <div class="section-title">📈 Les multiples les plus utilisés</div>
+  <table>
+    <thead><tr><th>Multiple</th><th>Formule</th><th>Utilisation</th></tr></thead>
+    <tbody>
+      <tr><td><b>VE/EBITDA</b></td><td>Valeur Entreprise / EBE</td><td>Le plus courant, indépendant de la structure financière</td></tr>
+      <tr><td><b>VE/CA</b></td><td>Valeur Entreprise / Chiffre d'affaires</td><td>Utile pour startups sans profit encore</td></tr>
+      <tr><td><b>PER</b></td><td>Prix de l'action / Bénéfice par action</td><td>Pour entreprises cotées en bourse</td></tr>
+      <tr><td><b>P/B</b></td><td>Prix / Valeur comptable</td><td>Utile pour banques, secteur financier</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">💎 Comprendre l'actualisation (DCF)</div>
+  <div class="box">🧮 <b>Principe :</b> 1 000 000 FCFA aujourd'hui vaut plus que 1 000 000 FCFA dans 5 ans (à cause de l'inflation et du risque).<br><br>
+  <b>Formule d'actualisation :</b> Valeur actuelle = Flux futur / (1 + taux d'actualisation)^nombre d'années<br><br>
+  <b>Exemple :</b> 1 000 000 FCFA dans 3 ans, actualisé à 10% :<br>
+  1 000 000 / (1,10)³ = <b>751 315 FCFA</b> en valeur d'aujourd'hui</div>
+
+  <div class="section-title">⚠️ Limites de la valorisation</div>
+  <div class="box warn">⚠️ <b>Aucune méthode n'est parfaite :</b><br>
+  • La valorisation reste une ESTIMATION, pas une vérité absolue<br>
+  • Les hypothèses (croissance future, taux) influencent énormément le résultat<br>
+  • Le marché peut valoriser différemment de vos calculs (offre/demande)<br>
+  • En pratique, on utilise PLUSIEURS méthodes et on compare les résultats</div>
+</div>
+
+<!-- PANE 1: MULTIPLES -->
+<div class="pane" id="p1">
+  <div class="box" style="margin-bottom:12px">🧮 <span>Valorisez une entreprise par la méthode des multiples comparables — la plus utilisée en pratique pour les PME africaines.</span></div>
+  <div class="row r3">
+    <div><label>EBE / EBITDA de l'entreprise (FCFA)</label><input type="number" id="mEbe" value="50000000" oninput="calcMultiples()"></div>
+    <div><label>Chiffre d'affaires (FCFA)</label><input type="number" id="mCa" value="300000000" oninput="calcMultiples()"></div>
+    <div><label>Secteur d'activité</label>
+    <select id="mSecteur" onchange="calcMultiples()">
+      <option value="tech" data-mult="6">Tech / Digital (multiple 6x EBE)</option>
+      <option value="commerce" data-mult="4">Commerce / Distribution (4x EBE)</option>
+      <option value="industrie" data-mult="5">Industrie / Production (5x EBE)</option>
+      <option value="services" data-mult="4.5">Services (4,5x EBE)</option>
+      <option value="agro" data-mult="3.5">Agro-alimentaire (3,5x EBE)</option>
+    </select></div>
+  </div>
+  <div class="row">
+    <div><label>Total dettes financières (FCFA)</label><input type="number" id="mDettes" value="40000000" oninput="calcMultiples()"></div>
+    <div><label>Trésorerie disponible (FCFA)</label><input type="number" id="mTreso" value="15000000" oninput="calcMultiples()"></div>
+  </div>
+  <div class="kpis" id="kpiMultiples"></div>
+  <div id="multiplesResult"></div>
+</div>
+
+<!-- PANE 2: DCF -->
+<div class="pane" id="p2">
+  <div class="box" style="margin-bottom:12px">💎 <span>Valorisez par les flux de trésorerie actualisés (DCF). Méthode la plus rigoureuse, utilisée pour les analyses approfondies.</span></div>
+  <div class="row r3">
+    <div><label>Cash-flow actuel (FCFA)</label><input type="number" id="dcfCF" value="30000000" oninput="calcDCF()"></div>
+    <div><label>Taux de croissance annuel (%)</label><input type="number" id="dcfCroissance" value="10" step="0.5" oninput="calcDCF()"></div>
+    <div><label>Taux d'actualisation (%)</label><input type="number" id="dcfTaux" value="12" step="0.5" oninput="calcDCF()"><div class="hint">Reflète le risque (WACC)</div></div>
+  </div>
+  <div class="row">
+    <div><label>Durée de projection (années)</label><input type="number" id="dcfDuree" value="5" min="1" max="10" oninput="calcDCF()"></div>
+    <div><label>Taux de croissance perpétuel (%)</label><input type="number" id="dcfPerp" value="3" step="0.5" oninput="calcDCF()"><div class="hint">Croissance à l'infini après la période</div></div>
+  </div>
+  <div class="kpis" id="kpiDCF"></div>
+  <div class="section-title">📊 Flux projetés et actualisés</div>
+  <div id="dcfTable"></div>
+  <div id="dcfResult"></div>
+</div>
+
+<!-- PANE 3: EXERCICES -->
+<div class="pane" id="p3">
+  <div class="section-title">✏️ Exercice 1 — Valorisation par multiples</div>
+  <div class="box info" style="margin-bottom:10px">📝 Une entreprise de commerce a un EBE de 20 000 000 FCFA. Le multiple sectoriel moyen du commerce est de 4x. Elle a 5 000 000 FCFA de dettes et 2 000 000 FCFA de trésorerie.</div>
+  <div class="row r3">
+    <div><label>Valeur d'Entreprise (FCFA)</label><input type="number" id="e1_ve" placeholder="EBE × Multiple" oninput="checkE1()"></div>
+    <div><label>Dette nette (FCFA)</label><input type="number" id="e1_dn" placeholder="Dettes - Trésorerie" oninput="checkE1()"></div>
+    <div><label>Valeur des Fonds Propres (FCFA)</label><input type="number" id="e1_vfp" placeholder="VE - Dette nette" oninput="checkE1()"></div>
+  </div>
+  <div id="e1_res"></div>
+
+  <div class="section-title" style="margin-top:16px">✏️ Exercice 2 — Actualisation</div>
+  <div class="box info" style="margin-bottom:10px">📝 Vous devez recevoir 5 000 000 FCFA dans 4 ans. Le taux d'actualisation est de 10%. Quelle est la valeur actuelle de cette somme ?</div>
+  <div class="row">
+    <div><label>Valeur actuelle (FCFA)</label><input type="number" id="e2_va" placeholder="5000000/(1.10)^4" oninput="checkE2()"></div>
+    <div><label>Interprétation</label>
+    <select id="e2_interp" onchange="checkE2()">
+      <option value="">— Choisissez —</option>
+      <option value="ok">5M FCFA dans 4 ans vaut moins qu'aujourd'hui</option>
+      <option value="nok">5M FCFA dans 4 ans vaut plus qu'aujourd'hui</option>
+    </select></div>
+  </div>
+  <div id="e2_res"></div>
+
+  <div class="section-title" style="margin-top:16px">✏️ Exercice 3 — Pourcentage à céder</div>
+  <div class="box info" style="margin-bottom:10px">📝 Votre startup est valorisée à 50 000 000 FCFA (pré-money). Un investisseur veut investir 10 000 000 FCFA. Calculez le pourcentage de l'entreprise qu'il obtiendra.</div>
+  <div class="row">
+    <div><label>Valorisation post-money (FCFA)</label><input type="number" id="e3_post" placeholder="Pré-money + Investissement" oninput="checkE3()"></div>
+    <div><label>% cédé à l'investisseur</label><input type="number" id="e3_pct" placeholder="Investissement/Post-money×100" step="0.1" oninput="checkE3()"></div>
+  </div>
+  <div id="e3_res"></div>
+</div>
+
+<!-- PANE 4: QUIZ -->
+<div class="pane" id="p4">
+  <div id="quizArea"></div>
+</div>
+
+<script>
+var qStep=0,qScore=0,qAnswers=[];
+
+var QUESTIONS=[
+  {q:"Quelle est la différence entre Valeur d'Entreprise (VE) et Valeur des Fonds Propres ?",tip:"Pensez à la dette nette.",
+   opts:["C'est la même chose","VE = Valeur des Fonds Propres + Dette nette. La VE représente la valeur totale de l'activité, indépendamment de son financement","La VE est toujours plus petite que les Fonds Propres","La VE ne s'applique qu'aux entreprises cotées"],
+   correct:1,fb:"✅ VE (Valeur d'Entreprise) = Valeur des Fonds Propres + Dette nette (Dettes − Trésorerie). La VE mesure la valeur de l'activité économique, peu importe comment elle est financée (dettes ou capital).",pts:15},
+  {q:"Pourquoi 1 000 000 FCFA aujourd'hui vaut plus que 1 000 000 FCFA dans 5 ans ?",tip:"Principe fondamental de l'actualisation.",
+   opts:["Parce que les billets s'usent avec le temps","À cause de l'inflation et du risque — l'argent disponible aujourd'hui peut être investi et générer des intérêts","Ce n'est pas vrai, les deux montants sont identiques","Parce que le FCFA perd toujours de la valeur"],
+   correct:1,fb:"✅ C'est la valeur temporelle de l'argent. 1M FCFA aujourd'hui peut être investi à 10%/an et devenir 1,61M FCFA en 5 ans. Donc recevoir 1M FCFA dans 5 ans équivaut à recevoir moins d'argent aujourd'hui.",pts:15},
+  {q:"Une entreprise a un EBE de 30 000 000 FCFA et le secteur se valorise à 5x l'EBE. Quelle est sa Valeur d'Entreprise ?",tip:"VE = EBE × Multiple",
+   opts:["6 000 000 FCFA","35 000 000 FCFA","150 000 000 FCFA","300 000 000 FCFA"],
+   correct:2,fb:"✅ VE = 30 000 000 × 5 = 150 000 000 FCFA. C'est la méthode des multiples comparables, la plus utilisée en pratique car rapide et basée sur le marché réel.",pts:15},
+  {q:"Qu'est-ce que le taux d'actualisation (taux de discount) dans la méthode DCF ?",tip:"Il reflète le risque de l'investissement.",
+   opts:["Le taux de TVA applicable","Le taux qui reflète le risque et le coût d'opportunité — plus le risque est élevé, plus le taux est élevé","Le taux d'inflation officiel","Le taux d'intérêt de la BCEAO uniquement"],
+   correct:1,fb:"✅ Le taux d'actualisation reflète le risque perçu de l'investissement et son coût d'opportunité. Une startup risquée sera actualisée à 15-20%, une entreprise stable à 8-10%. Plus le taux est élevé, plus la valeur actuelle des flux futurs est faible.",pts:15},
+  {q:"Une startup est valorisée à 40M FCFA pré-money. Un investisseur met 10M FCFA. Quelle est la valorisation post-money ?",tip:"Post-money = Pré-money + Investissement",
+   opts:["30 000 000 FCFA","40 000 000 FCFA","50 000 000 FCFA","400 000 000 FCFA"],
+   correct:2,fb:"✅ Post-money = 40M + 10M = 50M FCFA. L'investisseur obtient 10M/50M = 20% de l'entreprise. C'est le calcul fondamental de toute levée de fonds !",pts:15},
+  {q:"Pourquoi utilise-t-on généralement PLUSIEURS méthodes de valorisation et pas une seule ?",tip:"Pensez aux limites de chaque méthode.",
+   opts:["C'est obligatoire légalement au Mali","Chaque méthode a ses limites et ses hypothèses ; comparer plusieurs résultats donne une fourchette de valeur plus fiable","Une seule méthode est interdite par l'OHADA","Pour faire perdre du temps aux investisseurs"],
+   correct:1,fb:"✅ Aucune méthode n'est parfaite. La méthode patrimoniale ignore le futur, les multiples dépendent des comparables choisis, le DCF est très sensible aux hypothèses. En pratique, on calcule plusieurs valorisations et on retient une fourchette raisonnable.",pts:15},
+];
+
+function show(i){
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+  document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+  if(i===1) calcMultiples();
+  if(i===2) calcDCF();
+  if(i===4) renderQuiz();
+}
+
+function gn(id,d){return parseFloat(document.getElementById(id)?.value)||d||0;}
+function fm(n){return Math.round(n).toLocaleString('fr-FR');}
+
+function calcMultiples(){
+  var ebe=gn('mEbe',50000000);
+  var ca=gn('mCa',300000000);
+  var sel=document.getElementById('mSecteur');
+  var mult=parseFloat(sel?.selectedOptions[0]?.getAttribute('data-mult'))||5;
+  var dettes=gn('mDettes',40000000);
+  var treso=gn('mTreso',15000000);
+  var ve=ebe*mult;
+  var detteNette=dettes-treso;
+  var vfp=ve-detteNette;
+  var margeEbe=ca>0?Math.round(ebe/ca*100):0;
+  var kpi=document.getElementById('kpiMultiples');
+  if(kpi) kpi.innerHTML=
+    '<div class="kpi"><b>'+mult+'x</b><span>Multiple sectoriel</span></div>'+
+    '<div class="kpi"><b>'+fm(ve)+'</b><span>Valeur Entreprise (F)</span></div>'+
+    '<div class="kpi o"><b>'+fm(detteNette)+'</b><span>Dette nette (F)</span></div>'+
+    '<div class="kpi g"><b>'+fm(vfp)+'</b><span>Valeur Fonds Propres (F)</span></div>';
+  var el=document.getElementById('multiplesResult');
+  if(el) el.innerHTML='<div class="section-title">📊 Détail du calcul</div>'+
+    '<table><tbody>'+
+    '<tr><td>EBE (EBITDA)</td><td style="text-align:right">'+fm(ebe)+' FCFA</td></tr>'+
+    '<tr><td>× Multiple sectoriel</td><td style="text-align:right">'+mult+'x</td></tr>'+
+    '<tr class="tot"><td><b>= VALEUR D\'ENTREPRISE (VE)</b></td><td style="text-align:right"><b>'+fm(ve)+' FCFA</b></td></tr>'+
+    '<tr><td>− Dettes financières</td><td style="text-align:right">-'+fm(dettes)+' FCFA</td></tr>'+
+    '<tr><td>+ Trésorerie disponible</td><td style="text-align:right">+'+fm(treso)+' FCFA</td></tr>'+
+    '<tr class="tot"><td><b>= VALEUR DES FONDS PROPRES</b></td><td style="text-align:right"><b>'+fm(vfp)+' FCFA</b></td></tr>'+
+    '</tbody></table>'+
+    '<div class="box info">💡 Marge EBE/CA = '+margeEbe+'%. '+(margeEbe>=15?'Très bonne rentabilité opérationnelle.':'Marge correcte mais à surveiller selon le secteur.')+'</div>';
+}
+
+function calcDCF(){
+  var cf=gn('dcfCF',30000000);
+  var croissance=gn('dcfCroissance',10)/100;
+  var taux=gn('dcfTaux',12)/100;
+  var duree=gn('dcfDuree',5);
+  var perp=gn('dcfPerp',3)/100;
+  var flux=[];
+  var sommeActualisee=0;
+  for(var y=1;y<=duree;y++){
+    var fluxAnnee=cf*Math.pow(1+croissance,y);
+    var actualise=fluxAnnee/Math.pow(1+taux,y);
+    flux.push({annee:y,flux:fluxAnnee,actualise:actualise});
+    sommeActualisee+=actualise;
+  }
+  var dernierFlux=flux[flux.length-1].flux;
+  var valeurTerminale=(dernierFlux*(1+perp))/(taux-perp);
+  var valeurTerminaleActualisee=valeurTerminale/Math.pow(1+taux,duree);
+  var valeurTotale=sommeActualisee+valeurTerminaleActualisee;
+  var kpi=document.getElementById('kpiDCF');
+  if(kpi) kpi.innerHTML=
+    '<div class="kpi"><b>'+fm(sommeActualisee)+'</b><span>Flux actualisés (F)</span></div>'+
+    '<div class="kpi o"><b>'+fm(valeurTerminaleActualisee)+'</b><span>Valeur terminale actualisée (F)</span></div>'+
+    '<div class="kpi g"><b>'+fm(valeurTotale)+'</b><span>VALEUR TOTALE (F)</span></div>';
+  var tab=document.getElementById('dcfTable');
+  if(tab){
+    var h='<table><thead><tr><th>Année</th><th>Cash-flow projeté</th><th>Facteur actualisation</th><th>Valeur actualisée</th></tr></thead><tbody>';
+    flux.forEach(function(f){
+      var facteur=Math.round(1/Math.pow(1+taux,f.annee)*1000)/1000;
+      h+='<tr><td>Année '+f.annee+'</td><td>'+fm(f.flux)+' FCFA</td><td>'+facteur+'</td><td style="color:#7C3AED;font-weight:600">'+fm(f.actualise)+' FCFA</td></tr>';
+    });
+    h+='<tr class="tot"><td colspan="3"><b>Somme des flux actualisés</b></td><td><b>'+fm(sommeActualisee)+' FCFA</b></td></tr>';
+    h+='<tr class="tot"><td colspan="3"><b>Valeur terminale actualisée</b></td><td><b>'+fm(valeurTerminaleActualisee)+' FCFA</b></td></tr>';
+    h+='</tbody></table>';
+    tab.innerHTML=h;
+  }
+  var el=document.getElementById('dcfResult');
+  if(el) el.innerHTML='<div class="box ok" style="margin-top:10px">💎 <b>Valeur DCF estimée : '+fm(Math.round(valeurTotale))+' FCFA</b><br>'+
+    'Cette valeur représente la somme de tous les cash-flows futurs actualisés, incluant la valeur terminale (croissance perpétuelle à '+(perp*100)+'%/an après l\'année '+duree+').</div>'+
+    '<div class="box warn">⚠️ Cette estimation est très sensible au taux d\'actualisation ('+( taux*100)+'%) et à la croissance ('+(croissance*100)+'%). Testez différents scénarios !</div>';
+}
+
+function checkE1(){
+  var ve=parseFloat(document.getElementById('e1_ve')?.value)||0;
+  var dn=parseFloat(document.getElementById('e1_dn')?.value)||0;
+  var vfp=parseFloat(document.getElementById('e1_vfp')?.value)||0;
+  var veOk=Math.abs(ve-80000000)<1;
+  var dnOk=Math.abs(dn-3000000)<1;
+  var vfpOk=Math.abs(vfp-77000000)<1;
+  var el=document.getElementById('e1_res');
+  if(el) el.innerHTML='<div class="box '+(veOk&&dnOk&&vfpOk?'ok':'warn')+'" style="margin-top:8px">'+
+    (veOk?'✅ VE = 80 000 000 F ':'❌ VE = 20 000 000×4 = <b>80 000 000 FCFA</b><br>')+
+    (dnOk?'✅ Dette nette = 3 000 000 F ':'❌ Dette nette = 5 000 000−2 000 000 = <b>3 000 000 FCFA</b><br>')+
+    (vfpOk?'✅ Valeur Fonds Propres = 77 000 000 F !':'❌ VFP = 80 000 000−3 000 000 = <b>77 000 000 FCFA</b>')+
+    '</div>';
+}
+
+function checkE2(){
+  var va=parseFloat(document.getElementById('e2_va')?.value)||0;
+  var interp=document.getElementById('e2_interp')?.value;
+  var correct=Math.round(5000000/Math.pow(1.10,4));
+  var vaOk=Math.abs(va-correct)<1000;
+  var interpOk=interp==='ok';
+  var el=document.getElementById('e2_res');
+  if(el) el.innerHTML='<div class="box '+(vaOk&&interpOk?'ok':'warn')+'" style="margin-top:8px">'+
+    (vaOk?'✅ Valeur actuelle = '+fm(correct)+' FCFA ':'❌ VA = 5 000 000/(1,10)^4 = <b>'+fm(correct)+' FCFA</b><br>')+
+    (interpOk?'✅ Interprétation correcte !':'❌ 5M dans 4 ans vaut MOINS qu\'aujourd\'hui ('+fm(correct)+' FCFA) à cause de l\'actualisation.')+
+    '</div>';
+}
+
+function checkE3(){
+  var post=parseFloat(document.getElementById('e3_post')?.value)||0;
+  var pct=parseFloat(document.getElementById('e3_pct')?.value)||0;
+  var postOk=Math.abs(post-60000000)<1;
+  var pctOk=Math.abs(pct-16.7)<0.5;
+  var el=document.getElementById('e3_res');
+  if(el) el.innerHTML='<div class="box '+(postOk&&pctOk?'ok':'warn')+'" style="margin-top:8px">'+
+    (postOk?'✅ Post-money = 60 000 000 F ':'❌ Post-money = 50 000 000+10 000 000 = <b>60 000 000 FCFA</b><br>')+
+    (pctOk?'✅ % cédé ≈ 16,7% !':'❌ % cédé = 10 000 000/60 000 000×100 = <b>16,7%</b>')+
+    '</div>';
+}
+
+function renderQuiz(){
+  if(qStep>=QUESTIONS.length){showResult();return;}
+  var q=QUESTIONS[qStep];
+  var ans=qAnswers[qStep]!==undefined;
+  var html='<div style="text-align:center;margin-bottom:10px;font-size:12px;color:#666">Question '+(qStep+1)+'/'+QUESTIONS.length+' · Score : <b>'+qScore+' pts</b></div>'+
+    '<div class="quiz-q"><div class="q-num">Question '+(qStep+1)+' — '+q.pts+' points</div>'+
+    '<div class="q-text">'+q.q+'</div>'+
+    '<div class="q-tip">💡 '+q.tip+'</div>'+
+    q.opts.map(function(o,i){
+      var cls='opt';
+      if(ans) cls+=(i===q.correct?' good':(i===qAnswers[qStep]?' bad':' dis'));
+      return '<button class="'+cls+'" onclick="ansQ('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+    }).join('')+
+    (ans?'<div class="fb show '+(qAnswers[qStep]===q.correct?'ok':'ko')+'">'+q.fb+'</div>':'')+
+    (ans?'<button class="btn btn-purple" style="margin-top:8px" onclick="nextQ()">'+( qStep<QUESTIONS.length-1?'Question suivante →':'Voir mon score →')+'</button>':'')+
+    '</div>';
+  document.getElementById('quizArea').innerHTML=html;
+}
+function ansQ(i){if(qAnswers[qStep]!==undefined)return;qAnswers[qStep]=i;if(i===QUESTIONS[qStep].correct)qScore+=QUESTIONS[qStep].pts;renderQuiz();}
+function nextQ(){qStep++;renderQuiz();}
+function showResult(){
+  var max=QUESTIONS.reduce(function(s,q){return s+q.pts;},0);
+  var p=Math.round(qScore/max*100);
+  var msg=p>=80?'🏆 Expert en valorisation !':p>=60?'👍 Bonne maîtrise !':'📚 Continuez à apprendre !';
+  document.getElementById('quizArea').innerHTML=
+    '<div style="text-align:center;background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-radius:12px;padding:20px;margin-bottom:14px;border:2px solid #7C3AED">'+
+    '<div style="font-size:36px;font-weight:700;color:#7C3AED">'+qScore+'/'+max+'</div>'+
+    '<div style="font-size:14px;font-weight:700;margin:6px 0">'+msg+'</div>'+
+    '<div style="font-size:12px;color:#666">Score : '+p+'%</div></div>'+
+    '<button onclick="qStep=0;qScore=0;qAnswers=[];renderQuiz()" class="btn btn-purple" style="width:100%;padding:12px">🔄 Recommencer le quiz</button>';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Simulateur Stratégie Réseaux Sociaux</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f5;color:#1a1a1a;padding:16px}
+.header{background:linear-gradient(135deg,#0D0B2E,#1a1060);border-radius:12px;padding:18px 22px;margin-bottom:16px;color:#fff;display:flex;align-items:center;gap:12px}
+.h-icon{width:44px;height:44px;background:rgba(37,211,102,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.h-title{font-size:16px;font-weight:600}.h-sub{font-size:11px;color:#AFA9EC;margin-top:3px}
+.tabs{display:flex;gap:2px;border-bottom:1px solid #ddd;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:8px 12px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;color:#666;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:Arial}
+.tab.active{color:#E1306C;border-bottom-color:#E1306C}
+.tp{display:none}.tp.active{display:block}
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid #e0e0e0}
+.ctitle{font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.cicon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.frow.full{grid-template-columns:1fr}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fl{font-size:11px;color:#666;font-weight:500}
+.fi{padding:7px 9px;border:1px solid #ddd;border-radius:8px;font-size:13px;color:#1a1a1a;background:#fff;font-family:Arial;width:100%}
+.fi:focus{outline:none;border-color:#E1306C}
+.fh{font-size:10px;color:#888}
+.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:12px}
+.kp{background:#f5f5f5;border-radius:8px;padding:10px;text-align:center}
+.kv{font-size:18px;font-weight:700;margin-bottom:2px}
+.kl{font-size:10px;color:#666}
+.kp.g .kv{color:#0F6E56}.kp.r .kv{color:#A32D2D}.kp.o .kv{color:#BA7517}.kp.p .kv{color:#534AB7}.kp.b .kv{color:#185FA5}.kp.pk .kv{color:#C2185B}
+.platform-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.plat-card{border:2px solid #ddd;border-radius:10px;padding:14px;cursor:pointer;transition:all .15s;background:#fff;text-align:center}
+.plat-card:hover{transform:translateY(-2px)}
+.plat-card.sel{border-width:2px}
+.plat-icon{font-size:28px;margin-bottom:6px}
+.plat-name{font-size:13px;font-weight:600;margin-bottom:3px}
+.plat-users{font-size:10px;color:#666;margin-bottom:4px}
+.plat-badge{font-size:10px;padding:2px 8px;border-radius:10px;display:inline-block;font-weight:500}
+.content-piliers{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px}
+.pilier-card{border-radius:10px;padding:14px;text-align:center}
+.pilier-icon{font-size:22px;margin-bottom:6px}
+.pilier-name{font-size:12px;font-weight:600;margin-bottom:4px}
+.pilier-pct{font-size:20px;font-weight:700;margin-bottom:4px}
+.pilier-desc{font-size:10px;color:#666;line-height:1.4}
+.pilier-input{width:60px;padding:4px;border:1px solid #ddd;border-radius:6px;font-size:13px;text-align:center;font-family:Arial}
+.planning-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:12px}
+.day-header{text-align:center;font-size:10px;font-weight:600;color:#666;padding:4px}
+.day-cell{border:1px solid #eee;border-radius:6px;min-height:50px;padding:4px;font-size:9px;cursor:pointer;transition:all .15s;background:#fff}
+.day-cell:hover{border-color:#E1306C}
+.day-cell.has-post{border-color:#E1306C;background:#FFF0F5}
+.post-tag{display:block;padding:2px 4px;border-radius:3px;margin-bottom:2px;font-size:9px;font-weight:500;color:#fff;line-height:1.3}
+.bch{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.br{display:flex;align-items:center;gap:6px;font-size:11px}
+.bl{width:70px;color:#666;text-align:right;flex-shrink:0;font-size:10px}
+.bt{flex:1;height:16px;background:#f0f0f0;border-radius:3px;overflow:hidden}
+.bf{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:9px;font-weight:600;color:#fff;white-space:nowrap}
+.conseil{font-size:12px;padding:8px 12px;background:#f5f5f5;border-radius:8px;margin-bottom:6px;display:flex;gap:8px;line-height:1.5;border-left:3px solid #E1306C}
+.alert{border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.alert.ok{background:#D1FAE5;border:1px solid #10B981;color:#065F46}
+.alert.info{background:#DBEAFE;border:1px solid #3B82F6;color:#1E40AF}
+.alert.warn{background:#FEF3C7;border:1px solid #F59E0B;color:#92400E}
+.alert.pink{background:#FCE4EC;border:1px solid #E1306C;color:#880E4F}
+.script-card{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:10px}
+.script-type{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:8px}
+.script-title{font-size:13px;font-weight:600;margin-bottom:6px;color:#0D0B2E}
+.script-body{font-size:12px;color:#444;line-height:1.7;background:#fff;border-radius:8px;padding:12px;border:1px solid #eee}
+.script-hook{color:#E1306C;font-weight:600}
+.script-cta{color:#1877F2;font-weight:600}
+.hashtag-cloud{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.ht{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s}
+.ht.small{background:#EEEDFE;color:#534AB7}
+.ht.medium{background:#FEF3C7;color:#92400E}
+.ht.large{background:#D1FAE5;color:#065F46}
+.metric-card{border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.mc-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.mc-info{flex:1}
+.mc-name{font-size:12px;font-weight:600;margin-bottom:2px}
+.mc-desc{font-size:11px;color:#666}
+.mc-val{font-size:14px;font-weight:700}
+.mc-status{font-size:10px;padding:2px 6px;border-radius:6px;font-weight:500;margin-top:2px;display:inline-block}
+.tw{overflow-x:auto;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{background:#f5f5f5;padding:7px 8px;text-align:left;font-weight:500;color:#666;border-bottom:1px solid #eee}
+td{padding:7px 8px;border-bottom:1px solid #eee}
+@media(max-width:600px){.frow{grid-template-columns:1fr}.planning-grid{grid-template-columns:repeat(7,1fr)}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="h-icon">📱</div>
+  <div><div class="h-title">Stageia — Simulateur Stratégie Réseaux Sociaux</div>
+  <div class="h-sub">Stratégie personnalisée · Planning éditorial · Scripts · Hashtags · KPIs · Croissance</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="st(0)">🏢 Profil</button>
+  <button class="tab" onclick="st(1)">📱 Plateformes</button>
+  <button class="tab" onclick="st(2)">🎨 Piliers</button>
+  <button class="tab" onclick="st(3)">📅 Planning</button>
+  <button class="tab" onclick="st(4)">✍️ Scripts</button>
+  <button class="tab" onclick="st(5)">#️⃣ Hashtags</button>
+  <button class="tab" onclick="st(6)">📊 KPIs</button>
+  <button class="tab" onclick="st(7)">🚀 Croissance</button>
+</div>
+
+<!-- TAB 0: PROFIL -->
+<div class="tp active" id="t0">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FCE4EC;color:#C2185B">🏢</div>Votre profil</div>
+  <div class="frow full"><div class="fg"><label class="fl">Nom de votre marque / compte</label>
+  <input class="fi" id="marque" placeholder="Ex: Stageia, Boutique Aminata, Restaurant Djenné..." oninput="upd()"></div></div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Secteur d'activité</label>
+    <select class="fi" id="sect" onchange="upd()">
+      <option value="edtech">EdTech / Formation</option>
+      <option value="mode">Mode / Beauté / Artisanat</option>
+      <option value="restauration">Restauration / Alimentation</option>
+      <option value="tech">Tech / Digital / SaaS</option>
+      <option value="commerce">Commerce / Retail</option>
+      <option value="services">Services aux entreprises</option>
+      <option value="sante">Santé / Bien-être</option>
+      <option value="media">Médias / Créateur de contenu</option>
+    </select></div>
+    <div class="fg"><label class="fl">Objectif principal</label>
+    <select class="fi" id="objectif" onchange="upd()">
+      <option value="notoriete">Notoriété (faire connaître)</option>
+      <option value="engagement">Engagement (communauté)</option>
+      <option value="ventes">Ventes (générer du CA)</option>
+      <option value="recrutement">Recrutement (talents)</option>
+      <option value="leads">Génération de leads</option>
+    </select></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Abonnés actuels (toutes plateformes)</label>
+    <input class="fi" type="number" id="abonnes" value="500" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Budget mensuel pub (FCFA)</label>
+    <input class="fi" type="number" id="budgetPub" value="30000" oninput="upd()"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Fréquence actuelle (posts/semaine)</label>
+    <input class="fi" type="number" id="freqActuelle" value="2" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Taux d'engagement actuel (%)</label>
+    <input class="fi" type="number" id="engActuel" value="3" step="0.1" oninput="upd()"></div>
+  </div>
+  <div class="frow full"><div class="fg"><label class="fl">Cible principale</label>
+  <input class="fi" id="cible" placeholder="Ex: Femmes 25-40 ans Bamako, passionnées de mode africaine..." oninput="upd()"></div></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">📊</div>Projections actuelles</div>
+  <div class="kg" id="kgProfil"></div>
+</div>
+</div>
+
+<!-- TAB 1: PLATEFORMES -->
+<div class="tp" id="t1">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FCE4EC;color:#C2185B">📱</div>Choisissez vos plateformes prioritaires</div>
+  <div class="alert info" style="margin-bottom:12px">💡 Recommandation : Maximum 2-3 plateformes pour débuter. Mieux vaut exceller sur 2 que être médiocre sur 5.</div>
+  <div class="platform-grid" id="platGrid"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FEF3C7;color:#BA7517">📋</div>Analyse par plateforme — Contexte Mali</div>
+  <div id="platAnalyse"></div>
+</div>
+</div>
+
+<!-- TAB 2: PILIERS -->
+<div class="tp" id="t2">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#EEEDFE;color:#534AB7">🎨</div>Piliers de contenu — Répartition recommandée</div>
+  <div class="alert info" style="margin-bottom:12px">💡 Les piliers définissent les thèmes récurrents de votre contenu. La règle 80/20 : 80% valeur + 20% promotion.</div>
+  <div class="content-piliers" id="piliersGrid"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">💡</div>Idées de contenu par pilier — <span id="sectLbl" style="color:#E1306C"></span></div>
+  <div id="ideeContenu"></div>
+</div>
+</div>
+
+<!-- TAB 3: PLANNING -->
+<div class="tp" id="t3">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#DBEAFE;color:#185FA5">📅</div>Planning éditorial — 4 semaines</div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Posts par semaine</label>
+    <input class="fi" type="number" id="postsParSemaine" value="5" min="1" max="14" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Heure de publication préférée</label>
+    <select class="fi" id="heurePost" onchange="upd()">
+      <option value="matin">Matin (7h-9h)</option>
+      <option value="midi">Midi (12h-14h)</option>
+      <option value="soir">Soir (19h-22h)</option>
+      <option value="mixte">Mixte (selon le contenu)</option>
+    </select></div>
+  </div>
+  <div style="font-size:11px;color:#666;margin-bottom:8px;font-weight:500">Semaine 1 — Cliquez sur un jour pour ajouter un post</div>
+  <div class="planning-grid" id="planningGrid"></div>
+  <div class="kg" id="kgPlanning"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FEF3C7;color:#BA7517">⏰</div>Meilleures heures de publication — Mali</div>
+  <div id="heuresChart"></div>
+</div>
+</div>
+
+<!-- TAB 4: SCRIPTS -->
+<div class="tp" id="t4">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FCE4EC;color:#C2185B">✍️</div>Scripts et modèles de posts — Secteur : <span id="sectLbl2" style="color:#E1306C"></span></div>
+  <div id="scriptsBox"></div>
+</div>
+</div>
+
+<!-- TAB 5: HASHTAGS -->
+<div class="tp" id="t5">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#EEEDFE;color:#534AB7">#️⃣</div>Stratégie Hashtags — <span id="sectLbl3" style="color:#E1306C"></span></div>
+  <div class="alert info" style="margin-bottom:12px">💡 Stratégie optimale : 5-15 hashtags par post. Mix : petits (engagement) + moyens (portée) + grands (visibilité).</div>
+  <div id="hashtagBox"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">📋</div>Template de post avec hashtags</div>
+  <div id="hashtagTemplate"></div>
+</div>
+</div>
+
+<!-- TAB 6: KPIs -->
+<div class="tp" id="t6">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#DBEAFE;color:#185FA5">📊</div>KPIs et métriques à suivre</div>
+  <div id="kpiBox"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FEF3C7;color:#BA7517">📈</div>Objectifs à 30 / 90 / 180 jours</div>
+  <div class="tw"><table id="objectifsTable"></table></div>
+</div>
+</div>
+
+<!-- TAB 7: CROISSANCE -->
+<div class="tp" id="t7">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">🚀</div>Simulation de croissance — 12 mois</div>
+  <div class="kg" id="kgCroissance"></div>
+  <div id="croissanceChart" class="bch"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FCE4EC;color:#C2185B">⚡</div>Tactiques de croissance rapide — Mali</div>
+  <div id="tactiquesBox"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#EEEDFE;color:#534AB7">📋</div>Plan d'action — 30 premiers jours</div>
+  <div id="planAction"></div>
+</div>
+</div>
+
+<script>
+const PLATEFORMES=[
+  {id:'facebook',icon:'🔵',name:'Facebook',color:'#1877F2',users:'2,2M au Mali',best:'Commerce, services, 25-55 ans',badge:'Indispensable Mali'},
+  {id:'instagram',icon:'📸',name:'Instagram',color:'#E1306C',users:'800K au Mali',best:'Mode, beauté, food, 18-35 ans',badge:'Visuel & Tendance'},
+  {id:'tiktok',icon:'🎵',name:'TikTok',color:'#010101',users:'600K au Mali',best:'Créateurs, 15-30 ans, viral',badge:'Croissance rapide'},
+  {id:'whatsapp',icon:'💬',name:'WhatsApp Business',color:'#25D366',users:'90%+ des Maliens',best:'Commerce direct, service client',badge:'Indispensable'},
+  {id:'linkedin',icon:'💼',name:'LinkedIn',color:'#0077B5',users:'50K au Mali',best:'B2B, recrutement, expertise',badge:'B2B & Cadres'},
+  {id:'youtube',icon:'▶️',name:'YouTube',color:'#FF0000',users:'400K au Mali',best:'Formation, tutoriels, vlogs',badge:'Long format'},
+];
+
+const PILIERS_SECTEUR={
+  edtech:[{id:'edu',icon:'📚',name:'Éducatif',pct:35,color:'#534AB7',desc:'Tips, astuces, conseils carrière, définitions'},
+    {id:'inspire',icon:'✨',name:'Inspirant',pct:25,color:'#EC4899',desc:'Témoignages, success stories, citations'},
+    {id:'entertain',icon:'😄',name:'Divertissant',pct:20,color:'#F59E0B',desc:'Quiz, sondages, fun facts sur l\'emploi'},
+    {id:'promo',icon:'🎯',name:'Promotionnel',pct:20,color:'#E1306C',desc:'Formations, inscriptions, offres'}],
+  mode:[{id:'inspo',icon:'💃',name:'Inspiration',pct:30,color:'#EC4899',desc:'Looks du jour, tendances, style tips'},
+    {id:'behind',icon:'🎬',name:'Coulisses',pct:25,color:'#8B5CF6',desc:'Fabrication, artisans, processus créatif'},
+    {id:'edu2',icon:'📚',name:'Éducatif',pct:25,color:'#534AB7',desc:'Histoire bogolan, conseils entretien, tailles'},
+    {id:'promo2',icon:'🛒',name:'Produits',pct:20,color:'#E1306C',desc:'Nouvelles collections, promotions, stocks'}],
+  restauration:[{id:'food',icon:'🍽️',name:'Food Porn',pct:30,color:'#EF4444',desc:'Photos plats, coulisses cuisine, recettes'},
+    {id:'equipe',icon:'👨‍🍳',name:'Équipe & Ambiance',pct:25,color:'#F59E0B',desc:'Chef, service, restaurant, événements'},
+    {id:'edu3',icon:'📚',name:'Éducatif',pct:25,color:'#534AB7',desc:'Origine plats, valeurs nutritives, culture'},
+    {id:'promo3',icon:'🎉',name:'Offres',pct:20,color:'#E1306C',desc:'Menu du jour, promotions, réservations'}],
+  default:[{id:'edu4',icon:'📚',name:'Éducatif',pct:35,color:'#534AB7',desc:'Conseils, astuces, expertise de votre domaine'},
+    {id:'inspire2',icon:'✨',name:'Inspirant',pct:25,color:'#EC4899',desc:'Témoignages, success stories, motivations'},
+    {id:'entertain2',icon:'😄',name:'Engagement',pct:20,color:'#F59E0B',desc:'Questions, sondages, concours, réactions'},
+    {id:'promo4',icon:'🎯',name:'Promotionnel',pct:20,color:'#E1306C',desc:'Produits, services, offres, appels à l\'action'}],
+};
+
+const IDEES_CONTENU={
+  edtech:['📝 "3 erreurs que font les diplômés maliens dans leur CV" (carrousel Canva)','🎤 Interview d\'un recruteur chez Orange Mali sur ce qu\'il cherche','📊 Infographie : "Les 10 compétences les plus demandées au Mali en 2025"','✅ Quiz : "Êtes-vous prêt(e) pour votre premier entretien ?" (Stories)','💼 Story "Une journée de stage chez [entreprise partenaire]"','🔥 Reel : "J\'ai posturé 50 fois et voici ce que j\'ai appris"','📚 Carrousel : "Le CV parfait pour une entreprise malienne en 5 étapes"','🌟 Témoignage : "Comment Fatoumata a trouvé son emploi via Stageia"'],
+  mode:['👗 Reel "Look complet avec bogolan : 3 façons de le porter"','🎨 Carrousel : "Comment identifier un vrai bogolan authentique vs imitation"','📸 Before/After : transformation d\'un tissu en tenue de soirée','🌍 Story : "Derrière les coulisses — visite chez l\'artisan tisserand"','💃 Sondage : "Quelle tenue pour un mariage malien ?" (2 options)','✂️ Reel tutoriel : "Comment prendre ses mesures seul(e) à la maison"','🛒 Nouveau produit : "Collection Ramadan 2025 — disponible ce vendredi"','🌟 Témoignage client : "Aminata porte notre robe de mariée personnalisée"'],
+  restauration:['🍽️ Reel : "La préparation de notre tô malien en 60 secondes"','👨‍🍳 Story : "Notre chef vous révèle le secret de la sauce arachide"','📸 Photo produit : plat du jour avec belle mise en scène','🎉 "Ce vendredi : buffet spécial mariage sur réservation"','💬 Question : "Votre plat malien préféré ? Commentez !"','🌍 Éducatif : "L\'histoire du dolo — boisson traditionnelle malienne"','🎬 Reel cuisine : "Comment on prépare 200 assiettes pour un événement"','⭐ Témoignage : "Ce que nos clients disent de notre thiéboudiène"'],
+  default:['💡 "3 astuces pour [problème de votre cible] que personne ne vous dit"','📊 Infographie : Les 5 chiffres clés de votre secteur au Mali','🎤 Interview d\'un expert de votre secteur (vidéo 60 secondes)','✅ Sondage : "Quel est votre plus grand défi en [votre domaine] ?"','🌟 Témoignage client avec photo et résultat concret obtenu','🎬 Reel : "Une journée dans la vie de [votre métier]"','📝 Carrousel : "Le guide complet pour [résoudre un problème de votre cible]"','🔥 "La vraie raison pourquoi [insight contre-intuitif de votre secteur]"'],
+};
+
+const HASHTAGS={
+  edtech:{petit:['#FormationMali','#EmploiMali','#DesignBamako','#StageeiaMali','#CarrièreMali'],moyen:['#Formation','#EmploisAfrique','#TechAfrique','#JeunesMali','#Freelance'],grand:['#Emploi','#Formation','#CarrièreProfessionnelle','#AfricaTech','#Travail']},
+  mode:{petit:['#ModeMali','#BogolaMali','#TissageArtisanal','#BoutiqueBamako','#AfricanFashion'],moyen:['#ModeAfricaine','#WaxFashion','#AfricanStyle','#ModeTraditionelle'],grand:['#Fashion','#AfricanDesign','#Style','#Couture','#Handmade']},
+  restauration:{petit:['#RestaurantBamako','#FoodMali','#CuisineMalienne','#ThiéboudiènneMali'],moyen:['#AfricanFood','#FoodAfrique','#CuisineAfricaine','#FoodBlogger'],grand:['#Food','#Foodie','#Restaurant','#Delicious','#FoodPhotography']},
+  default:{petit:['#Mali','#Bamako','#EntrepreneurMali','#BusinessMali','#StartupMali'],moyen:['#AfriqueEntreprise','#Afrique','#EntrepreneurAfrique','#BusinessAfrica'],grand:['#Entrepreneur','#Business','#Startup','#Innovation','#Success']},
+};
+
+const SCRIPTS={
+  edtech:[
+    {type:'Éducatif',typeColor:'#534AB7',title:'3 erreurs qui tuent votre CV',hook:'⚠️ 3 erreurs que TOUS les diplômés maliens font dans leur CV (et comment les éviter) 👇',body:'1️⃣ Mettre une photo non professionnelle\n→ Solution : Studio photo ou fond blanc, tenue formelle\n\n2️⃣ Lister des compétences sans preuves\n→ Solution : "Maîtrise Excel — créé 15 tableaux de bord pour Orange Mali"\n\n3️⃣ Objectif professionnel générique\n→ Solution : Adaptez-le à CHAQUE entreprise en 2 phrases',cta:'📌 Sauvegardez ce post. Partagez-le à un ami qui cherche du travail. 🔔 Suivez @{marque} pour plus de conseils carrière chaque semaine.'},
+    {type:'Inspirant',typeColor:'#EC4899',title:'Témoignage — De diplômé sans emploi à salarié',hook:'Il y a 8 mois, Mamadou avait 3 diplômes et zéro offre d\'emploi. Aujourd\'hui, il est développeur chez une startup à Bamako. Voici son histoire 👇',body:'Mamadou avait tout fait "bien" : Bac S mention, BTS informatique, Licence professionnelle.\n\nMais ses candidatures restaient sans réponse.\n\nLe problème ? Ses compétences n\'étaient pas visibles.\nPas de portfolio. Pas de projets concrets. Pas de présence en ligne.\n\nEn 4 mois avec {marque}, il a :\n✅ Créé son portfolio GitHub\n✅ Réalisé 2 projets clients\n✅ Obtenu une certification reconnue',cta:'Vous reconnaissez-vous dans cette situation ? 👇 Commentez "OUI" et je vous envoie notre programme en DM.'},
+    {type:'Engagement',typeColor:'#F59E0B',title:'Question sondage — Carrière',hook:'SONDAGE ⬇️ Quel est votre plus grand défi professionnel en ce moment ?',body:'A) Je n\'arrive pas à trouver un emploi malgré mon diplôme\nB) Je veux changer de secteur mais je ne sais pas par où commencer\nC) Je manque de compétences numériques pour évoluer\nD) Je veux me mettre à mon compte mais j\'ai peur\n\n👇 Commentez votre lettre + dites-moi pourquoi',cta:'📊 Basé sur vos réponses, je vais créer du contenu adapté à VOS besoins. Chaque réponse compte. Partagez avec quelqu\'un qui en a besoin.'},
+  ],
+  mode:[
+    {type:'Inspirant',typeColor:'#EC4899',title:'Look bogolan — 3 façons de le porter',hook:'🌍 Ce tissu vieux de 1000 ans peut être ultra moderne. Voici comment porter le bogolan en 2025 👇',body:'1️⃣ Look Casual : Bogolan en haut + jean simple\n→ Parfait pour le bureau ou une sortie\n\n2️⃣ Look Soirée : Robe longue bogolan ceinturée\n→ Élégance africaine contemporaine\n\n3️⃣ Look Fusion : Bogolan en accessoires (sac, bandeau)\n→ Touche culturelle discrète sur une tenue moderne',cta:'❤️ Likez si vous aimez le bogolan. Quel look vous inspire le plus ? Commentez votre préféré ! Disponible en commande personnalisée en DM 📩'},
+    {type:'Éducatif',typeColor:'#534AB7',title:'Comment identifier un vrai bogolan',hook:'⚠️ ATTENTION : 70% des "bogolans" vendus à Bamako sont des imitations. Voici comment reconnaître l\'authentique 👇',body:'✅ L\'AUTHENTIQUE :\n• Texture légèrement irrégulière (fait main)\n• Odeur terreuse (argile et plantes naturelles)\n• Dos du tissu légèrement différent du recto\n• Couleur naturelle : brun, ocre, noir seulement\n\n❌ L\'IMITATION :\n• Trop parfait et uniforme (machine)\n• Couleurs trop vives (teintures chimiques)\n• Prix trop bas (< 2000 FCFA le mètre)',cta:'Partagez ce post pour protéger notre artisanat malien 🙏 Questions ? DM moi !'},
+  ],
+  restauration:[
+    {type:'Food',typeColor:'#EF4444',title:'La vraie recette du tô malien',hook:'🍽️ Le secret de notre tô qui fait revenir nos clients semaine après semaine... je vous le révèle 👇',body:'Le tô, c\'est simple. Mais le PARFAIT tô, ça demande un secret :\n\n1️⃣ La farine : Mil local de Ségou, mouture fine\n2️⃣ L\'eau : Bien mesurée — ratio 3:1 (eau/farine)\n3️⃣ La technique : Remuer SANS JAMAIS STOPPER pendant 20 min\n4️⃣ Le secret : Ajouter 1 pincée de sel de Kayes à la fin\n\nAccompagné de notre sauce arachide maison... 🤤',cta:'Vous voulez goûter ? Venez nous voir 📍 [Adresse]. Ouvert 7j/7. Réservation en DM ou WhatsApp.'},
+    {type:'Engagement',typeColor:'#F59E0B',title:'Sondage plat préféré',hook:'DÉBAT 🔥 Lequel choisissez-vous ?',body:'A) 🍲 Tô + Sauce arachide\nB) 🐟 Thiéboudiène\nC) 🥘 Riz au gras\nD) 🍚 Dolo traditionnel\n\nCommentez votre choix 👇\nDites-nous POURQUOI c\'est le meilleur !',cta:'🏆 Le plat le plus voté sera notre PLAT DU MOIS de mars avec -20% ! Partagez le sondage pour voter plus fort 📣'},
+  ],
+  default:[
+    {type:'Éducatif',typeColor:'#534AB7',title:'3 conseils pour [votre secteur]',hook:'⚡ 3 choses que les pros de [votre secteur] ne vous disent pas (mais qui changent TOUT) 👇',body:'1️⃣ [Conseil contre-intuitif]\n→ Pourquoi c\'est important\n→ Comment l\'appliquer maintenant\n\n2️⃣ [Astuce peu connue]\n→ Pourquoi ça marche\n→ Exemple concret au Mali\n\n3️⃣ [Insight d\'expert]\n→ L\'erreur que tout le monde fait\n→ La solution simple',cta:'📌 Sauvegardez et partagez avec quelqu\'un qui en a besoin ! 🔔 Suivez @{marque} pour du contenu comme ça chaque semaine.'},
+    {type:'Témoignage',typeColor:'#10B981',title:'Histoire client — Résultat concret',hook:'Ce que [Prénom client] a accompli en [durée] avec [votre service] 👇 (histoire vraie)',body:'Avant de nous contacter, [Prénom] avait le problème de [problème précis].\n\nIl/Elle avait essayé [solution précédente] sans résultats.\n\nDepuis [durée de collaboration] :\n✅ [Résultat 1 mesurable]\n✅ [Résultat 2 mesurable]\n✅ [Résultat 3 mesurable]\n\n"[Citation du client en ses propres mots]"\n— [Prénom], [Ville]',cta:'Vous voulez des résultats similaires ? DM ou commentez "INFO" pour qu\'on discute de votre situation.'},
+  ],
+};
+
+let selectedPlatforms=['facebook','instagram','whatsapp'];
+let planning={};
+
+function gs(id,d=''){return document.getElementById(id)?.value||d;}
+function gn(id,d=0){return parseFloat(document.getElementById(id)?.value)||d;}
+function fmt(n){return Math.round(n).toLocaleString('fr-FR');}
+function st(i){document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));document.querySelectorAll('.tp').forEach((c,j)=>c.classList.toggle('active',i===j));upd();}
+
+function upd(){
+  const ab=gn('abonnes',500),budgetPub=gn('budgetPub',30000),freq=gn('postsParSemaine',5)||gn('freqActuelle',2),eng=gn('engActuel',3);
+  const sect=gs('sect','edtech');
+  const sn={'edtech':'EdTech / Formation','mode':'Mode / Beauté','restauration':'Restauration','tech':'Tech / Digital','commerce':'Commerce','services':'Services','sante':'Santé','media':'Médias'};
+  document.querySelectorAll('#sectLbl,#sectLbl2,#sectLbl3').forEach(e=>{if(e)e.textContent=sn[sect]||sect;});
+
+  // Profil KPIs
+  const cpmFB=500,porteeOrganique=Math.round(ab*0.05*freq*4.3);
+  const porteePub=budgetPub>0?Math.round((budgetPub/cpmFB)*1000):0;
+  const porteeTotal=porteeOrganique+porteePub;
+  const kgP=document.getElementById('kgProfil');
+  if(kgP) kgP.innerHTML=`
+    <div class="kp pk"><div class="kv">${fmt(ab)}</div><div class="kl">Abonnés actuels</div></div>
+    <div class="kp o"><div class="kv">${eng}%</div><div class="kl">Taux engagement</div></div>
+    <div class="kp p"><div class="kv">${fmt(Math.round(ab*eng/100))}</div><div class="kl">Interactions/post</div></div>
+    <div class="kp b"><div class="kv">${fmt(porteeTotal)}</div><div class="kl">Portée mensuelle</div></div>
+    <div class="kp g"><div class="kv">${fmt(budgetPub)}</div><div class="kl">Budget pub (F)</div></div>`;
+
+  // Plateformes
+  const pg=document.getElementById('platGrid');
+  if(pg) pg.innerHTML=PLATEFORMES.map(p=>`
+    <div class="plat-card ${selectedPlatforms.includes(p.id)?'sel':''}" style="${selectedPlatforms.includes(p.id)?'border-color:'+p.color+';background:'+p.color+'10':''}" onclick="togglePlat('${p.id}','${p.color}')">
+      <div class="plat-icon">${p.icon}</div>
+      <div class="plat-name">${p.name}</div>
+      <div class="plat-users">${p.users}</div>
+      <div class="plat-badge" style="background:${selectedPlatforms.includes(p.id)?p.color:'#f0f0f0'};color:${selectedPlatforms.includes(p.id)?'#fff':'#666'}">${p.badge}</div>
+    </div>`).join('');
+
+  // Analyse plateformes
+  const pa=document.getElementById('platAnalyse');
+  if(pa){
+    const analyses={
+      facebook:{ok:true,msg:'Facebook = 2,2M utilisateurs au Mali. C\'est la plateforme n°1 pour toucher les 25-55 ans. Idéal pour les pubs ciblées par ville (Bamako, Sikasso). Coût publicitaire : ~500 FCFA/1000 impressions.'},
+      instagram:{ok:true,msg:'Instagram = 800K utilisateurs au Mali, majorité 18-35 ans. Très efficace pour mode, food, beauté. Les Reels ont 3x plus de portée que les posts normaux.'},
+      tiktok:{ok:true,msg:'TikTok = 600K utilisateurs maliens, croissance +40%/an. Algorithme le plus équitable — n\'importe quelle vidéo peut devenir virale. Idéal pour les créateurs de contenu.'},
+      whatsapp:{ok:true,msg:'WhatsApp = 90%+ des Maliens. WhatsApp Business est INDISPENSABLE pour le commerce local. Canal de vente directe le plus efficace au Mali en 2024.'},
+      linkedin:{ok:false,msg:'LinkedIn = 50K utilisateurs au Mali seulement. Utile uniquement pour le B2B et le recrutement. Peu pertinent pour les PME grand public.'},
+      youtube:{ok:true,msg:'YouTube = 400K utilisateurs au Mali. Idéal pour les formations longues, tutoriels et vlogs. Monétisation possible à partir de 1000 abonnés.'},
+    };
+    pa.innerHTML=PLATEFORMES.map(p=>`
+      <div class="conseil" style="border-left-color:${p.color}">
+        <span>${p.icon}</span>
+        <span><b>${p.name} :</b> ${analyses[p.id]?.msg||''} ${selectedPlatforms.includes(p.id)?'<span style="background:#D1FAE5;color:#065F46;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600">✓ Sélectionnée</span>':''}</span>
+      </div>`).join('');
+  }
+
+  // Piliers
+  const piliers=PILIERS_SECTEUR[sect]||PILIERS_SECTEUR.default;
+  const pg2=document.getElementById('piliersGrid');
+  if(pg2) pg2.innerHTML=piliers.map(p=>`
+    <div class="pilier-card" style="background:${p.color}15;border:1px solid ${p.color}40">
+      <div class="pilier-icon">${p.icon}</div>
+      <div class="pilier-name" style="color:${p.color}">${p.name}</div>
+      <div class="pilier-pct" style="color:${p.color}">${p.pct}%</div>
+      <div class="pilier-desc">${p.desc}</div>
+    </div>`).join('');
+
+  // Idées contenu
+  const ic=document.getElementById('ideeContenu');
+  if(ic){
+    const idees=IDEES_CONTENU[sect]||IDEES_CONTENU.default;
+    ic.innerHTML=idees.map(i=>`<div class="conseil"><span>💡</span><span>${i}</span></div>`).join('');
+  }
+
+  // Planning
+  const postsW=gn('postsParSemaine',5)||5;
+  const jours=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  const piliers2=PILIERS_SECTEUR[sect]||PILIERS_SECTEUR.default;
+  const pg3=document.getElementById('planningGrid');
+  if(pg3){
+    let html=jours.map(j=>`<div class="day-header">${j}</div>`).join('');
+    const postDays=[0,1,2,3,4].slice(0,postsW);
+    let pIdx=0;
+    for(let w=0;w<4;w++){
+      for(let d=0;d<7;d++){
+        const key=`${w}_${d}`;
+        const hasPost=postDays.includes(d)||(postsW>5&&d<postsW-5);
+        const pilier=hasPost?piliers2[pIdx%piliers2.length]:null;
+        if(hasPost) pIdx++;
+        html+=`<div class="day-cell ${hasPost?'has-post':''}">${hasPost&&pilier?`<span class="post-tag" style="background:${pilier.color}">${pilier.icon} ${pilier.name}</span>`:''}${w===0?'<span style="color:#ccc;font-size:8px">S'+(w+1)+'J'+(d+1)+'</span>':''}</div>`;
+      }
+    }
+    pg3.innerHTML=html;
+  }
+
+  // Planning KPIs
+  const kgPl=document.getElementById('kgPlanning');
+  if(kgPl){
+    const postsM=Math.round(postsW*4.3);
+    kgPl.innerHTML=`
+      <div class="kp pk"><div class="kv">${postsW}</div><div class="kl">Posts/semaine</div></div>
+      <div class="kp p"><div class="kv">${postsM}</div><div class="kl">Posts/mois</div></div>
+      <div class="kp g"><div class="kv">${fmt(Math.round(ab*0.05*postsM+porteePub))}</div><div class="kl">Portée mensuelle</div></div>
+      <div class="kp o"><div class="kv">${Math.round(postsW*60/60)}h</div><div class="kl">Temps création/sem</div></div>`;
+  }
+
+  // Heures optimales
+  const hc=document.getElementById('heuresChart');
+  if(hc){
+    const heures=[{h:'6h-7h',score:30},{h:'7h-9h',score:85},{h:'9h-12h',score:55},{h:'12h-14h',score:75},{h:'14h-17h',score:40},{h:'17h-19h',score:60},{h:'19h-21h',score:95},{h:'21h-23h',score:70}];
+    hc.innerHTML=heures.map(h=>`<div class="br"><div class="bl">${h.h}</div><div class="bt"><div class="bf" style="width:${h.score}%;background:${h.score>=80?'#E1306C':h.score>=60?'#F59E0B':'#aaa'}">${h.score}% audience</div></div></div>`).join('');
+  }
+
+  // Scripts
+  const sb=document.getElementById('scriptsBox');
+  if(sb){
+    const scripts=(SCRIPTS[sect]||SCRIPTS.default).map(s=>({...s,body:s.body,cta:s.cta.replace('{marque}',gs('marque','votre compte'))}));
+    sb.innerHTML=scripts.map(s=>`
+      <div class="script-card">
+        <div class="script-type" style="background:${s.typeColor}20;color:${s.typeColor}">${s.type}</div>
+        <div class="script-title">${s.title}</div>
+        <div class="script-body">
+          <div class="script-hook">${s.hook}</div><br>
+          <div style="white-space:pre-line">${s.body}</div><br>
+          <div class="script-cta">${s.cta}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // Hashtags
+  const hb=document.getElementById('hashtagBox');
+  if(hb){
+    const ht=HASHTAGS[sect]||HASHTAGS.default;
+    hb.innerHTML=`
+      <div style="margin-bottom:10px"><div style="font-size:11px;font-weight:600;color:#666;margin-bottom:6px">🟣 Petits hashtags (<50K) — Engagement communautaire ciblé</div>
+      <div class="hashtag-cloud">${ht.petit.map(h=>`<span class="ht small">${h}</span>`).join('')}</div></div>
+      <div style="margin-bottom:10px"><div style="font-size:11px;font-weight:600;color:#666;margin-bottom:6px">🟡 Hashtags moyens (50K-500K) — Portée sectorielle</div>
+      <div class="hashtag-cloud">${ht.moyen.map(h=>`<span class="ht medium">${h}</span>`).join('')}</div></div>
+      <div><div style="font-size:11px;font-weight:600;color:#666;margin-bottom:6px">🟢 Grands hashtags (>500K) — Visibilité maximale</div>
+      <div class="hashtag-cloud">${ht.grand.map(h=>`<span class="ht large">${h}</span>`).join('')}</div></div>`;
+  }
+
+  // Hashtag template
+  const ht2=document.getElementById('hashtagTemplate');
+  if(ht2){
+    const ht=HASHTAGS[sect]||HASHTAGS.default;
+    const allHt=[...ht.petit.slice(0,3),...ht.moyen.slice(0,2),...ht.grand.slice(0,2),'#'+gs('marque','Stageia').replace(/\s+/g,'')].join(' ');
+    ht2.innerHTML=`<div class="script-body"><div style="color:#666;font-size:11px;margin-bottom:6px">Template à copier-coller sous vos posts :</div>${allHt}</div>
+      <div class="alert info" style="margin-top:8px">💡 Total : ${allHt.split(' ').length} hashtags (recommandé : 5-15). Créez votre hashtag de marque unique : <b>#${gs('marque','Stageia').replace(/\s+/g,'')}</b></div>`;
+  }
+
+  // KPIs
+  const kb=document.getElementById('kpiBox');
+  if(kb){
+    const postsM=Math.round((gn('postsParSemaine',5)||5)*4.3);
+    const metrics=[
+      {icon:'👥',bg:'#FCE4EC',color:'#C2185B',name:'Taux d\'engagement',desc:'(Likes+Comments+Shares)/Abonnés × 100',val:eng+'%',seuil:'Objectif >3% (bon) >6% (excellent)',ok:eng>=3},
+      {icon:'👁️',bg:'#DBEAFE',color:'#185FA5',name:'Portée organique/post',desc:'Nb personnes touchées par post',val:fmt(Math.round(ab*0.05)),seuil:'Objectif >5% de vos abonnés',ok:true},
+      {icon:'💾',bg:'#EEEDFE',color:'#534AB7',name:'Taux de sauvegarde',desc:'Posts sauvegardés / Vues × 100',val:'Objectif >2%',seuil:'Indicateur de valeur du contenu',ok:true},
+      {icon:'📤',bg:'#D1FAE5',color:'#065F46',name:'Taux de partage',desc:'Posts partagés / Vues × 100',val:'Objectif >1%',seuil:'Indicateur de contenu viral',ok:true},
+      {icon:'🔗',bg:'#FEF3C7',color:'#92400E',name:'Taux de clic lien bio',desc:'Clics lien bio / Visites profil',val:'Objectif >3%',seuil:'Optimiser le lien bio (Linktree)',ok:true},
+      {icon:'💰',bg:'#FEE2E2',color:'#991B1B',name:'Coût par engagement',desc:'Budget pub / Total engagements',val:budgetPub>0?fmt(Math.round(budgetPub/(Math.round(ab*eng/100)*postsM)))+' F':'Non calculable',seuil:'Objectif <500 FCFA/engagement',ok:true},
+    ];
+    kb.innerHTML=metrics.map(m=>`
+      <div class="metric-card" style="background:${m.bg};border:1px solid ${m.color}30">
+        <div class="mc-icon" style="background:${m.color}20;color:${m.color}">${m.icon}</div>
+        <div class="mc-info">
+          <div class="mc-name">${m.name}</div>
+          <div class="mc-desc">${m.desc}</div>
+          <div class="mc-desc" style="margin-top:2px;font-style:italic">${m.seuil}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="mc-val" style="color:${m.color}">${m.val}</div>
+          <div class="mc-status" style="background:${m.ok?'#D1FAE5':'#FEE2E2'};color:${m.ok?'#065F46':'#991B1B'}">${m.ok?'✅ OK':'⚠️ À améliorer'}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // Objectifs table
+  const ot=document.getElementById('objectifsTable');
+  if(ot){
+    const rows=[
+      ['Abonnés',fmt(ab),fmt(Math.round(ab*1.5)),fmt(Math.round(ab*2.5)),fmt(Math.round(ab*5))],
+      ['Posts publiés','—',fmt(Math.round((gn('postsParSemaine',5)||5)*4.3)),fmt(Math.round((gn('postsParSemaine',5)||5)*4.3*3)),fmt(Math.round((gn('postsParSemaine',5)||5)*4.3*6))],
+      ['Taux engagement',eng+'%',Math.min(eng*1.2,15).toFixed(1)+'%',Math.min(eng*1.5,15).toFixed(1)+'%',Math.min(eng*2,15).toFixed(1)+'%'],
+      ['Budget pub (F)',fmt(budgetPub),fmt(budgetPub),fmt(budgetPub*1.5),fmt(budgetPub*2)],
+      ['Portée mensuelle',fmt(Math.round(ab*0.05*(gn('postsParSemaine',5)||5)*4.3)),fmt(Math.round(ab*1.5*0.06*gn('postsParSemaine',5)*4.3)),fmt(Math.round(ab*2.5*0.07*gn('postsParSemaine',5)*4.3)),fmt(Math.round(ab*5*0.08*gn('postsParSemaine',5)*4.3))],
+    ];
+    ot.innerHTML='<thead><tr><th>Indicateur</th><th>Actuel</th><th>J+30</th><th>J+90</th><th>J+180</th></tr></thead><tbody>'+
+      rows.map(r=>`<tr>${r.map((v,i)=>`<td ${i>0?'style="font-weight:500;color:'+(i===r.length-1?'#0F6E56':'#534AB7')+'"':''}>${v}</td>`).join('')}</tr>`).join('')+'</tbody>';
+  }
+
+  // Croissance 12 mois
+  let abM=ab;const vals=[];
+  const tauxOrganique=0.05+(gn('postsParSemaine',5)||5)*0.01;
+  const abPub=budgetPub>0?Math.round((budgetPub/500)*0.02*1000):0;
+  for(let m=1;m<=12;m++){
+    abM=Math.round(abM*(1+tauxOrganique))+abPub;
+    vals.push(abM);
+  }
+  const kgC=document.getElementById('kgCroissance');
+  if(kgC) kgC.innerHTML=`
+    <div class="kp pk"><div class="kv">${fmt(ab)}</div><div class="kl">Abonnés actuels</div></div>
+    <div class="kp g"><div class="kv">${fmt(vals[2])}</div><div class="kl">Mois 3</div></div>
+    <div class="kp p"><div class="kv">${fmt(vals[5])}</div><div class="kl">Mois 6</div></div>
+    <div class="kp b"><div class="kv">${fmt(vals[11])}</div><div class="kl">Mois 12</div></div>`;
+
+  const cc=document.getElementById('croissanceChart');
+  if(cc){const mx=vals[11];cc.innerHTML=vals.map((v,i)=>`<div class="br"><div class="bl">Mois ${i+1}</div><div class="bt"><div class="bf" style="width:${Math.max(5,Math.round(v/mx*100))}%;background:#E1306C">${fmt(v)} abonnés</div></div></div>`).join('');}
+
+  // Tactiques
+  const tb=document.getElementById('tactiquesBox');
+  if(tb) tb.innerHTML=[
+    ['🎬','Reels / TikTok quotidiens','Les vidéos courtes ont 3-10x plus de portée que les photos. Publiez 1 Reel/TikTok par jour pendant 30 jours. C\'est la tactique de croissance la plus efficace en 2024.'],
+    ['🤝','Collaborations avec d\'autres créateurs','Identifiez 5 comptes maliens dans des secteurs complémentaires. Proposez une collaboration : post partagé, Live ensemble, échange de mentions. Gain : +15-30% d\'abonnés en 2 semaines.'],
+    ['💬','Répondre à 100% des commentaires','L\'algorithme Facebook et Instagram récompense les comptes avec fort taux d\'engagement. Répondez à chaque commentaire dans les 2 premières heures après publication.'],
+    ['📱','Stories quotidiennes (7j/7)','Les Stories gardent votre compte en haut des fils d\'actualité. 5 Stories/jour minimum : 1 question, 1 sondage, 1 coulisse, 1 partage post, 1 réponse DM.'],
+    ['🏷️','Taguer les clients dans les posts','Chaque fois qu\'un client partage une photo de votre produit ou service, republiez-la (UGC). Cela crée de la preuve sociale et fidélise le client.'],
+    ['📊','Analyser et doubler ce qui marche','Chaque lundi : analysez les 3 posts les plus performants de la semaine. Créez 3 variations du meilleur post. La data, pas l\'intuition.'],
+  ].map(t=>`<div class="conseil"><span style="font-size:18px">${t[0]}</span><span><b>${t[1]} :</b> ${t[2]}</span></div>`).join('');
+
+  // Plan 30 jours
+  const pa2=document.getElementById('planAction');
+  if(pa2) pa2.innerHTML=[
+    {sem:'Semaine 1',color:'#E1306C',actions:['Optimiser la bio Instagram/Facebook (photo pro + lien + description claire)','Créer votre kit de 10 visuels Canva cohérents (même palette, même police)','Publier votre post de présentation avec votre histoire personnelle','Configurer WhatsApp Business (réponses automatiques + catalogue)']},
+    {sem:'Semaine 2',color:'#534AB7',actions:['Lancer votre 1er Reel/TikTok avec une accroche forte','Identifier et contacter 3 comptes pour collaboration','Publier 5 posts en suivant vos piliers de contenu','Répondre à chaque commentaire dans les 2h']},
+    {sem:'Semaine 3',color:'#10B981',actions:['Lancer votre 1ère pub Facebook (budget: '+fmt(Math.round(budgetPub/4))+' FCFA)','Analyser les statistiques de la semaine 1-2','Créer votre 1er post avec témoignage client','Programmer les posts de la semaine 4 en avance']},
+    {sem:'Semaine 4',color:'#F59E0B',actions:['Faire le bilan : meilleurs posts, meilleurs jours, meilleure heure','Identifier votre 1er format de contenu "signature" (celui qui performe le mieux)','Contacter vos 10 premiers clients via DM pour demander un avis','Planifier le contenu du mois 2 basé sur ce qui a marché']},
+  ].map(s=>`<div class="conseil" style="border-left-color:${s.color}"><div><b style="color:${s.color}">${s.sem}</b><ul style="margin-top:4px;padding-left:16px">${s.actions.map(a=>`<li style="font-size:11px;margin-bottom:3px">${a}</li>`).join('')}</ul></div></div>`).join('');
+}
+
+function togglePlat(id,color){
+  if(selectedPlatforms.includes(id)) selectedPlatforms=selectedPlatforms.filter(x=>x!==id);
+  else selectedPlatforms.push(id);
+  upd();
+}
+
+upd();
+</script>
+</body>
+</html>

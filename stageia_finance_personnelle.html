@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Finance Personnelle & Budget</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#7C2D12);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#FCA5A5;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#C2410C;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+.box{background:#FFF7ED;border-left:3px solid #C2410C;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.ok{background:#D1FAE5;border-left-color:#10B981;color:#065F46}
+.warn{background:#FEF3C7;border-left-color:#F59E0B;color:#92400E}
+.err{background:#FEE2E2;border-left-color:#EF4444;color:#991B1B}
+.info{background:#DBEAFE;border-left-color:#3B82F6;color:#1E40AF}
+.purple{background:#F5F3FF;border-left-color:#8B5CF6;color:#5B21B6}
+label{font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:4px}
+input,select{width:100%;padding:7px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;font-family:Arial;background:#fff}
+input:focus,select:focus{outline:none;border-color:#C2410C}
+.hint{font-size:10px;color:#888;margin-top:3px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.row.r3{grid-template-columns:1fr 1fr 1fr}
+.section-title{font-size:13px;font-weight:700;color:#0D0B2E;margin:14px 0 8px;border-bottom:2px solid #C2410C;padding-bottom:5px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:12px 0}
+.kpi{background:#f5f5f5;border-radius:8px;padding:10px;text-align:center;border:1px solid #e0e0e0}
+.kpi b{display:block;font-size:17px;color:#C2410C;margin-bottom:2px}
+.kpi.g b{color:#065F46}.kpi.r b{color:#A32D2D}.kpi.o b{color:#BA7517}.kpi.b b{color:#185FA5}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+th{background:#7C2D12;color:#fff;padding:8px;text-align:left;font-weight:600}
+td{padding:8px;border-bottom:1px solid #eee}
+tr:nth-child(even) td{background:#FFF7ED}
+tr.tot td{background:#FFF7ED;font-weight:700;color:#C2410C}
+.budget-item{display:grid;grid-template-columns:1fr 120px 80px auto;gap:8px;align-items:center;padding:8px 12px;border:1px solid #eee;border-radius:8px;margin-bottom:6px}
+.budget-item:hover{border-color:#C2410C}
+.budget-cat{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+.btn{padding:8px 16px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600}
+.btn-orange{background:#C2410C;color:#fff}
+.btn-red{background:#EF4444;color:#fff}
+.btn-green{background:#10B981;color:#fff}
+.btn-blue{background:#3B82F6;color:#fff}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+/* JAUGE */
+.jauge-wrap{margin-bottom:10px}
+.jauge-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}
+.jauge-track{height:16px;background:#f0f0f0;border-radius:8px;overflow:hidden}
+.jauge-fill{height:100%;border-radius:8px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:600;color:#fff;transition:width .4s}
+/* QUIZ */
+.quiz-q{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:12px}
+.q-num{font-size:10px;color:#C2410C;font-weight:700;margin-bottom:5px}
+.q-text{font-size:13px;font-weight:600;color:#0D0B2E;margin-bottom:10px;line-height:1.5}
+.q-tip{font-size:11px;color:#888;background:#fff;border:1px solid #eee;border-radius:6px;padding:6px 10px;margin-bottom:10px}
+.opt{width:100%;padding:9px 14px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;font-size:12px;background:#fff;text-align:left;margin-bottom:5px;font-family:Arial;line-height:1.5}
+.opt:hover{border-color:#C2410C;background:#FFF7ED}
+.opt.good{border-color:#10B981;background:#D1FAE5;pointer-events:none;color:#065F46}
+.opt.bad{border-color:#EF4444;background:#FEE2E2;pointer-events:none;color:#991B1B}
+.opt.dis{pointer-events:none;opacity:.5}
+.fb{border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;line-height:1.6;display:none}
+.fb.show{display:block}
+.fb.ok{background:#D1FAE5;color:#065F46}
+.fb.ko{background:#FEE2E2;color:#991B1B}
+@media(max-width:600px){.row,.row.r3{grid-template-columns:1fr}.budget-item{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<h1>💳 Finance Personnelle & Budget — Stageia
+<small>Budget mensuel · Épargne · Objectifs · Remboursement dettes · Retraite · Quiz</small></h1>
+
+<div class="tabs">
+  <button class="tab on" onclick="show(0)">📚 Leçons</button>
+  <button class="tab" onclick="show(1)">💰 Mon Budget</button>
+  <button class="tab" onclick="show(2)">🎯 Objectifs Épargne</button>
+  <button class="tab" onclick="show(3)">💳 Gestion Dettes</button>
+  <button class="tab" onclick="show(4)">🏖️ Retraite</button>
+  <button class="tab" onclick="show(5)">🎯 Quiz</button>
+</div>
+
+<!-- PANE 0: LEÇONS -->
+<div class="pane on" id="p0">
+  <div class="section-title">💡 Pourquoi gérer ses finances personnelles ?</div>
+  <div class="box">💰 <b>La finance personnelle</b> = l'art de gérer son argent pour atteindre ses objectifs de vie.<br><br>
+  Sans gestion, l'argent disparaît toujours — peu importe combien on gagne.<br>
+  <b>Règle fondamentale :</b> Ce que vous gardez > Ce que vous gagnez</div>
+
+  <div class="section-title">📊 La règle 50/30/20</div>
+  <div class="box info">📌 <b>Répartition recommandée de vos revenus :</b><br>
+  🏠 <b>50%</b> — Besoins essentiels (loyer, nourriture, transport, factures)<br>
+  🎯 <b>30%</b> — Envies et loisirs (sorties, vêtements, restaurants)<br>
+  💰 <b>20%</b> — Épargne et investissement (obligatoire !)<br><br>
+  <b>Exemple :</b> Salaire 300 000 FCFA → 150 000 besoins · 90 000 loisirs · 60 000 épargne</div>
+
+  <div class="section-title">🏦 Les 4 piliers de la finance personnelle</div>
+  <div class="box">1️⃣ <b>Épargne de précaution</b> = 3 à 6 mois de charges. C'est votre filet de sécurité. Priorité absolue avant tout autre investissement.</div>
+  <div class="box">2️⃣ <b>Remboursement des dettes</b> = Payez d'abord les dettes à taux élevé (crédits conso, découverts). Une dette à 20%/an coûte plus cher qu'un investissement à 10% ne rapporte.</div>
+  <div class="box">3️⃣ <b>Investissement long terme</b> = Une fois l'épargne de précaution constituée et les dettes remboursées, investissez le reste : BRVM, immobilier, business...</div>
+  <div class="box">4️⃣ <b>Protection</b> = Assurance santé, assurance vie, testament. Protégez ce que vous avez bâti.</div>
+
+  <div class="section-title">🚀 Les 7 habitudes des personnes financièrement libres</div>
+  <div class="box ok">✅ <b>Habitudes à adopter :</b><br>
+  1. <b>Se payer en premier</b> — Épargner avant de dépenser, pas après<br>
+  2. <b>Suivre chaque dépense</b> — Ce qu'on ne mesure pas, on ne le contrôle pas<br>
+  3. <b>Avoir un budget mensuel</b> — Planifier avant de dépenser<br>
+  4. <b>Diversifier ses revenus</b> — Ne jamais dépendre d'une seule source<br>
+  5. <b>Investir régulièrement</b> — Même 25 000 FCFA/mois pendant 20 ans = fortune<br>
+  6. <b>Éviter les dettes de consommation</b> — Emprunter seulement pour investir<br>
+  7. <b>Se former en continu</b> — Les connaissances financières = meilleur investissement</div>
+
+  <div class="section-title">⚠️ Les pièges financiers courants au Mali</div>
+  <div class="box err">🚨 <b>Pièges à éviter :</b><br>
+  • Prêter de l'argent à la famille sans capacité de perte<br>
+  • Investir dans des schémas pyramidaux (promesses de 50%/mois)<br>
+  • Acheter en crédit des biens qui se déprécient (voiture, électro)<br>
+  • Garder tout son argent en cash sous le matelas<br>
+  • Ne pas avoir d'assurance santé<br>
+  • Augmenter ses dépenses au même rythme que son salaire (lifestyle inflation)</div>
+</div>
+
+<!-- PANE 1: BUDGET -->
+<div class="pane" id="p1">
+  <div class="box" style="margin-bottom:12px">💰 <span>Saisissez vos revenus et dépenses mensuels. Le bilan se calcule automatiquement avec analyse selon la règle 50/30/20.</span></div>
+  <div class="row">
+    <div><label>Votre prénom</label><input id="budgetNom" placeholder="Ex: Kady" oninput="calcBudget()"></div>
+    <div><label>Mois de référence</label><input id="budgetMois" placeholder="Ex: Janvier 2025" oninput="calcBudget()"></div>
+  </div>
+
+  <div class="section-title">📈 Mes Revenus</div>
+  <div id="revenusBox"></div>
+  <div class="btn-row">
+    <button class="btn btn-orange" onclick="addRevenu()">+ Ajouter un revenu</button>
+  </div>
+
+  <div class="section-title">📉 Mes Dépenses</div>
+  <div style="margin-bottom:8px">
+    <select id="newDepCat" style="width:auto;display:inline-block;margin-right:8px;padding:6px 10px;font-size:12px">
+      <option value="logement">🏠 Logement</option>
+      <option value="nourriture">🍽️ Nourriture</option>
+      <option value="transport">🚗 Transport</option>
+      <option value="sante">🏥 Santé</option>
+      <option value="education">📚 Éducation</option>
+      <option value="loisirs">🎉 Loisirs</option>
+      <option value="vetements">👗 Vêtements</option>
+      <option value="famille">👨‍👩‍👧 Famille</option>
+      <option value="epargne">💰 Épargne</option>
+      <option value="autres">📦 Autres</option>
+    </select>
+    <button class="btn btn-orange" onclick="addDepense()">+ Ajouter une dépense</button>
+  </div>
+  <div id="depensesBox"></div>
+
+  <div class="section-title">📊 Bilan mensuel</div>
+  <div class="kpis" id="bilanKpis"></div>
+  <div id="bilanAnalyse"></div>
+  <div id="regle502030"></div>
+  <div class="btn-row">
+    <button class="btn btn-orange" onclick="loadExempleBudget()">📋 Charger un exemple</button>
+    <button class="btn btn-red" onclick="resetBudget()">🗑️ Effacer</button>
+  </div>
+</div>
+
+<!-- PANE 2: OBJECTIFS -->
+<div class="pane" id="p2">
+  <div class="box" style="margin-bottom:12px">🎯 <span>Définissez vos objectifs d'épargne et calculez combien épargner chaque mois pour les atteindre.</span></div>
+  <div id="objectifsList"></div>
+  <div style="background:#f8f8f8;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #e0e0e0">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px">➕ Nouvel objectif</div>
+    <div class="row">
+      <div><label>Nom de l'objectif</label><input id="objNom" placeholder="Ex: Voiture, Voyage, Maison..."></div>
+      <div><label>Montant cible (FCFA)</label><input type="number" id="objMontant" value="1000000"></div>
+    </div>
+    <div class="row">
+      <div><label>Épargne déjà réalisée (FCFA)</label><input type="number" id="objDejaEpargne" value="0"></div>
+      <div><label>Délai pour atteindre (mois)</label><input type="number" id="objDelai" value="12"></div>
+    </div>
+    <div class="row">
+      <div><label>Taux de rendement (%/an)</label><input type="number" id="objTaux" value="5" step="0.5"><div class="hint">Taux du placement choisi pour cette épargne</div></div>
+      <div><label>Catégorie</label>
+      <select id="objCat">
+        <option value="urgence">🆘 Épargne urgence</option>
+        <option value="achat">🛒 Achat important</option>
+        <option value="voyage">✈️ Voyage</option>
+        <option value="education">📚 Éducation</option>
+        <option value="business">🚀 Projet business</option>
+        <option value="retraite">🏖️ Retraite</option>
+      </select></div>
+    </div>
+    <button class="btn btn-orange" onclick="addObjectif()">✅ Ajouter cet objectif</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-orange" onclick="loadExemplesObj()">📋 Exemples d'objectifs</button>
+  </div>
+</div>
+
+<!-- PANE 3: DETTES -->
+<div class="pane" id="p3">
+  <div class="box" style="margin-bottom:12px">💳 <span>Gérez vos dettes intelligemment. Comparez la méthode Avalanche (taux le plus élevé d'abord) vs Boule de Neige (petite dette d'abord).</span></div>
+
+  <div style="background:#f8f8f8;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #e0e0e0">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px">➕ Ajouter une dette</div>
+    <div class="row r3">
+      <div><label>Nom de la dette</label><input id="detteNom" placeholder="Ex: Crédit BMS, Tontine..."></div>
+      <div><label>Capital restant dû (FCFA)</label><input type="number" id="detteMontant" value="500000"></div>
+      <div><label>Taux d'intérêt (%/an)</label><input type="number" id="detteTaux" value="18" step="0.5"></div>
+    </div>
+    <div class="row">
+      <div><label>Mensualité minimale (FCFA)</label><input type="number" id="detteEcheance" value="30000"></div>
+      <div><label>Type de dette</label>
+      <select id="detteType">
+        <option value="credit">🏦 Crédit bancaire</option>
+        <option value="tontine">🤝 Tontine/Famille</option>
+        <option value="fournisseur">📦 Fournisseur</option>
+        <option value="autre">📋 Autre</option>
+      </select></div>
+    </div>
+    <button class="btn btn-orange" onclick="addDette()">+ Ajouter cette dette</button>
+  </div>
+  <div id="dettesList"></div>
+  <div id="dettesAnalyse"></div>
+
+  <div class="section-title">📊 Stratégies de remboursement</div>
+  <div class="row">
+    <div class="box warn">🏔️ <b>Méthode Avalanche</b><br>Rembourser en priorité la dette avec le taux d'intérêt le plus élevé.<br><b>Avantage :</b> Économise le plus d'intérêts<br><b>Idéal :</b> Si vous êtes discipliné(e)</div>
+    <div class="box info">⛄ <b>Méthode Boule de Neige</b><br>Rembourser en priorité la plus petite dette (solde le plus bas).<br><b>Avantage :</b> Motivation rapide car on clôture des dettes<br><b>Idéal :</b> Si vous avez besoin de motivation</div>
+  </div>
+  <div id="strategiesDettes"></div>
+</div>
+
+<!-- PANE 4: RETRAITE -->
+<div class="pane" id="p4">
+  <div class="box" style="margin-bottom:12px">🏖️ <span>Simulez votre épargne retraite. Il n'est jamais trop tôt pour commencer — chaque année compte !</span></div>
+  <div class="row">
+    <div><label>Votre âge actuel</label><input type="number" id="retAge" value="28" oninput="calcRetraite()"></div>
+    <div><label>Âge de retraite souhaité</label><input type="number" id="retAgeRet" value="60" oninput="calcRetraite()"></div>
+  </div>
+  <div class="row">
+    <div><label>Épargne retraite actuelle (FCFA)</label><input type="number" id="retEpargne" value="0" oninput="calcRetraite()"></div>
+    <div><label>Versement mensuel pour retraite (FCFA)</label><input type="number" id="retVersement" value="30000" oninput="calcRetraite()"></div>
+  </div>
+  <div class="row">
+    <div><label>Taux de rendement annuel (%)</label><input type="number" id="retTaux" value="8" step="0.5" oninput="calcRetraite()"></div>
+    <div><label>Revenu mensuel souhaité à la retraite (FCFA)</label><input type="number" id="retRevSouhaite" value="300000" oninput="calcRetraite()"></div>
+  </div>
+  <div class="kpis" id="kpiRetraite"></div>
+  <div id="analyseRetraite"></div>
+  <div id="retraiteProjection"></div>
+</div>
+
+<!-- PANE 5: QUIZ -->
+<div class="pane" id="p5">
+  <div id="quizArea"></div>
+</div>
+
+<script>
+var revenus=[], depenses=[], objectifs=[], dettes=[];
+var qStep=0, qScore=0, qAnswers=[];
+var CAT_DEP={logement:{l:'🏠 Logement',c:'#1D4ED8',type:'besoin'},nourriture:{l:'🍽️ Nourriture',c:'#059669',type:'besoin'},transport:{l:'🚗 Transport',c:'#7C3AED',type:'besoin'},sante:{l:'🏥 Santé',c:'#DC2626',type:'besoin'},education:{l:'📚 Éducation',c:'#0891B2',type:'besoin'},loisirs:{l:'🎉 Loisirs',c:'#D97706',type:'envie'},vetements:{l:'👗 Vêtements',c:'#EC4899',type:'envie'},famille:{l:'👨‍👩‍👧 Famille',c:'#6366F1',type:'besoin'},epargne:{l:'💰 Épargne',c:'#10B981',type:'epargne'},autres:{l:'📦 Autres',c:'#64748B',type:'envie'}};
+var QUESTIONS=[
+  {q:"Selon la règle 50/30/20, quelle part de votre revenu devrait aller à l'épargne ?",tip:"C'est la règle de base de la budgétisation personnelle.",opts:["5%","10%","20%","50%"],correct:2,fb:"✅ 20% de votre revenu doit aller à l'épargne et l'investissement. Si vous gagnez 300 000 FCFA, c'est 60 000 FCFA à mettre de côté AVANT de dépenser le reste.",pts:10},
+  {q:"Qu'est-ce que l'épargne de précaution ?",tip:"C'est votre filet de sécurité financier.",opts:["L'argent pour les vacances","3 à 6 mois de charges mensuelles mis de côté pour faire face aux imprévus","L'argent investi en bourse","Le montant économisé sur les achats en promotion"],correct:1,fb:"✅ L'épargne de précaution = 3 à 6 mois de vos charges. Si vous dépensez 200 000 FCFA/mois, vous devez avoir 600 000 à 1 200 000 FCFA disponibles immédiatement. C'est la PREMIÈRE priorité avant tout investissement.",pts:15},
+  {q:"Vous avez 2 dettes : A) 1 000 000 FCFA à 24%/an et B) 200 000 FCFA à 8%/an. Quelle méthode Avalanche recommande-t-elle ?",tip:"Avalanche = taux d'intérêt le plus élevé en premier.",opts:["Rembourser B en premier car c'est la plus petite","Rembourser A en premier car son taux est plus élevé","Rembourser les deux en même temps à parts égales","Attendre d'avoir assez pour tout rembourser d'un coup"],correct:1,fb:"✅ Méthode Avalanche : Rembourser d'abord la dette A (24%/an) car elle coûte plus cher. Pendant ce temps, payer le minimum sur B. Une fois A remboursée, attaquer B avec tout le budget disponible. Cela économise le plus d'intérêts.",pts:15},
+  {q:"Pourquoi est-il conseillé de 'se payer en premier' ?",tip:"C'est le principe numéro 1 de la finance personnelle.",opts:["Pour avoir plus d'argent à dépenser","Pour s'assurer que l'épargne se fait systématiquement avant les dépenses, pas avec ce qui reste","Pour impressionner les autres","Pour payer moins d'impôts"],correct:1,fb:"✅ 'Se payer en premier' = virer automatiquement son épargne dès que le salaire arrive, AVANT de payer quoi que ce soit d'autre. La psychologie humaine dépense ce qui est disponible — en épargnant d'abord, vous vous assurez que ça se fait vraiment.",pts:15},
+  {q:"Vous gagnez 400 000 FCFA/mois. Selon la règle 50/30/20, combien devriez-vous dépenser en loisirs ?",tip:"30% de 400 000 FCFA",opts:["40 000 FCFA","80 000 FCFA","120 000 FCFA","200 000 FCFA"],correct:2,fb:"✅ 30% × 400 000 = 120 000 FCFA pour les loisirs (sorties, restaurants, vêtements...). Les besoins = 200 000 FCFA et l'épargne = 80 000 FCFA.",pts:10},
+  {q:"Quel est le piège de 'l'inflation du style de vie' (lifestyle inflation) ?",tip:"Ce qui se passe quand les revenus augmentent...",opts:["Les prix augmentent plus vite que le salaire","On augmente ses dépenses au même rythme que ses revenus, donc on n'épargne jamais plus malgré un meilleur salaire","L'inflation détruit la valeur de l'épargne","On dépense moins quand on gagne plus"],correct:1,fb:"✅ L'inflation du style de vie = chaque augmentation de salaire est absorbée par de nouvelles dépenses (meilleur logement, nouvelle voiture, restaurants plus chers). Résultat : malgré un salaire qui double, on n'épargne pas plus. Solution : maintenir le même niveau de vie quand les revenus augmentent.",pts:15},
+  {q:"Quel est l'avantage principal d'investir tôt pour la retraite ?",tip:"Pensez aux intérêts composés sur le long terme.",opts:["On peut retirer l'argent plus facilement","L'effet des intérêts composés sur une longue durée multiplie considérablement le capital","Les taux d'intérêt sont plus élevés pour les jeunes","On paie moins d'impôts sur les placements retraite"],correct:1,fb:"✅ Investir 25 000 FCFA/mois à 30 ans (pendant 30 ans à 8%) = 34 millions FCFA à 60 ans. Commencer à 40 ans (pendant 20 ans) avec le même versement = seulement 14 millions. Les 10 années de différence = 20 millions FCFA grâce aux intérêts composés !",pts:20},
+];
+
+function show(i){
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+  document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+  if(i===1) renderBudget();
+  if(i===2) renderObjectifs();
+  if(i===3) renderDettes();
+  if(i===4) calcRetraite();
+  if(i===5) renderQuiz();
+}
+
+function gn(id,d){return parseFloat(document.getElementById(id)?.value)||d||0;}
+function fm(n){return Math.round(n).toLocaleString('fr-FR');}
+
+// BUDGET
+function addRevenu(){revenus.push({id:Date.now(),nom:'',montant:0});renderBudget();}
+function delRevenu(id){revenus=revenus.filter(function(r){return r.id!==id;});renderBudget();}
+function addDepense(){
+  var cat=document.getElementById('newDepCat')?.value||'autres';
+  depenses.push({id:Date.now(),nom:'',montant:0,cat:cat});
+  renderBudget();
+}
+function delDepense(id){depenses=depenses.filter(function(d){return d.id!==id;});renderBudget();}
+
+function renderBudget(){
+  var rb=document.getElementById('revenusBox');
+  if(rb) rb.innerHTML=revenus.map(function(r){
+    return '<div class="budget-item">'+
+      '<input placeholder="Ex: Salaire, Freelance, Loyer reçu..." value="'+r.nom+'" oninput="revenus.find(x=>x.id==='+r.id+').nom=this.value;calcBudget()" style="border:1px solid #ddd;border-radius:6px;padding:6px 10px;font-size:12px;font-family:Arial">'+
+      '<input type="number" placeholder="Montant FCFA" value="'+(r.montant||'')+'" oninput="revenus.find(x=>x.id==='+r.id+').montant=parseFloat(this.value)||0;calcBudget()" style="border:1px solid #ddd;border-radius:6px;padding:6px 10px;font-size:12px;text-align:right;font-family:Arial">'+
+      '<span class="budget-cat" style="background:#D1FAE5;color:#065F46">📈 Revenu</span>'+
+      '<button onclick="delRevenu('+r.id+')" style="border:none;background:none;color:#EF4444;cursor:pointer;font-size:16px">✕</button>'+
+      '</div>';
+  }).join('');
+
+  var db=document.getElementById('depensesBox');
+  if(db) db.innerHTML=depenses.map(function(d){
+    var cat=CAT_DEP[d.cat]||CAT_DEP.autres;
+    return '<div class="budget-item">'+
+      '<input placeholder="Description..." value="'+d.nom+'" oninput="depenses.find(x=>x.id==='+d.id+').nom=this.value;calcBudget()" style="border:1px solid #ddd;border-radius:6px;padding:6px 10px;font-size:12px;font-family:Arial">'+
+      '<input type="number" placeholder="Montant FCFA" value="'+(d.montant||'')+'" oninput="depenses.find(x=>x.id==='+d.id+').montant=parseFloat(this.value)||0;calcBudget()" style="border:1px solid #ddd;border-radius:6px;padding:6px 10px;font-size:12px;text-align:right;font-family:Arial">'+
+      '<span class="budget-cat" style="background:'+cat.c+'22;color:'+cat.c+'">'+cat.l+'</span>'+
+      '<button onclick="delDepense('+d.id+')" style="border:none;background:none;color:#EF4444;cursor:pointer;font-size:16px">✕</button>'+
+      '</div>';
+  }).join('');
+  calcBudget();
+}
+
+function calcBudget(){
+  var totalRev=revenus.reduce(function(s,r){return s+r.montant;},0);
+  var totalDep=depenses.reduce(function(s,d){return s+d.montant;},0);
+  var solde=totalRev-totalDep;
+  var bk=document.getElementById('bilanKpis');
+  if(bk) bk.innerHTML=
+    '<div class="kpi"><b>'+fm(totalRev)+'</b><span>Revenus totaux (F)</span></div>'+
+    '<div class="kpi r"><b>'+fm(totalDep)+'</b><span>Dépenses totales (F)</span></div>'+
+    '<div class="kpi '+(solde>=0?'g':'r')+'"><b>'+fm(solde)+'</b><span>'+(solde>=0?'Excédent':'Déficit')+' (F)</span></div>'+
+    '<div class="kpi '+(totalRev>0&&totalDep/totalRev<=0.8?'g':'r')+'"><b>'+(totalRev>0?Math.round(totalDep/totalRev*100):0)+'%</b><span>Taux dépense</span></div>';
+
+  var ba=document.getElementById('bilanAnalyse');
+  if(ba){
+    if(solde<0) ba.innerHTML='<div class="box err">🚨 Budget déficitaire de '+fm(Math.abs(solde))+' FCFA ! Vous dépensez plus que vous ne gagnez. Identifiez les dépenses à réduire.</div>';
+    else if(solde===0) ba.innerHTML='<div class="box warn">⚠️ Budget à l\'équilibre exact — aucune marge d\'épargne. Cherchez à réduire au moins 20% de vos dépenses.</div>';
+    else ba.innerHTML='<div class="box ok">✅ Budget excédentaire de '+fm(solde)+' FCFA. Placez cet excédent en épargne ou investissement !</div>';
+  }
+
+  // Règle 50/30/20
+  var besoins=depenses.filter(function(d){return (CAT_DEP[d.cat]||{type:'autres'}).type==='besoin';}).reduce(function(s,d){return s+d.montant;},0);
+  var envies=depenses.filter(function(d){return (CAT_DEP[d.cat]||{type:'autres'}).type==='envie';}).reduce(function(s,d){return s+d.montant;},0);
+  var epargne=depenses.filter(function(d){return d.cat==='epargne';}).reduce(function(s,d){return s+d.montant;},0);
+  var r2030=document.getElementById('regle502030');
+  if(r2030&&totalRev>0){
+    r2030.innerHTML='<div class="section-title">📊 Analyse selon la règle 50/30/20</div>'+
+      ['Besoins (cible 50%):'+fm(besoins)+':'+Math.round(besoins/totalRev*100)+':50:'+Math.round(totalRev*0.5),
+       'Envies (cible 30%):'+fm(envies)+':'+Math.round(envies/totalRev*100)+':30:'+Math.round(totalRev*0.3),
+       'Épargne (cible 20%):'+fm(epargne)+':'+Math.round(epargne/totalRev*100)+':20:'+Math.round(totalRev*0.2)].map(function(row){
+        var parts=row.split(':');
+        var lbl=parts[0],val=parseInt(parts[1]),pct=parseInt(parts[2]),cible=parseInt(parts[3]),cibleMontant=parseInt(parts[4]);
+        var ok=lbl.includes('Besoins')?pct<=50:lbl.includes('Envies')?pct<=30:pct>=20;
+        var fillPct=Math.min(100,Math.round(val/totalRev*100));
+        return '<div class="jauge-wrap">'+
+          '<div class="jauge-top"><span>'+lbl+'</span><span style="color:'+(ok?'#065F46':'#991B1B');+'">'+fm(val)+' F ('+pct+'%) | Cible : '+cible+'% ('+fm(cibleMontant)+' F)</span></div>'+
+          '<div class="jauge-track"><div class="jauge-fill" style="width:'+fillPct+'%;background:'+(ok?'#10B981':'#EF4444')+'">'+pct+'%</div></div>'+
+          '</div>';
+       }).join('');
+  }
+}
+
+function loadExempleBudget(){
+  revenus=[{id:1,nom:'Salaire net',montant:300000},{id:2,nom:'Revenu freelance',montant:80000}];
+  depenses=[
+    {id:10,nom:'Loyer',montant:60000,cat:'logement'},
+    {id:11,nom:'Nourriture & marché',montant:70000,cat:'nourriture'},
+    {id:12,nom:'Transport (moto)',montant:30000,cat:'transport'},
+    {id:13,nom:'Électricité & eau',montant:15000,cat:'logement'},
+    {id:14,nom:'Téléphone',montant:10000,cat:'transport'},
+    {id:15,nom:'Sorties & restaurants',montant:40000,cat:'loisirs'},
+    {id:16,nom:'Vêtements',montant:20000,cat:'vetements'},
+    {id:17,nom:'Soutien famille',montant:30000,cat:'famille'},
+    {id:18,nom:'Épargne BMS',montant:76000,cat:'epargne'},
+  ];
+  renderBudget();
+}
+
+function resetBudget(){revenus=[];depenses=[];renderBudget();}
+
+// OBJECTIFS
+function addObjectif(){
+  var nom=document.getElementById('objNom')?.value?.trim();
+  if(!nom){alert('Donnez un nom à votre objectif');return;}
+  var montant=gn('objMontant',1000000);
+  var deja=gn('objDejaEpargne',0);
+  var delai=gn('objDelai',12);
+  var taux=gn('objTaux',5)/100/12;
+  var restant=montant-deja;
+  var mensuel=taux>0?Math.ceil(restant*taux/(Math.pow(1+taux,delai)-1)):Math.ceil(restant/delai);
+  objectifs.push({id:Date.now(),nom:nom,montant:montant,deja:deja,delai:delai,taux:gn('objTaux',5),mensuel:mensuel,cat:document.getElementById('objCat')?.value||'achat'});
+  document.getElementById('objNom').value='';
+  renderObjectifs();
+}
+
+function delObjectif(id){objectifs=objectifs.filter(function(o){return o.id!==id;});renderObjectifs();}
+
+function renderObjectifs(){
+  var el=document.getElementById('objectifsList');
+  if(!el) return;
+  if(!objectifs.length){el.innerHTML='<div class="box" style="margin-bottom:10px">🎯 Aucun objectif défini. Ajoutez votre premier objectif ci-dessous !</div>';return;}
+  var catIcon={urgence:'🆘',achat:'🛒',voyage:'✈️',education:'📚',business:'🚀',retraite:'🏖️'};
+  el.innerHTML=objectifs.map(function(o){
+    var pct=Math.min(100,Math.round(o.deja/o.montant*100));
+    return '<div style="border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:10px">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'+
+      '<div style="font-size:14px;font-weight:700">'+(catIcon[o.cat]||'🎯')+' '+o.nom+'</div>'+
+      '<button onclick="delObjectif('+o.id+')" style="border:none;background:none;color:#EF4444;cursor:pointer;font-size:14px">✕</button></div>'+
+      '<div class="jauge-wrap"><div class="jauge-top"><span>Progression</span><span>'+fm(o.deja)+' / '+fm(o.montant)+' F ('+pct+'%)</span></div>'+
+      '<div class="jauge-track"><div class="jauge-fill" style="width:'+pct+'%;background:#C2410C">'+pct+'%</div></div></div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;font-size:11px">'+
+      '<div style="background:#f5f5f5;border-radius:6px;padding:8px;text-align:center"><div style="font-weight:700;color:#C2410C">'+fm(o.mensuel)+' F</div><div style="color:#666">À épargner/mois</div></div>'+
+      '<div style="background:#f5f5f5;border-radius:6px;padding:8px;text-align:center"><div style="font-weight:700;color:#C2410C">'+o.delai+' mois</div><div style="color:#666">Délai</div></div>'+
+      '<div style="background:#f5f5f5;border-radius:6px;padding:8px;text-align:center"><div style="font-weight:700;color:#C2410C">'+o.taux+'%</div><div style="color:#666">Rendement</div></div>'+
+      '</div></div>';
+  }).join('');
+}
+
+function loadExemplesObj(){
+  objectifs=[
+    {id:1,nom:'Épargne urgence (6 mois)',montant:1200000,deja:300000,delai:18,taux:5,mensuel:57000,cat:'urgence'},
+    {id:2,nom:'Voyage Dubaï',montant:800000,deja:0,delai:12,taux:3,mensuel:68000,cat:'voyage'},
+    {id:3,nom:'Formation Stageia',montant:150000,deja:50000,delai:4,taux:0,mensuel:25000,cat:'education'},
+  ];
+  renderObjectifs();
+}
+
+// DETTES
+function addDette(){
+  var nom=document.getElementById('detteNom')?.value?.trim();
+  if(!nom){alert('Nommez la dette');return;}
+  dettes.push({id:Date.now(),nom:nom,montant:gn('detteMontant',500000),taux:gn('detteTaux',18),echeance:gn('detteEcheance',30000),type:document.getElementById('detteType')?.value||'credit'});
+  document.getElementById('detteNom').value='';
+  renderDettes();
+}
+
+function delDette(id){dettes=dettes.filter(function(d){return d.id!==id;});renderDettes();}
+
+function renderDettes(){
+  var el=document.getElementById('dettesList');
+  if(!el) return;
+  if(!dettes.length){el.innerHTML='<div class="box ok" style="margin-bottom:10px">✅ Aucune dette enregistrée. Excellent !</div>';document.getElementById('dettesAnalyse').innerHTML='';document.getElementById('strategiesDettes').innerHTML='';return;}
+  var totalDettes=dettes.reduce(function(s,d){return s+d.montant;},0);
+  var totalInterets=dettes.reduce(function(s,d){return s+d.montant*d.taux/100;},0);
+  el.innerHTML='<table><thead><tr><th>Dette</th><th>Capital restant (F)</th><th>Taux (%/an)</th><th>Mensualité (F)</th><th>Intérêts annuels (F)</th><th></th></tr></thead><tbody>'+
+    dettes.map(function(d){return '<tr>'+
+      '<td><b>'+d.nom+'</b></td>'+
+      '<td>'+fm(d.montant)+'</td>'+
+      '<td style="color:'+(d.taux>15?'#991B1B':d.taux>8?'#92400E':'#065F46');+'"><b>'+d.taux+'%</b></td>'+
+      '<td>'+fm(d.echeance)+'</td>'+
+      '<td style="color:#991B1B">'+fm(Math.round(d.montant*d.taux/100))+'</td>'+
+      '<td><button onclick="delDette('+d.id+')" style="border:none;background:none;color:#EF4444;cursor:pointer;font-size:13px">✕</button></td>'+
+      '</tr>';}).join('')+
+    '<tr class="tot"><td><b>TOTAL</b></td><td><b>'+fm(totalDettes)+'</b></td><td></td><td><b>'+fm(dettes.reduce(function(s,d){return s+d.echeance;},0))+'</b></td><td><b style="color:#991B1B">'+fm(Math.round(totalInterets))+'</b></td><td></td></tr>'+
+    '</tbody></table>';
+
+  // Analyse
+  var da=document.getElementById('dettesAnalyse');
+  if(da) da.innerHTML='<div class="box err">💳 Total dettes : <b>'+fm(totalDettes)+' FCFA</b> · Coût annuel des intérêts : <b>'+fm(Math.round(totalInterets))+' FCFA</b></div>';
+
+  // Stratégies
+  var sorted_aval=[...dettes].sort(function(a,b){return b.taux-a.taux;});
+  var sorted_snow=[...dettes].sort(function(a,b){return a.montant-b.montant;});
+  var sd=document.getElementById('strategiesDettes');
+  if(sd) sd.innerHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+    '<div><div style="font-size:12px;font-weight:700;color:#92400E;margin-bottom:6px">🏔️ Ordre Avalanche (conseillé)</div>'+
+    sorted_aval.map(function(d,i){return '<div class="box warn" style="padding:7px 10px;margin-bottom:4px;font-size:11px"><b>'+(i+1)+'. '+d.nom+'</b> — '+d.taux+'%/an — '+fm(d.montant)+' F</div>';}).join('')+
+    '</div><div><div style="font-size:12px;font-weight:700;color:#1D4ED8;margin-bottom:6px">⛄ Ordre Boule de Neige (motivation)</div>'+
+    sorted_snow.map(function(d,i){return '<div class="box info" style="padding:7px 10px;margin-bottom:4px;font-size:11px"><b>'+(i+1)+'. '+d.nom+'</b> — '+fm(d.montant)+' F — '+d.taux+'%/an</div>';}).join('')+
+    '</div></div>';
+}
+
+// RETRAITE
+function calcRetraite(){
+  var age=gn('retAge',28),ageRet=gn('retAgeRet',60);
+  var epargne=gn('retEpargne',0),versement=gn('retVersement',30000);
+  var taux=gn('retTaux',8)/100,tauxM=taux/12;
+  var duree=(ageRet-age)*12;
+  var revSouhaite=gn('retRevSouhaite',300000);
+  if(duree<=0){document.getElementById('kpiRetraite').innerHTML='<div class="box err">Âge de retraite doit être supérieur à votre âge actuel.</div>';return;}
+  var capitalFinal=epargne*Math.pow(1+taux,ageRet-age);
+  for(var m=1;m<=duree;m++) capitalFinal+=versement*Math.pow(1+tauxM,(duree-m));
+  var capitalNecessaire=revSouhaite*12/taux;
+  var dureeRevenu=capitalFinal>0?Math.round(capitalFinal/revSouhaite):0;
+  var kpi=document.getElementById('kpiRetraite');
+  if(kpi) kpi.innerHTML=
+    '<div class="kpi"><b>'+(ageRet-age)+' ans</b><span>Avant la retraite</span></div>'+
+    '<div class="kpi g"><b>'+fm(Math.round(capitalFinal))+'</b><span>Capital à la retraite (F)</span></div>'+
+    '<div class="kpi b"><b>'+fm(Math.round(capitalNecessaire))+'</b><span>Capital nécessaire (F)</span></div>'+
+    '<div class="kpi '+(capitalFinal>=capitalNecessaire?'g':'r')+'"><b>'+(capitalFinal>=capitalNecessaire?'✅ Objectif atteint':'❌ Insuffisant')+'</b><span>Statut</span></div>';
+
+  var ar=document.getElementById('analyseRetraite');
+  if(ar){
+    var msgs=[];
+    if(capitalFinal>=capitalNecessaire) msgs.push('<div class="box ok">🏖️ Excellent ! Votre capital de retraite estimé ('+fm(Math.round(capitalFinal))+' F) dépasse votre objectif ('+fm(Math.round(capitalNecessaire))+' F). Vous pourrez vivre de vos rentes !</div>');
+    else{
+      var manque=capitalNecessaire-capitalFinal;
+      var mensuelNecessaire=Math.ceil(manque*tauxM/(Math.pow(1+tauxM,duree)-1));
+      msgs.push('<div class="box warn">⚠️ Capital insuffisant. Il manque '+fm(Math.round(manque))+' FCFA. Pour atteindre votre objectif, épargnez <b>'+fm(mensuelNecessaire+versement)+' FCFA/mois</b> au lieu de '+fm(versement)+' FCFA.</div>');
+    }
+    if(age<35) msgs.push('<div class="box ok">🚀 Vous avez commencé tôt ! Chaque année supplémentaire d\'épargne vaut des millions grâce aux intérêts composés.</div>');
+    ar.innerHTML=msgs.join('');
+  }
+
+  var rp=document.getElementById('retraiteProjection');
+  if(rp){
+    var annees=[5,10,15,20,ageRet-age].filter(function(a,i,arr){return a>0&&a<=ageRet-age&&arr.indexOf(a)===i;});
+    var maxV=capitalFinal;
+    rp.innerHTML='<div class="section-title">📊 Projection du capital</div>'+
+      annees.map(function(a){
+        var cap=epargne*Math.pow(1+taux,a);
+        for(var m=1;m<=a*12;m++) cap+=versement*Math.pow(1+tauxM,(a*12-m));
+        var pct=Math.min(100,Math.round(cap/maxV*100));
+        return '<div class="jauge-wrap"><div class="jauge-top"><span>Dans '+a+' ans (à '+(age+a)+' ans)</span><span style="font-weight:600;color:#C2410C">'+fm(Math.round(cap))+' FCFA</span></div>'+
+          '<div class="jauge-track"><div class="jauge-fill" style="width:'+pct+'%;background:linear-gradient(90deg,#C2410C,#F97316)">'+pct+'%</div></div></div>';
+      }).join('');
+  }
+}
+
+// QUIZ
+function renderQuiz(){
+  if(qStep>=QUESTIONS.length){showResult();return;}
+  var q=QUESTIONS[qStep];
+  var ans=qAnswers[qStep]!==undefined;
+  var html='<div style="text-align:center;margin-bottom:10px;font-size:12px;color:#666">Question '+(qStep+1)+'/'+QUESTIONS.length+' · Score : <b>'+qScore+' pts</b></div>'+
+    '<div class="quiz-q"><div class="q-num">Question '+(qStep+1)+' — '+q.pts+' points</div>'+
+    '<div class="q-text">'+q.q+'</div>'+
+    '<div class="q-tip">💡 '+q.tip+'</div>'+
+    q.opts.map(function(o,i){
+      var cls='opt';
+      if(ans) cls+=(i===q.correct?' good':(i===qAnswers[qStep]?' bad':' dis'));
+      return '<button class="'+cls+'" onclick="ansQ('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+    }).join('')+
+    (ans?'<div class="fb show '+(qAnswers[qStep]===q.correct?'ok':'ko')+'">'+q.fb+'</div>':'')+
+    (ans?'<button class="btn btn-orange" style="margin-top:8px" onclick="nextQ()">'+( qStep<QUESTIONS.length-1?'Question suivante →':'Voir mon score →')+'</button>':'')+
+    '</div>';
+  document.getElementById('quizArea').innerHTML=html;
+}
+function ansQ(i){if(qAnswers[qStep]!==undefined)return;qAnswers[qStep]=i;if(i===QUESTIONS[qStep].correct)qScore+=QUESTIONS[qStep].pts;renderQuiz();}
+function nextQ(){qStep++;renderQuiz();}
+function showResult(){
+  var max=QUESTIONS.reduce(function(s,q){return s+q.pts;},0);
+  var p=Math.round(qScore/max*100);
+  var msg=p>=80?'🏆 Expert en finance personnelle !':p>=60?'👍 Bonne maîtrise financière !':'📚 Continuez à apprendre !';
+  document.getElementById('quizArea').innerHTML=
+    '<div style="text-align:center;background:linear-gradient(135deg,#FFF7ED,#FED7AA);border-radius:12px;padding:20px;margin-bottom:14px;border:2px solid #C2410C">'+
+    '<div style="font-size:36px;font-weight:700;color:#C2410C">'+qScore+'/'+max+'</div>'+
+    '<div style="font-size:14px;font-weight:700;margin:6px 0">'+msg+'</div>'+
+    '<div style="font-size:12px;color:#666">Score : '+p+'%</div></div>'+
+    '<button onclick="qStep=0;qScore=0;qAnswers=[];renderQuiz()" class="btn btn-orange" style="width:100%;padding:12px">🔄 Recommencer le quiz</button>';
+}
+</script>
+</body>
+</html>

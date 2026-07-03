@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Simulateur Pitch Investisseur</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#B45309);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#FCD34D;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#D97706;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+label{font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:4px}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;font-family:Arial;background:#fff}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#D97706}
+textarea{resize:vertical;min-height:70px}
+.hint{font-size:10px;color:#888;margin-top:3px}
+.box{background:#FFFBEB;border-left:3px solid #D97706;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.ok{background:#D1FAE5;border-left-color:#10B981;color:#065F46}
+.warn{background:#FEF3C7;border-left-color:#F59E0B;color:#92400E}
+.err{background:#FEE2E2;border-left-color:#EF4444;color:#991B1B}
+.info{background:#DBEAFE;border-left-color:#3B82F6;color:#1E40AF}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin:12px 0}
+.kpi{background:#f5f5f5;border-radius:8px;padding:10px;text-align:center;border:1px solid #e0e0e0}
+.kpi b{display:block;font-size:17px;color:#B45309;margin-bottom:2px}
+.kpi span{font-size:10px;color:#666}
+/* SLIDES */
+.slide-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.slide-dots{display:flex;gap:5px}
+.dot{width:10px;height:10px;border-radius:50%;background:#ddd;cursor:pointer;transition:all .2s}
+.dot.on{background:#D97706;transform:scale(1.3)}
+.slide{display:none;border:2px solid #e0e0e0;border-radius:12px;overflow:hidden}
+.slide.on{display:block}
+.slide-header{padding:14px 18px;color:#fff;display:flex;align-items:center;justify-content:space-between}
+.slide-num{font-size:11px;opacity:.8}
+.slide-title{font-size:16px;font-weight:700}
+.slide-body{padding:16px}
+.slide-content{font-size:13px;color:#333;line-height:1.8}
+.slide-tip{background:#FFFBEB;border:1px solid #D97706;border-radius:8px;padding:10px;margin-top:10px;font-size:11px;color:#92400E}
+.btn-nav{padding:8px 16px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600}
+.btn-prev{background:#f0f0f0;color:#555}
+.btn-next{background:#D97706;color:#fff}
+/* SIMULATION */
+.sim-msg{padding:12px 14px;border-radius:10px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.sim-msg.inv{background:#f5f5f5;border:1px solid #ddd;border-radius:4px 12px 12px 12px}
+.sim-msg.you{background:#D97706;color:#fff;border-radius:12px 4px 12px 12px;align-self:flex-end;margin-left:20%}
+.sim-msg.sys{background:#DBEAFE;border:1px solid #3B82F6;color:#1E40AF;text-align:center;font-size:11px;border-radius:8px}
+.sim-name{font-size:10px;font-weight:600;color:#888;margin-bottom:3px}
+.opt-btn{width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:9px;cursor:pointer;font-size:12px;background:#fff;text-align:left;margin-bottom:6px;font-family:Arial;line-height:1.5;transition:all .15s}
+.opt-btn:hover{border-color:#D97706;background:#FFFBEB}
+.opt-btn.good{border-color:#10B981;background:#D1FAE5;pointer-events:none}
+.opt-btn.bad{border-color:#EF4444;background:#FEE2E2;pointer-events:none}
+.score-ring{width:80px;height:80px;border-radius:50%;margin:0 auto 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:20px;font-weight:700;border:4px solid}
+.score-ring.exc{border-color:#10B981;color:#10B981;background:#E1F5EE}
+.score-ring.bon{border-color:#D97706;color:#B45309;background:#FEF3C7}
+.score-ring.fai{border-color:#EF4444;color:#A32D2D;background:#FEE2E2}
+.section-title{font-size:13px;font-weight:700;color:#0D0B2E;margin:14px 0 8px;border-bottom:2px solid #D97706;padding-bottom:5px}
+.checklist-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid #f5f5f5;font-size:12px;line-height:1.5}
+.checklist-item:last-child{border-bottom:none}
+table{width:100%;border-collapse:collapse;font-size:11px;margin:10px 0}
+th{background:#FFFBEB;padding:8px;text-align:left;font-weight:600;color:#92400E}
+td{padding:8px;border-bottom:1px solid #eee}
+tr.hl td{background:#FFFBEB;font-weight:700;color:#B45309}
+@media(max-width:550px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<h1>🏆 Simulateur Pitch Investisseur — Stageia
+<small>Construisez votre pitch · Simulation questions difficiles · Score · Scripts · Deck 10 slides</small></h1>
+
+<div class="tabs">
+  <button class="tab on" onclick="show(0)">📋 Mon Projet</button>
+  <button class="tab" onclick="show(1)">🎯 Deck 10 Slides</button>
+  <button class="tab" onclick="show(2)">💬 Simulation</button>
+  <button class="tab" onclick="show(3)">✍️ Scripts</button>
+  <button class="tab" onclick="show(4)">📊 Score Pitch</button>
+  <button class="tab" onclick="show(5)">✅ Checklist</button>
+</div>
+
+<!-- PANE 0: PROJET -->
+<div class="pane on" id="p0">
+  <div class="box info">💡 Remplissez les infos de votre projet. Elles seront utilisées dans toutes les sections.</div>
+  <div class="row">
+    <div><label>Nom du projet / startup</label><input id="nomProjet" placeholder="Ex: Stageia, TechMali, FoodExpress..." oninput="upd()"></div>
+    <div><label>Secteur d'activité</label>
+    <select id="secteur" onchange="upd()">
+      <option value="edtech">EdTech / Formation</option>
+      <option value="fintech">Fintech / Finance</option>
+      <option value="agritech">Agritech / Agriculture</option>
+      <option value="ecommerce">E-commerce / Commerce</option>
+      <option value="sante">Healthtech / Santé</option>
+      <option value="logistique">Logistique / Transport</option>
+      <option value="media">Médias / Contenu</option>
+      <option value="autre">Autre Tech</option>
+    </select></div>
+  </div>
+  <div><label>Le problème que vous résolvez (1-2 phrases)</label>
+  <textarea id="probleme" placeholder="Ex: 1,2 million de jeunes maliens diplômés ne trouvent pas d'emploi car ils manquent de compétences pratiques et de mise en relation avec les entreprises..." oninput="upd()"></textarea></div>
+  <div style="margin-top:10px"><label>Votre solution unique</label>
+  <textarea id="solution" placeholder="Ex: Une plateforme IA qui combine formations pratiques certifiées + stages virtuels rémunérés, accessible depuis le téléphone..." oninput="upd()"></textarea></div>
+  <div class="row" style="margin-top:10px">
+    <div><label>Clients actuels</label><input type="number" id="clients" value="0" oninput="upd()"></div>
+    <div><label>CA mensuel actuel (FCFA)</label><input type="number" id="ca" value="0" oninput="upd()"></div>
+  </div>
+  <div class="row">
+    <div><label>Montant recherché (FCFA)</label><input type="number" id="montant" value="10000000" oninput="upd()"><div class="hint">Montant que vous demandez à l'investisseur</div></div>
+    <div><label>Contrepartie offerte</label>
+    <select id="contrepartie" onchange="upd()">
+      <option value="equity">Equity / Parts de l'entreprise</option>
+      <option value="pret">Prêt remboursable</option>
+      <option value="revenue">Revenue share</option>
+      <option value="grant">Subvention / Grant</option>
+    </select></div>
+  </div>
+  <div class="row">
+    <div><label>Taille du marché cible (FCFA/an)</label><input type="number" id="taillemarche" value="50000000000" oninput="upd()"><div class="hint">Marché total adressable</div></div>
+    <div><label>Phase actuelle</label>
+    <select id="phase" onchange="upd()">
+      <option value="idee">Idée / Concept</option>
+      <option value="mvp">MVP / Prototype</option>
+      <option value="traction">Traction (premiers clients)</option>
+      <option value="scale">Scale (croissance)</option>
+    </select></div>
+  </div>
+  <div class="row">
+    <div><label>Taille de l'équipe</label><input type="number" id="equipe" value="2" oninput="upd()"></div>
+    <div><label>Utilisation des fonds</label>
+    <select id="utilisation" onchange="upd()">
+      <option value="tech">Développement tech / produit</option>
+      <option value="marketing">Marketing / acquisition clients</option>
+      <option value="equipe">Recrutement équipe</option>
+      <option value="expansion">Expansion géographique</option>
+      <option value="mixte">Mixte (tech + marketing + équipe)</option>
+    </select></div>
+  </div>
+  <div class="kpis" id="kp0"></div>
+</div>
+
+<!-- PANE 1: DECK -->
+<div class="pane" id="p1">
+  <div class="box info" style="margin-bottom:12px">🎯 Le deck parfait = 10 slides maximum. Chaque slide a 1 seul message. Durée totale : 5 minutes.</div>
+  <div class="slide-nav">
+    <button class="btn-nav btn-prev" onclick="prevSlide()">← Précédent</button>
+    <div class="slide-dots" id="slideDots"></div>
+    <button class="btn-nav btn-next" onclick="nextSlide()">Suivant →</button>
+  </div>
+  <div id="slideArea"></div>
+</div>
+
+<!-- PANE 2: SIMULATION -->
+<div class="pane" id="p2">
+  <div class="box info" style="margin-bottom:12px">💬 Simulez une session de questions difficiles avec un investisseur. Choisissez la meilleure réponse. Score final sur 100.</div>
+  <div id="simScore" style="display:none;text-align:center;margin-bottom:12px"></div>
+  <div id="simArea"></div>
+  <button style="padding:8px 18px;background:#D97706;color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600;margin-top:10px" onclick="resetSim()">🔄 Recommencer</button>
+</div>
+
+<!-- PANE 3: SCRIPTS -->
+<div class="pane" id="p3">
+  <div id="scriptsBox"></div>
+</div>
+
+<!-- PANE 4: SCORE -->
+<div class="pane" id="p4">
+  <div id="scoreBox"></div>
+</div>
+
+<!-- PANE 5: CHECKLIST -->
+<div class="pane" id="p5">
+  <div id="checklistBox"></div>
+</div>
+
+<script>
+var curSlide=0;
+var simStep=0;
+var simScore=0;
+var simAnswers=[];
+
+var SLIDES_DATA=[
+  {titre:'Le Problème',color:'#EF4444',icon:'🔥',conseil:'Commencez par une histoire vraie d\'une personne réelle qui souffre de ce problème. 30 secondes max.',
+   champs:['probleme'],extra:'Le problème doit être douloureux, fréquent et sous-estimé. Si l\'investisseur dit "je connais ce problème", vous avez gagné.'},
+  {titre:'La Solution',color:'#8B5CF6',icon:'💡',conseil:'Démontrez, ne décrivez pas. Une démo de 30 secondes vaut mieux que 3 minutes d\'explication.',
+   champs:['solution'],extra:'Soyez spécifique. "Plateforme IA" = vague. "Application mobile qui connecte X avec Y en 3 clics" = concret.'},
+  {titre:'Taille du Marché',color:'#3B82F6',icon:'📊',conseil:'Bottom-up est plus crédible que top-down. Calculez à partir du nombre réel de clients potentiels.',
+   champs:['taillemarche'],extra:'TAM (Total) → SAM (Serviceable) → SOM (Obtainable). Les investisseurs veulent voir le SOM réaliste à 3 ans.'},
+  {titre:'Traction & Validation',color:'#10B981',icon:'📈',conseil:'Les chiffres réels, même petits, valent plus que les projections. "10 clients payants" > "potentiel 1 million".',
+   champs:['clients','ca'],extra:'Chaque preuve de traction réduit le risque perçu. Témoignages, lettres d\'intention, utilisateurs actifs = traction.'},
+  {titre:'Modèle Économique',color:'#F59E0B',icon:'💰',conseil:'Expliquez comment vous gagnez de l\'argent en 1 phrase simple. L\'investisseur doit comprendre immédiatement.',
+   champs:[],extra:'Montrez vos unités économiques : CAC (coût acquisition), LTV (valeur vie client), marge unitaire. Ratio LTV/CAC > 3 = excellent.'},
+  {titre:'Compétition',color:'#EC4899',icon:'🥊',conseil:'Ne dites jamais "nous n\'avons pas de concurrents". Ça signifie soit pas de marché, soit que vous n\'avez pas cherché.',
+   champs:[],extra:'Matrice 2×2 : vous vs concurrents sur 2 axes clés. Positionnez-vous clairement. Votre avantage compétitif doit être défendable dans le temps.'},
+  {titre:'Go-to-Market',color:'#6366F1',icon:'🚀',conseil:'Votre 1er canal doit être testé et prouvé, pas théorique. Comment allez-vous acquérir vos 100 premiers clients ?',
+   champs:[],extra:'Soyez précis sur le canal, le coût et la timeline. "Facebook Ads ciblés femmes 25-40 ans Bamako, CAC estimé 3 000 F, 50 clientes en 30 jours".'},
+  {titre:'L\'Équipe',color:'#0891B2',icon:'👥',conseil:'Les investisseurs investissent d\'abord dans les personnes. Pourquoi VOUS êtes les mieux placés pour résoudre ce problème ?',
+   champs:['equipe'],extra:'Mentionnez les compétences uniques, les expériences pertinentes et pourquoi cette équipe peut gagner. Honnêteté sur les lacunes + plan de recrutement.'},
+  {titre:'Projections Financières',color:'#7C3AED',icon:'📊',conseil:'3 ans maximum. Scénario réaliste ET pessimiste. Montrez que vous comprenez votre économie unitaire.',
+   champs:['ca'],extra:'Les investisseurs ne croient pas les projections — ils veulent voir que vous pensez de manière rigoureuse. Expliquez vos hypothèses.'},
+  {titre:'L\'Ask',color:'#D97706',icon:'🤝',conseil:'Soyez précis sur le montant, l\'utilisation et les jalons que vous atteindrez. "Je veux X pour faire Y et atteindre Z en W mois."',
+   champs:['montant','utilisation','contrepartie'],extra:'Après avoir demandé, TAISEZ-VOUS. Le silence est puissant. L\'investisseur qui parle en premier est souvent celui qui cède.'},
+];
+
+var SIM_QUESTIONS=[
+  {phase:'Question 1 — Le marché',
+   inv:'Votre marché est-il vraiment assez grand ? Le Mali c\'est 22 millions de personnes avec un faible pouvoir d\'achat.',
+   opts:[
+     {txt:'✅ "Notre marché adressable immédiat au Mali est de 1,2 million de jeunes diplômés cherchant emploi. À 15 000 F/mois d\'abonnement, ça représente 18 milliards FCFA/an. Nous visons 1% en an 3 soit 180 millions FCFA de CA."',type:'good',score:20,fb:'Parfait ! Vous avez répondu avec des chiffres précis, bottom-up, et réalistes. C\'est exactement ce qu\'un investisseur veut entendre.'},
+     {txt:'🤔 "Le marché africain de l\'EdTech est estimé à plusieurs milliards de dollars..."',type:'bad',score:5,fb:'Trop vague et top-down. Les investisseurs sont sceptiques face aux grands chiffres sans ancrage local précis.'},
+     {txt:'❌ "Nous prévoyons de nous étendre rapidement au Sénégal et en Côte d\'Ivoire aussi."',type:'bad',score:0,fb:'Erreur classique de pivot vers l\'expansion quand on ne maîtrise pas encore son marché local. Ça fragilise votre crédibilité.'},
+   ]},
+  {phase:'Question 2 — La concurrence',
+   inv:'Coursera et Udemy sont gratuits. Pourquoi quelqu\'un paierait pour votre plateforme ?',
+   opts:[
+     {txt:'✅ "Coursera et Udemy sont en anglais, avec des cas américains, sans mise en relation avec des entreprises maliennes et sans adaptation au marché local. Nous faisons exactement l\'inverse : en français + bambara, cas pratiques maliens, et stages virtuels rémunérés avec des entreprises partenaires à Bamako."',type:'good',score:20,fb:'Excellent ! Vous reconnaissez la concurrence, montrez que vous la connaissez bien, et expliquez clairement votre différenciation concrète.'},
+     {txt:'🤔 "Notre technologie IA est unique et ils ne peuvent pas nous copier facilement."',type:'bad',score:8,fb:'Insuffisant. "IA unique" est une affirmation sans preuve. La défense par la technologie seule ne convainc pas les investisseurs.'},
+     {txt:'❌ "En fait nos vrais concurrents sont les centres de formation physiques, pas les plateformes en ligne."',type:'bad',score:3,fb:'Vous esquivez la question. L\'investisseur remarque que vous évitez de répondre directement — signe de faiblesse ou de manque de préparation.'},
+   ]},
+  {phase:'Question 3 — La traction',
+   inv:'Combien avez-vous de clients payants aujourd\'hui ? Et quel est votre taux de rétention ?',
+   opts:[
+     {txt:'✅ "Nous avons 47 clients payants à 15 000 F/mois, soit 705 000 F de MRR. Notre taux de rétention à 3 mois est de 78%. Ces chiffres sur 4 mois valident notre hypothèse de willingness-to-pay sur le marché malien."',type:'good',score:20,fb:'Parfait. Chiffres précis, métriques pertinentes, et vous replacez dans le contexte temporel. Même avec peu de clients, vous montrez que vous mesurez les bonnes choses.'},
+     {txt:'🤔 "Nous avons encore peu de clients car nous sommes en phase de lancement, mais nous avons beaucoup de prospects intéressés."',type:'bad',score:5,fb:'"Prospects intéressés" ne vaut rien. Les investisseurs veulent de la traction réelle — même 5 clients payants valent plus que 1000 prospects.'},
+     {txt:'❌ "Nous n\'avons pas encore lancé commercialement — nous finalisons le produit d\'abord."',type:'bad',score:0,fb:'Erreur critique. Finaliser avant de vendre = risque maximal. Les meilleurs fondateurs vendent avant même d\'avoir le produit fini (presales).'},
+   ]},
+  {phase:'Question 4 — L\'équipe',
+   inv:'Pourquoi vous ? Qu\'est-ce qui vous qualifie spécifiquement pour résoudre ce problème ?',
+   opts:[
+     {txt:'✅ "J\'ai moi-même vécu ce problème — diplômée en 2021, 8 mois de recherche d\'emploi malgré mon BTS. Cette expérience m\'a donné une compréhension unique des besoins. Par ailleurs, j\'ai 3 ans d\'expérience en formation professionnelle chez [entreprise], et mon co-fondateur est développeur avec 5 ans d\'expérience tech."',type:'good',score:20,fb:'Excellent ! Vous avez la légitimité du vécu (founder-market fit), l\'expérience professionnelle pertinente et une équipe complémentaire. Très convaincant.'},
+     {txt:'🤔 "Je suis passionné(e) par l\'éducation et j\'ai toujours voulu créer une entreprise dans ce domaine."',type:'bad',score:5,fb:'La passion n\'est pas suffisante. Tous les fondateurs sont passionnés. L\'investisseur veut savoir pourquoi VOUS avez un avantage sur un concurrent potentiel.'},
+     {txt:'❌ "Notre équipe est encore en construction — je cherche un co-fondateur technique actuellement."',type:'bad',score:0,fb:'Risque rouge pour un investisseur. Une startup sans CTO technique dans la tech est très difficile à financer. Trouvez votre co-fondateur AVANT de pitcher.'},
+   ]},
+  {phase:'Question 5 — L\'utilisation des fonds',
+   inv:'Comment allez-vous utiliser les 10 millions FCFA demandés ? Et quels jalons atteindrez-vous ?',
+   opts:[
+     {txt:'✅ "50% développement produit (app mobile + IA), 30% marketing acquisition (Facebook Ads + partenariats lycées), 20% opérations et équipe. En 12 mois, l\'objectif est 500 clients payants, 7,5M FCFA de MRR, et un taux de rétention >70%. Ces jalons rendront notre prochaine levée de fonds plus facile à valoriser."',type:'good',score:20,fb:'Parfait ! Répartition précise, jalons mesurables avec timeline, et vous montrez que vous pensez déjà à la prochaine levée. C\'est la réponse d\'un entrepreneur mature.'},
+     {txt:'🤔 "Nous allons investir dans la technologie, le marketing et l\'équipe pour accélérer notre croissance."',type:'bad',score:5,fb:'Trop générique. Tout entrepreneur dirait la même chose. L\'investisseur veut des pourcentages précis et des jalons mesurables.'},
+     {txt:'❌ "Nous nous adapterons selon les besoins — nous privilégions l\'agilité dans notre utilisation des fonds."',type:'bad',score:0,fb:'Erreur fatale. "Nous verrons" signifie pour l\'investisseur que vous n\'avez pas de plan. Un fundrai sans plan d\'utilisation précis = rejet quasi-certain.'},
+   ]},
+];
+
+function show(i){
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+  document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+  if(i===1) renderDeck();
+  if(i===2) renderSim();
+  if(i===3) renderScripts();
+  if(i===4) renderScore();
+  if(i===5) renderChecklist();
+}
+
+function g(id,d){var e=document.getElementById(id);if(!e)return d||'';return e.value||d||'';}
+function gn(id,d){return parseFloat(g(id))||d||0;}
+function fm(n){return Math.round(n).toLocaleString('fr-FR');}
+function fmk(n){if(n>=1000000000)return (n/1000000000).toFixed(1)+'Mds';if(n>=1000000)return (n/1000000).toFixed(1)+'M';if(n>=1000)return Math.round(n/1000)+'K';return Math.round(n).toString();}
+
+function upd(){
+  var nom=g('nomProjet','Mon Projet');
+  var montant=gn('montant',10000000);
+  var clients=gn('clients',0);
+  var ca=gn('ca',0);
+  var phase=g('phase','mvp');
+  var phaseScore={idee:2,mvp:5,traction:8,scale:10}[phase]||5;
+  var kp=document.getElementById('kp0');
+  if(kp) kp.innerHTML=
+    '<div class="kpi"><b>'+fmk(montant)+'</b><span>Montant demandé (F)</span></div>'+
+    '<div class="kpi"><b>'+clients+'</b><span>Clients actuels</span></div>'+
+    '<div class="kpi"><b>'+fmk(ca)+'</b><span>CA mensuel (F)</span></div>'+
+    '<div class="kpi"><b>'+phaseScore+'/10</b><span>Maturité projet</span></div>';
+}
+
+// DECK
+var COLORS=['#EF4444','#8B5CF6','#3B82F6','#10B981','#F59E0B','#EC4899','#6366F1','#0891B2','#7C3AED','#D97706'];
+
+function renderDeck(){
+  var dots=document.getElementById('slideDots');
+  if(dots) dots.innerHTML=SLIDES_DATA.map(function(s,i){
+    return '<div class="dot'+(i===curSlide?' on':'')+'" onclick="goSlide('+i+')"></div>';
+  }).join('');
+  var area=document.getElementById('slideArea');
+  if(!area) return;
+  var s=SLIDES_DATA[curSlide];
+  var nom=g('nomProjet','Votre Startup')||'Votre Startup';
+  var secteur=g('secteur','edtech');
+  var prob=g('probleme','Votre problème ici...')||'Votre problème ici...';
+  var sol=g('solution','Votre solution ici...')||'Votre solution ici...';
+  var clients=gn('clients',0);
+  var ca=gn('ca',0);
+  var montant=gn('montant',10000000);
+  var marche=gn('taillemarche',50000000000);
+  var util=g('utilisation','mixte');
+  var contra=g('contrepartie','equity');
+  var equipe=gn('equipe',2);
+  var contenu='';
+  if(curSlide===0) contenu='<b>Problème :</b><br>'+prob+'<br><br><i style="color:#888">Selon nos études, ce problème touche des millions de Maliens chaque année.</i>';
+  else if(curSlide===1) contenu='<b>Notre solution :</b><br>'+sol;
+  else if(curSlide===2) contenu='<b>TAM</b> (Total Addressable Market) : '+fmk(marche)+' FCFA/an<br><b>SAM</b> (Serviceable) : '+fmk(Math.round(marche*0.3))+' FCFA/an<br><b>SOM</b> (An 3 — 1%) : '+fmk(Math.round(marche*0.01))+' FCFA/an';
+  else if(curSlide===3) contenu=(clients>0?'<b>Clients actuels :</b> '+clients+'<br><b>CA mensuel :</b> '+fm(ca)+' FCFA<br><b>MRR Growth :</b> +X%/mois':'<b>Phase :</b> Recherche early adopters<br><b>Validation :</b> '+clients+' utilisateurs test<br><b>Prochaine étape :</b> 10 premiers clients payants');
+  else if(curSlide===4) contenu='<b>Modèle :</b> Abonnement mensuel B2C/B2B<br><b>Prix :</b> 15 000 F/mois (particulier) · 150 000 F/mois (entreprise)<br><b>CAC estimé :</b> 5 000 FCFA<br><b>LTV estimé :</b> 90 000 FCFA (6 mois)<br><b>Ratio LTV/CAC :</b> 18x';
+  else if(curSlide===5) contenu='<b>Concurrents :</b> Coursera (anglais, pas local) · Centres de formation (physique, cher) · YouTube (gratuit, non structuré)<br><br><b>Notre avantage :</b> 100% adapté au marché malien · Mise en relation entreprises · Certifications reconnues localement';
+  else if(curSlide===6) contenu='<b>Canal principal :</b> Facebook Ads (25-35 ans, diplômés Bamako)<br><b>CAC cible :</b> 5 000 FCFA<br><b>Partenariats :</b> Universités, lycées, APEJ<br><b>Bouche-à-oreille :</b> Programme ambassadeurs étudiants';
+  else if(curSlide===7) contenu='<b>Équipe :</b> '+equipe+' fondateur(s)<br><b>Fondateur(s) :</b> Expérience terrain + expertise sectorielle<br><b>Lacune identifiée :</b> Besoin CTO tech / Besoin Sales<br><b>Recrutement prévu :</b> Avec les fonds levés';
+  else if(curSlide===8) contenu='<b>An 1 :</b> 500 clients · '+fmk(Math.round(500*15000))+' FCFA MRR<br><b>An 2 :</b> 2 000 clients · '+fmk(Math.round(2000*15000))+' FCFA MRR<br><b>An 3 :</b> 5 000 clients · '+fmk(Math.round(5000*15000))+' FCFA MRR<br><i style="font-size:11px;color:#888">Hypothèse : 15 000 F/mois/client, croissance +20%/mois an 1</i>';
+  else if(curSlide===9) contenu='<b>Montant demandé :</b> '+fm(montant)+' FCFA<br><b>Contrepartie :</b> '+{equity:'15% equity',pret:'Prêt remboursable 24 mois',revenue:'10% revenue share 18 mois',grant:'Subvention / Grant'}[contra]+'<br><b>Utilisation :</b> '+{tech:'50% Tech, 30% Marketing, 20% Équipe',marketing:'20% Tech, 50% Marketing, 30% Équipe',equipe:'30% Tech, 20% Marketing, 50% Équipe',expansion:'20% Tech, 30% Marketing, 50% Expansion',mixte:'40% Tech, 35% Marketing, 25% Opérations'}[util]+'<br><b>Jalons 12 mois :</b> 500 clients · '+fmk(Math.round(500*15000))+' FCFA MRR · Rentabilité';
+
+  area.innerHTML='<div class="slide on">'+
+    '<div class="slide-header" style="background:'+COLORS[curSlide]+'">'+
+    '<div><div class="slide-num">Slide '+(curSlide+1)+'/10</div><div class="slide-title">'+s.icon+' '+s.titre+'</div></div>'+
+    '<div style="font-size:24px">'+s.icon+'</div>'+
+    '</div>'+
+    '<div class="slide-body">'+
+    '<div class="slide-content">'+contenu+'</div>'+
+    '<div class="slide-tip">💡 <b>Conseil :</b> '+s.conseil+'<br><span style="color:#666">'+s.extra+'</span></div>'+
+    '</div></div>';
+}
+
+function goSlide(i){curSlide=i;renderDeck();}
+function prevSlide(){if(curSlide>0){curSlide--;renderDeck();}}
+function nextSlide(){if(curSlide<SLIDES_DATA.length-1){curSlide++;renderDeck();}}
+
+// SIMULATION
+function renderSim(){
+  if(simStep>=SIM_QUESTIONS.length){showSimResult();return;}
+  var q=SIM_QUESTIONS[simStep];
+  var msgs='<div class="sim-msg sys">— '+q.phase+' —</div>'+
+    '<div class="sim-msg inv"><div class="sim-name">💼 Investisseur</div>'+q.inv+'</div>';
+  if(simAnswers[simStep]!==undefined){
+    var chosen=q.opts[simAnswers[simStep]];
+    msgs+='<div class="sim-msg you"><div class="sim-name" style="color:rgba(255,255,255,.7)">Vous</div>'+chosen.txt+'</div>'+
+      '<div class="sim-msg inv"><div class="sim-name">💡 Feedback</div><b>'+chosen.score+'pts — </b>'+chosen.fb+'</div>';
+  }
+  var opts='';
+  if(simAnswers[simStep]===undefined){
+    opts=q.opts.map(function(o,i){return '<button class="opt-btn" onclick="answerSim('+i+')">'+o.txt+'</button>';}).join('');
+  } else {
+    opts='<button style="padding:9px 18px;background:#D97706;color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600" onclick="nextSim()">Question suivante →</button>';
+  }
+  document.getElementById('simArea').innerHTML=
+    '<div style="border:1px solid #e0e0e0;border-radius:10px;overflow:hidden">'+
+    '<div style="background:linear-gradient(135deg,#0D0B2E,#B45309);padding:10px 14px;display:flex;justify-content:space-between">'+
+    '<span style="color:#fff;font-size:13px;font-weight:600">🎭 Session Pitch</span>'+
+    '<span style="color:#FCD34D;font-size:11px">Question '+(simStep+1)+'/'+SIM_QUESTIONS.length+'</span></div>'+
+    '<div style="padding:14px;display:flex;flex-direction:column;gap:8px">'+msgs+'</div>'+
+    '<div style="padding:12px 14px;border-top:1px solid #eee;background:#fafafa">'+opts+'</div></div>';
+}
+
+function answerSim(i){
+  simAnswers[simStep]=i;
+  simScore+=SIM_QUESTIONS[simStep].opts[i].score;
+  renderSim();
+}
+function nextSim(){simStep++;renderSim();}
+
+function showSimResult(){
+  var max=SIM_QUESTIONS.length*20;
+  var pct=Math.round(simScore/max*100);
+  var cls=pct>=80?'exc':pct>=60?'bon':'fai';
+  var msg=pct>=80?'🏆 Excellent pitcheur ! Vous êtes prêt(e) pour les investisseurs.':
+          pct>=60?'👍 Bon niveau. Pratiquez encore les questions difficiles.':
+          '📚 Des bases à renforcer. Relisez les scripts et recommencez.';
+  document.getElementById('simScore').style.display='block';
+  document.getElementById('simScore').innerHTML=
+    '<div class="score-ring '+cls+'">'+simScore+'<div style="font-size:9px">/'+max+'</div></div>'+
+    '<div style="font-size:14px;font-weight:700;margin-bottom:4px">'+msg+'</div>';
+  document.getElementById('simArea').innerHTML='<div class="box ok">✅ Simulation terminée ! Score : <b>'+simScore+'/'+max+' ('+pct+'%)</b></div>';
+}
+
+function resetSim(){simStep=0;simScore=0;simAnswers=[];document.getElementById('simScore').style.display='none';renderSim();}
+
+// SCRIPTS
+function renderScripts(){
+  var nom=g('nomProjet','Votre Startup')||'Votre Startup';
+  var prob=g('probleme','[votre problème]')||'[votre problème]';
+  var sol=g('solution','[votre solution]')||'[votre solution]';
+  var montant=gn('montant',10000000);
+  var clients=gn('clients',0);
+  var scripts=[
+    {tag:'Elevator Pitch (60 secondes)',color:'#7C3AED',
+     body:'Bonjour, je suis [Votre nom], fondateur(trice) de '+nom+'.\n\nNous résolvons le problème suivant : '+prob.substring(0,100)+'...\n\nNotre solution : '+sol.substring(0,100)+'...\n\n'+(clients>0?'Nous avons déjà '+clients+' clients payants, ce qui valide notre hypothèse de marché. ':'Nous sommes en phase de validation avec nos premiers utilisateurs. ')+'\n\nNous cherchons '+fm(montant)+' FCFA pour [accélérer la croissance]. Seriez-vous disponible pour un call de 20 minutes cette semaine ?',
+     tip:'Mémorisez ce pitch. Entraînez-vous jusqu\'à pouvoir le dire sans hésiter, à n\'importe quel moment.'},
+    {tag:'Répondre à "Et les concurrents ?"',color:'#EF4444',
+     body:'C\'est une très bonne question. Nous avons analysé en profondeur le paysage concurrentiel.\n\nNos principaux concurrents sont [X, Y, Z]. Ce qu\'ils font bien : [forces]. Ce qui leur manque : [faiblesses].\n\nNous nous différencions sur 2 axes clés : [différenciation 1] et [différenciation 2]. Ces avantages sont défendables car [raison].\n\nEt honnêtement, la présence de concurrents valide qu\'il y a un marché réel — ce qui est positif.',
+     tip:'Connaître ses concurrents mieux que l\'investisseur = crédibilité maximale. Faites votre homework.'},
+    {tag:'Répondre à "Pourquoi maintenant ?"',color:'#10B981',
+     body:'Excellente question sur le timing.\n\nTrois facteurs créent une fenêtre d\'opportunité unique en ce moment :\n\n1. [Facteur technologique ou marché] — [explication]\n2. [Facteur réglementaire ou comportemental] — [explication]\n3. [Facteur compétitif] — [explication]\n\nDans 2 ans, ce marché sera adressé par des acteurs bien financés. Aujourd\'hui, nous avons l\'avantage du first mover.',
+     tip:'Le "Why now" est souvent la question la plus négligée. Préparez 3 raisons structurelles, pas conjoncturelles.'},
+    {tag:'Clôturer et demander l\'engagement',color:'#D97706',
+     body:'[Après avoir présenté tous vos slides]\n\n"Nous avons couvert les points principaux. Avez-vous des questions avant que je vous présente notre ask final ?"\n\n[Après les questions]\n\n"Nous levons '+fm(montant)+' FCFA pour [utilisation]. Cela nous permettra d\'atteindre [jalons] en 12 mois. Je cherche [nombre] investisseurs stratégiques qui apportent non seulement du capital mais aussi [réseau/expertise].\n\nÊtes-vous intéressé(e) à explorer un investissement dans '+nom+' ?"\n\n[SILENCE — n\'ajoutez rien. Attendez la réponse.]',
+     tip:'Après avoir posé la question finale, ne remplissez pas le silence. Le premier qui parle révèle son niveau d\'anxiété. Tenez bon.'},
+  ];
+  var el=document.getElementById('scriptsBox');
+  if(!el) return;
+  el.innerHTML=scripts.map(function(s){
+    return '<div style="background:#f8f8f8;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:12px">'+
+      '<div style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:'+s.color+'22;color:'+s.color+';margin-bottom:6px">'+s.tag+'</div>'+
+      '<div style="font-size:12px;color:#444;line-height:1.8;background:#fff;border-radius:8px;padding:12px;border:1px solid #eee;white-space:pre-line">'+s.body+'</div>'+
+      '<div style="background:#FFFBEB;border:1px solid #D97706;border-radius:6px;padding:8px 10px;margin-top:8px;font-size:11px;color:#92400E">💡 '+s.tip+'</div>'+
+      '</div>';
+  }).join('');
+}
+
+// SCORE
+function renderScore(){
+  var el=document.getElementById('scoreBox');
+  if(!el) return;
+  var nom=g('nomProjet');
+  var prob=g('probleme');
+  var sol=g('solution');
+  var clients=gn('clients',0);
+  var ca=gn('ca',0);
+  var montant=gn('montant',0);
+  var equipe=gn('equipe',0);
+  var phase=g('phase','idee');
+  var score=0;var items=[];
+  if(nom.length>2){score+=10;items.push({ok:true,txt:'Projet nommé (+10)'});}
+  else items.push({ok:false,txt:'Nommez votre projet (-10)'});
+  if(prob.length>50){score+=15;items.push({ok:true,txt:'Problème bien décrit (+15)'});}
+  else items.push({ok:false,txt:'Décrivez le problème en détail (-15)'});
+  if(sol.length>50){score+=15;items.push({ok:true,txt:'Solution articulée (+15)'});}
+  else items.push({ok:false,txt:'Décrivez votre solution (-15)'});
+  if(clients>0){score+=20;items.push({ok:true,txt:'Traction réelle : '+clients+' clients (+20)'});}
+  else items.push({ok:false,txt:'Aucune traction — très difficile à financer (+0)'});
+  if(ca>0){score+=10;items.push({ok:true,txt:'CA existant : '+fm(ca)+' F (+10)'});}
+  if(montant>0){score+=10;items.push({ok:true,txt:'Montant précis demandé (+10)'});}
+  else items.push({ok:false,txt:'Précisez le montant demandé (-10)'});
+  if(equipe>=2){score+=10;items.push({ok:true,txt:'Équipe fondatrice (2+ pers) (+10)'});}
+  else items.push({ok:false,txt:'Équipe solo = risque élevé (+0)'});
+  if(phase==='traction'||phase==='scale'){score+=10;items.push({ok:true,txt:'Phase avancée (traction/scale) (+10)'});}
+  score=Math.min(100,score);
+  var cls=score>=70?'exc':score>=50?'bon':'fai';
+  var msg=score>=70?'✅ Pitch solide — vous pouvez approcher des investisseurs':
+          score>=50?'⚠️ Pitch partiel — renforcez la traction et les détails':
+          '❌ Pitch insuffisant — consolidez votre projet avant de pitcher';
+  el.innerHTML='<div style="text-align:center;margin-bottom:14px">'+
+    '<div class="score-ring '+cls+'">'+score+'<div style="font-size:9px">/100</div></div>'+
+    '<div style="font-size:14px;font-weight:700;margin-bottom:6px">Score Investisseur</div>'+
+    '<div style="font-size:12px;color:#666">'+msg+'</div></div>'+
+    items.map(function(i){return '<div class="box '+(i.ok?'ok':'warn')+'" style="margin-bottom:5px">'+(i.ok?'✅':'❌')+' '+i.txt+'</div>';}).join('');
+}
+
+// CHECKLIST
+function renderChecklist(){
+  var el=document.getElementById('checklistBox');
+  if(!el) return;
+  var avant=[
+    'Connaître par cœur vos chiffres clés (MRR, clients, CAC, LTV)',
+    'Avoir pratiqué le pitch à voix haute minimum 20 fois',
+    'Connaître les 3 principaux concurrents et leurs faiblesses',
+    'Préparer des réponses aux 10 questions difficiles classiques',
+    'Avoir le deck sur téléphone ET ordinateur (plan B)',
+    'Arriver 15 minutes en avance et tester le matériel',
+    'Avoir une liste de vos 5 jalons des 12 prochains mois',
+    'Connaître la valorisation que vous proposez et pourquoi',
+    'Avoir vérié les fonds de l\'investisseur (ticket moyen, secteurs)',
+    'Préparer votre "ask" et vous entraîner au silence après',
+  ];
+  var pendant=[
+    'Commencer par une histoire vraie, pas des chiffres',
+    'Maintenir le contact visuel — ne pas lire vos slides',
+    'Répondre aux questions brièvement puis reprendre le contrôle',
+    'Ne jamais critiquer négativement les concurrents',
+    'Si vous ne savez pas, dire "bonne question, je vérifierai" plutôt qu\'inventer',
+    'Conclure avec un call-to-action clair et une question directe',
+  ];
+  var apres=[
+    'Envoyer un email de suivi dans les 24h avec le deck',
+    'Inclure les réponses aux questions posées pendant le pitch',
+    'Proposer une date de prochain rendez-vous (due diligence)',
+    'Continuer à progresser — ne pas attendre la réponse pour agir',
+    'Relancer après 1 semaine si pas de réponse',
+  ];
+  el.innerHTML='<div class="section-title">📋 Avant le pitch</div>'+
+    avant.map(function(i){return '<div class="checklist-item"><span style="color:#D97706;font-size:16px">☐</span><span>'+i+'</span></div>';}).join('')+
+    '<div class="section-title">🎯 Pendant le pitch</div>'+
+    pendant.map(function(i){return '<div class="checklist-item"><span style="color:#D97706;font-size:16px">☐</span><span>'+i+'</span></div>';}).join('')+
+    '<div class="section-title">📧 Après le pitch</div>'+
+    apres.map(function(i){return '<div class="checklist-item"><span style="color:#D97706;font-size:16px">☐</span><span>'+i+'</span></div>';}).join('')+
+    '<div class="section-title">🏆 Investisseurs à contacter au Mali</div>'+
+    ['🏆 POESAM 2026 — Orange Mali (jusqu\'à 10M FCFA)','🚀 ODC Start — Orange Digital Center Mali','🌍 Innov\'Africa — Banque Africaine de Développement','💼 APEJ — Agence Promotion Emploi Jeunes Mali','🏦 BMS Pro Jeunes — Banque Malienne de Solidarité','🤝 Réseau Business Angels Afrique de l\'Ouest (BAAN)'].map(function(i){
+      return '<div class="box" style="margin-bottom:5px">'+i+'</div>';
+    }).join('');
+}
+
+upd();renderSim();
+</script>
+</body>
+</html>

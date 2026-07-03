@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Simulateur Business Plan</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f5;color:#1a1a1a;padding:16px}
+.header{background:linear-gradient(135deg,#0D0B2E,#1a1060);border-radius:12px;padding:18px 22px;margin-bottom:16px;color:#fff;display:flex;align-items:center;gap:12px}
+.h-icon{width:44px;height:44px;background:rgba(239,159,39,.25);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.h-title{font-size:16px;font-weight:600}.h-sub{font-size:11px;color:#AFA9EC;margin-top:3px}
+.tabs{display:flex;gap:2px;border-bottom:1px solid #ddd;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:8px 14px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;color:#666;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:Arial}
+.tab.active{color:#EF9F27;border-bottom-color:#EF9F27}
+.tp{display:none}.tp.active{display:block}
+.card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:16px;margin-bottom:12px}
+.ctitle{font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.cicon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.frow.full{grid-template-columns:1fr}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fl{font-size:11px;color:#666;font-weight:500}
+.fi{padding:7px 9px;border:1px solid #ddd;border-radius:8px;font-size:13px;color:#1a1a1a;background:#fff;font-family:Arial;width:100%}
+.fi:focus{outline:none;border-color:#EF9F27}
+.fh{font-size:10px;color:#888;line-height:1.4}
+.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:12px}
+.kp{background:#f5f5f5;border-radius:8px;padding:10px;text-align:center}
+.kv{font-size:18px;font-weight:600;margin-bottom:2px}
+.kl{font-size:10px;color:#666}
+.kp.g .kv{color:#0F6E56}.kp.p .kv{color:#534AB7}.kp.o .kv{color:#BA7517}.kp.r .kv{color:#A32D2D}.kp.b .kv{color:#185FA5}
+.tw{overflow-x:auto;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{background:#f5f5f5;padding:7px 8px;text-align:left;font-weight:500;color:#666;border-bottom:1px solid #eee}
+td{padding:7px 8px;border-bottom:1px solid #eee;color:#1a1a1a}
+tr.tot td{font-weight:600;background:#f5f5f5}
+tr.pr td{color:#0F6E56;font-weight:500}
+tr.ls td{color:#A32D2D;font-weight:500}
+.bch{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.br{display:flex;align-items:center;gap:6px;font-size:11px}
+.bl{width:50px;color:#666;text-align:right;flex-shrink:0}
+.bt{flex:1;height:18px;background:#f0f0f0;border-radius:3px;overflow:hidden}
+.bf{height:100%;border-radius:3px;transition:width .4s;display:flex;align-items:center;padding-left:6px;font-size:10px;font-weight:500;color:#fff;white-space:nowrap}
+.score-box{text-align:center;padding:14px;background:linear-gradient(135deg,#EEEDFE,#FEF3C7);border-radius:12px;margin-bottom:12px}
+.sv{font-size:34px;font-weight:700}.sl{font-size:12px;color:#666;margin-top:3px}
+.sbar{height:9px;background:#ddd;border-radius:5px;overflow:hidden;margin:10px 0}
+.sbf{height:100%;border-radius:5px;background:linear-gradient(90deg,#534AB7,#EF9F27);transition:width .6s}
+.swot{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.sw{border-radius:8px;padding:11px}
+.sw.s{background:#E1F5EE;border:1px solid #10B981}
+.sw.w{background:#FEE2E2;border:1px solid #EF4444}
+.sw.o{background:#DBEAFE;border:1px solid #3B82F6}
+.sw.t{background:#FEF3C7;border:1px solid #F59E0B}
+.swt{font-size:11px;font-weight:600;margin-bottom:6px}
+.sw.s .swt{color:#065F46}.sw.w .swt{color:#991B1B}.sw.o .swt{color:#1E40AF}.sw.t .swt{color:#92400E}
+.swi{font-size:11px;color:#555;padding:2px 0;line-height:1.4;display:flex;gap:5px}
+.rec{font-size:12px;padding:8px 12px;background:#f5f5f5;border-radius:8px;margin-bottom:6px;display:flex;gap:8px;line-height:1.5}
+.fin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:12px}
+.fin-card{border-radius:10px;padding:12px;border:1px solid #e0e0e0;background:#fff}
+.fin-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;margin-bottom:6px}
+.fin-name{font-size:12px;font-weight:600;margin-bottom:4px}
+.fin-amount{font-size:14px;font-weight:600;color:#EF9F27;margin-bottom:4px}
+.fin-desc{font-size:11px;color:#666;line-height:1.5;margin-bottom:6px}
+.fin-match{font-size:11px;font-weight:500;padding:3px 8px;border-radius:6px;display:inline-block}
+.assoc-item{background:#f5f5f5;border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.assoc-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#fff;flex-shrink:0}
+.assoc-name{font-size:13px;font-weight:600}
+.assoc-role{font-size:11px;color:#666}
+.assoc-parts{font-size:14px;font-weight:600;color:#534AB7;margin-left:auto}
+.add-assoc{display:grid;grid-template-columns:1fr 1fr 80px auto;gap:8px;align-items:end;margin-bottom:10px}
+.btn-add{padding:8px 12px;background:#534AB7;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px;font-family:Arial;white-space:nowrap;height:34px}
+.btn-del{padding:4px 8px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:11px;color:#666;font-family:Arial}
+.parts-bar-wrap{height:22px;border-radius:6px;overflow:hidden;display:flex;margin-bottom:8px}
+.parts-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff}
+.parts-legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.pl-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}
+.pl-dot{width:10px;height:10px;border-radius:3px}
+.pw{font-size:12px;padding:8px 12px;border-radius:8px;margin-bottom:8px}
+.pw.ok{background:#D1FAE5;color:#065F46}
+.pw.err{background:#FEE2E2;color:#991B1B}
+.pw.info{background:#FEF3C7;color:#92400E}
+.share-summary{font-size:12px;color:#444;line-height:1.9;margin-bottom:12px;padding:12px;background:#f5f5f5;border-radius:8px}
+.share-btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn-sh{padding:9px 16px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:Arial;border:none}
+.btn-cp{background:#534AB7;color:#fff}
+.btn-wa{background:#25D366;color:#fff}
+.btn-pr{background:#fff;color:#1a1a1a;border:1px solid #ddd!important}
+.copied{font-size:11px;color:#0F6E56;margin-top:6px;display:none}
+.email-box{font-size:12px;background:#f5f5f5;border-radius:8px;padding:14px;line-height:1.8;color:#444}
+@media(max-width:600px){.frow{grid-template-columns:1fr}.add-assoc{grid-template-columns:1fr 1fr;}.add-assoc .btn-add{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="h-icon">📊</div>
+  <div><div class="h-title">Stageia — Simulateur Business Plan</div>
+  <div class="h-sub">Analyse sectorielle personnalisée · Financements Mali · Associés · Partage</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="st(0)">🏢 Projet</button>
+  <button class="tab" onclick="st(1)">💰 Revenus</button>
+  <button class="tab" onclick="st(2)">📋 Charges</button>
+  <button class="tab" onclick="st(3)">📈 Projections</button>
+  <button class="tab" onclick="st(4)">🔍 Analyse</button>
+  <button class="tab" onclick="st(5)">🤝 Associés</button>
+  <button class="tab" onclick="st(6)">📤 Partager</button>
+</div>
+
+<!-- PROJET -->
+<div class="tp active" id="t0">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#EEEDFE;color:#534AB7">🏢</div>Informations du projet</div>
+  <div class="frow full"><div class="fg"><label class="fl">Nom du projet / entreprise</label>
+  <input class="fi" id="nom" placeholder="Ex: Stageia, Boutique Aminata, TechMali..." oninput="upd()"></div></div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Secteur d'activité</label>
+    <select class="fi" id="sect" onchange="upd()">
+      <option value="edtech">EdTech / Formation en ligne</option>
+      <option value="ecommerce">E-commerce / Commerce en ligne</option>
+      <option value="restauration">Restauration / Alimentation</option>
+      <option value="tech">Tech / Développement / SaaS</option>
+      <option value="design">Design / Créatif / Agence</option>
+      <option value="sante">Santé / Bien-être</option>
+      <option value="agriculture">Agriculture / Agroalimentaire</option>
+      <option value="finance">Finance / Fintech</option>
+      <option value="mode">Mode / Artisanat / Textile</option>
+      <option value="media">Médias / Contenus / Influence</option>
+    </select></div>
+    <div class="fg"><label class="fl">Phase actuelle</label>
+    <select class="fi" id="phase" onchange="upd()">
+      <option value="idee">Idée (0 client)</option>
+      <option value="mvp">MVP / Prototype</option>
+      <option value="lancement">Lancement (premiers clients)</option>
+      <option value="croissance">Croissance</option>
+    </select></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Ville principale</label>
+    <select class="fi" id="ville" onchange="upd()">
+      <option>Bamako</option><option>Sikasso</option><option>Mopti</option>
+      <option>Ségou</option><option>Kayes</option><option>Koulikoro</option><option>Autre</option>
+    </select></div>
+    <div class="fg"><label class="fl">Nombre de fondateurs</label>
+    <select class="fi" id="nbf" onchange="upd()">
+      <option value="1">1 — Solo</option><option value="2">2 fondateurs</option>
+      <option value="3">3 fondateurs</option><option value="4">4+ fondateurs</option>
+    </select></div>
+  </div>
+  <div class="frow full"><div class="fg"><label class="fl">Problème que vous résolvez</label>
+  <input class="fi" id="prob" placeholder="Ex: Les étudiants maliens n'ont pas accès à des formations pratiques..." oninput="upd()"></div></div>
+  <div class="frow full"><div class="fg"><label class="fl">Votre solution unique</label>
+  <input class="fi" id="sol" placeholder="Ex: Plateforme IA + stages virtuels accessibles depuis le téléphone..." oninput="upd()"></div></div>
+  <div class="frow full"><div class="fg"><label class="fl">Cible principale</label>
+  <input class="fi" id="cible" placeholder="Ex: Étudiants 18-30 ans Bamako, cherchant emploi ou reconversion..." oninput="upd()">
+  <span class="fh">Précisez : âge, localisation, besoin principal</span></div></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">🎯</div>Marché cible</div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Taille du marché (personnes)</label>
+    <input class="fi" type="number" id="marche" value="500000" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Part de marché visée an 1 (%)</label>
+    <input class="fi" type="number" id="part" value="0.5" step="0.1" oninput="upd()"></div>
+  </div>
+  <div class="kg" id="kgm"></div>
+</div>
+</div>
+
+<!-- REVENUS -->
+<div class="tp" id="t1">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">💰</div>Modèle de revenus</div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Type de revenu principal</label>
+    <select class="fi" id="typerev" onchange="upd()">
+      <option value="abo">Abonnement mensuel</option>
+      <option value="vente">Vente à l'unité</option>
+      <option value="comm">Commission / %</option>
+      <option value="mixte">Modèle mixte</option>
+    </select></div>
+    <div class="fg"><label class="fl">Prix unitaire (FCFA)</label>
+    <input class="fi" type="number" id="prix" value="15000" oninput="upd()">
+    <span class="fh">Prix moyen par client / par vente</span></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Clients mois 1</label>
+    <input class="fi" type="number" id="cm1" value="10" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Croissance mensuelle (%)</label>
+    <input class="fi" type="number" id="crois" value="15" oninput="upd()">
+    <span class="fh">Réaliste : 10-20% pour une startup</span></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Taux de rétention (%)</label>
+    <input class="fi" type="number" id="reten" value="70" oninput="upd()">
+    <span class="fh">% clients qui reviennent le mois suivant</span></div>
+    <div class="fg"><label class="fl">Revenus secondaires / mois (FCFA)</label>
+    <input class="fi" type="number" id="revsec" value="0" oninput="upd()">
+    <span class="fh">Sponsors, publicités, partenariats...</span></div>
+  </div>
+  <div class="kg" id="kgr"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">📈</div>Évolution CA — 12 mois</div>
+  <div id="revchart" class="bch"></div>
+</div>
+</div>
+
+<!-- CHARGES -->
+<div class="tp" id="t2">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FEE2E2;color:#A32D2D">📋</div>Charges fixes mensuelles</div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Salaires / Rémunérations (FCFA)</label>
+    <input class="fi" type="number" id="sal" value="150000" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Loyer / Espace travail (FCFA)</label>
+    <input class="fi" type="number" id="loyer" value="50000" oninput="upd()"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Outils / Hébergement digital (FCFA)</label>
+    <input class="fi" type="number" id="outils" value="20000" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Internet / Téléphone (FCFA)</label>
+    <input class="fi" type="number" id="inet" value="25000" oninput="upd()"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Comptabilité / Juridique (FCFA)</label>
+    <input class="fi" type="number" id="compta" value="15000" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Autres fixes (FCFA)</label>
+    <input class="fi" type="number" id="autf" value="20000" oninput="upd()"></div>
+  </div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FEF3C7;color:#BA7517">📣</div>Charges variables & investissement</div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Budget marketing / mois (FCFA)</label>
+    <input class="fi" type="number" id="mkt" value="50000" oninput="upd()">
+    <span class="fh">Facebook Ads, contenu, événements</span></div>
+    <div class="fg"><label class="fl">Coût acquisition client — CAC (FCFA)</label>
+    <input class="fi" type="number" id="cac" value="5000" oninput="upd()"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Coût variable par vente (FCFA)</label>
+    <input class="fi" type="number" id="cvar" value="3000" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Investissement initial (FCFA)</label>
+    <input class="fi" type="number" id="invest" value="500000" oninput="upd()"></div>
+  </div>
+  <div class="kg" id="kgc"></div>
+</div>
+</div>
+
+<!-- PROJECTIONS -->
+<div class="tp" id="t3">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#DBEAFE;color:#185FA5">📊</div>Compte de résultat — 12 mois</div>
+  <div class="tw"><table id="ptable"></table></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#EEEDFE;color:#534AB7">📉</div>Résultat net mensuel</div>
+  <div id="reschart" class="bch"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">🎯</div>Indicateurs clés</div>
+  <div class="kg" id="kgi"></div>
+</div>
+</div>
+
+<!-- ANALYSE -->
+<div class="tp" id="t4">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#EEEDFE;color:#534AB7">⭐</div>Score Investisseur</div>
+  <div id="scorebox" class="score-box"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FEF3C7;color:#BA7517">🔲</div>Analyse SWOT — Secteur : <span id="sectlbl" style="color:#EF9F27"></span></div>
+  <div id="swotbox"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#DBEAFE;color:#185FA5">💼</div>Financements disponibles — Selon votre secteur</div>
+  <div id="finbox"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">💡</div>Recommandations — Secteur : <span id="sectlbl2" style="color:#EF9F27"></span></div>
+  <div id="recbox"></div>
+</div>
+</div>
+
+<!-- ASSOCIÉS -->
+<div class="tp" id="t5">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#EEEDFE;color:#534AB7">🤝</div>Répartition des parts entre associés</div>
+  <div id="partsbar"></div>
+  <div id="partsw"></div>
+  <div id="assoclist"></div>
+  <div style="font-size:12px;color:#666;margin:12px 0 8px;font-weight:500">Ajouter un associé</div>
+  <div class="add-assoc">
+    <div class="fg"><label class="fl">Prénom & Nom</label>
+    <input class="fi" id="anom" placeholder="Ex: Kady Diawara"></div>
+    <div class="fg"><label class="fl">Rôle</label>
+    <input class="fi" id="arole" placeholder="Ex: CEO, CTO..."></div>
+    <div class="fg"><label class="fl">Parts (%)</label>
+    <input class="fi" type="number" id="aparts" placeholder="Ex: 40" min="1" max="100"></div>
+    <button class="btn-add" onclick="addAssoc()">+ Ajouter</button>
+  </div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">📋</div>Droits et dividendes estimés par associé</div>
+  <div id="droitsbox"></div>
+</div>
+</div>
+
+<!-- PARTAGER -->
+<div class="tp" id="t6">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">📤</div>Partager votre Business Plan</div>
+  <div class="share-summary" id="share-summary"></div>
+  <div class="share-btns">
+    <button class="btn-sh btn-cp" onclick="copyBP()">📋 Copier le résumé</button>
+    <button class="btn-sh btn-wa" onclick="shareWA()">📱 Partager via WhatsApp</button>
+    <button class="btn-sh btn-pr" onclick="window.print()">🖨️ Imprimer / PDF</button>
+  </div>
+  <div class="copied" id="copied">✅ Copié dans le presse-papiers !</div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#EEEDFE;color:#534AB7">📧</div>Email type pour un investisseur</div>
+  <div class="email-box" id="emailbox"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FEF3C7;color:#BA7517">💡</div>Conseils pour présenter votre BP</div>
+  <div id="consbox"></div>
+</div>
+</div>
+
+<script>
+const COLORS=['#534AB7','#EC4899','#10B981','#F59E0B','#3B82F6','#EF4444','#8B5CF6','#06B6D4'];
+let assocs=[];
+
+const SNAMES={edtech:'EdTech / Formation',ecommerce:'E-commerce',restauration:'Restauration',tech:'Tech / Dev',design:'Design / Créatif',sante:'Santé',agriculture:'Agriculture',finance:'Finance / Fintech',mode:'Mode / Artisanat',media:'Médias / Contenu'};
+
+const SWOT={
+  edtech:{s:['Secteur EdTech +25%/an en Afrique','Faible coût de distribution digitale','Scalabilité du modèle numérique'],w:['Connectivité variable hors Bamako','Habitude de payer pour la formation encore faible','Besoin fort en création de contenu'],o:['1,2M étudiants maliens sous-formés','POESAM, ODC Start disponibles','Partenariats universités et entreprises'],t:['Concurrents gratuits (YouTube, Coursera)','Décrochage apprenants en ligne','Data mobile coûteuse pour certains']},
+  ecommerce:{s:['Marché naissant = moins de concurrence','Mobile Money Orange/Moov bien implanté','Livraison urbaine possible à Bamako'],w:['Logistique complexe','Méfiance des consommateurs en ligne','Retours et remboursements difficiles'],o:['E-commerce malien quasi-inexistant','Mobile Money +40%/an','Festivals = pics de vente'],t:['Fraude en ligne fréquente','Aliexpress/Jumia déjà présents','Infrastructure transport limitée']},
+  restauration:{s:['Marché de proximité visible','Bouche-à-oreille puissant au Mali','Livraison avec partenaires possible'],w:['Marges souvent faibles (20-35%)','Dépendance aux matières premières','Turn-over élevé du personnel'],o:['Livraison à domicile en croissance','Traiteur événementiel = revenu complémentaire','Cantine d\'entreprise = contrats récurrents'],t:['Saisonnalité des ingrédients','Concurrence informelle forte','Délestage électrique = risque stocks']},
+  tech:{s:['Compétences techniques rares = valeur élevée','Coût marginal faible pour le digital','Marché international accessible'],w:['Recrutement talents tech difficile au Mali','Cycles de développement longs','Financement important au départ'],o:['Transformation digitale des entreprises maliennes','Forte demande développement mobile','Partenariats opérateurs télécom'],t:['Maintenance et mises à jour permanentes','Cybersécurité et protection données','Dépendance aux serveurs étrangers']},
+  design:{s:['Faible coût de production (logiciels cloud)','Portfolio visible en ligne = acquisition gratuite','Compétences multi-secteurs'],w:['Marché peu mature sur les tarifs design','Difficulté à valoriser le travail créatif','Concurrence freelances low-cost'],o:['Digitalisation PME maliennes = besoin visuels','Marques locales cherchant identité pro','Upwork/Fiverr pour clients internationaux'],t:['IA générative automatise certaines tâches','Prix dumping des concurrents','Délai de paiement long avec clients']},
+  sante:{s:['Demande forte et constante','Confiance élevée aux professionnels','Tarification multiple selon revenus'],w:['Réglementation stricte','Investissement matériel important','Dépendance aux certifications'],o:['Téléconsultation en émergence','Partenariats mutuelles santé','Programmes ONG et bailleurs'],t:['Médecine traditionnelle concurrente','Coût prohibitif pour patients','Ruptures de médicaments fréquentes']},
+  agriculture:{s:['Secteur prioritaire gouvernemental','Marché captif et demande stable','Soutien bailleurs internationaux'],w:['Dépendance aux aléas climatiques','Financement de campagne difficile','Pertes post-récolte importantes'],o:['Transformation agro sous-développée','Exportation CEDEAO possible','FIDA, PNUD, USAID disponibles'],t:['Changements climatiques et sécheresse','Volatilité prix matières premières','Accès difficile aux marchés formels']},
+  finance:{s:['Confiance élevée si agrément','Transactions récurrentes = revenus stables','Mobile Money = infrastructure existante'],w:['Réglementation BCEAO stricte','Capital minimum réglementaire élevé','Risque de crédit difficile à évaluer'],o:['70% population non-bancarisée','Finance islamique en forte croissance','API Mobile Money accessibles'],t:['Risque de défaut de paiement','Concurrence IMF existantes','Cyberfraude et sécurité digitale']},
+  mode:{s:['Identité culturelle forte = différenciation','Coton malien renommé','Mode africaine internationale en hausse'],w:['Production artisanale = scalabilité limitée','Approvisionnement fluctuant','Concurrence vêtements importés'],o:['Diaspora malienne = marché export','Événements culturels = visibilité','Vente en ligne panafricaine'],t:['Fast fashion très compétitif sur prix','Contrefaçon des designs','Saisonnalité des commandes']},
+  media:{s:['Coût de production digital faible','Audience fidèle si contenu de qualité','Monétisation multiple (pub, sponsors)'],w:['Revenus publicitaires faibles au Mali','Dépendance aux algorithmes','Régularité difficile à tenir'],o:['Peu de créateurs maliens professionnels','Marques locales cherchant influenceurs','YouTube/TikTok monétisation disponible'],t:['Copies et plagiat du contenu','Démonétisation par plateformes','Évolution rapide des tendances']},
+};
+
+const FINS={
+  edtech:[{nom:'POESAM 2026 — Orange Mali',badge:'🏆 Compétition',bc:'#FEF3C7',bt:'#92400E',montant:'Jusqu\'à 10 000 000 FCFA',desc:'Compétition nationale startups innovantes. Critères : impact social, innovation, viabilité.',match:'✅ Très adapté EdTech',mc:'#D1FAE5',mt:'#065F46'},{nom:'ODC Start — Orange Digital Center',badge:'🚀 Incubation',bc:'#EEEDFE',bt:'#3C3489',montant:'Accompagnement + 2 000 000 FCFA',desc:'Programme incubation 6 mois avec mentors, réseau et financement startups tech maliennes.',match:'✅ Adapté startups digitales',mc:'#D1FAE5',mt:'#065F46'},{nom:'Innov\'Africa — BAD',badge:'🌍 International',bc:'#DBEAFE',bt:'#1E40AF',montant:'10 000 $ à 100 000 $',desc:'Fond BAD pour startups EdTech/Impact en Afrique. Dossier en anglais requis.',match:'⭐ Très pertinent',mc:'#D1FAE5',mt:'#065F46'},{nom:'BMS Pro Jeunes',badge:'🏦 Prêt',bc:'#FEE2E2',bt:'#991B1B',montant:'500 000 à 5 000 000 FCFA',desc:'Prêts aux jeunes entrepreneurs maliens avec taux préférentiels.',match:'⚠️ Garanties nécessaires',mc:'#FEF3C7',mt:'#92400E'}],
+  ecommerce:[{nom:'POESAM 2026 — Orange Mali',badge:'🏆 Compétition',bc:'#FEF3C7',bt:'#92400E',montant:'Jusqu\'à 10 000 000 FCFA',desc:'Éligible si innovation digitale dans l\'e-commerce.',match:'✅ Adapté si digital',mc:'#D1FAE5',mt:'#065F46'},{nom:'Orange Money Partner',badge:'💳 Partenariat',bc:'#FEF3C7',bt:'#92400E',montant:'Intégration paiement + visibilité',desc:'Programme partenaire Orange Money pour e-commerçants maliens.',match:'✅ Essentiel pour e-commerce',mc:'#D1FAE5',mt:'#065F46'},{nom:'Kafo Jiginew — Microfinance',badge:'🤝 Microfinance',bc:'#DBEAFE',bt:'#1E40AF',montant:'100 000 à 2 000 000 FCFA',desc:'Financement TPE et commerçants maliens avec accompagnement terrain.',match:'⭐ Adapté commerce',mc:'#D1FAE5',mt:'#065F46'}],
+  restauration:[{nom:'PDEFP — Emploi Jeunes Mali',badge:'🇲🇱 Gouvernement',bc:'#D1FAE5',bt:'#065F46',montant:'500 000 à 3 000 000 FCFA',desc:'Programme appui emploi des jeunes pour création d\'entreprises secteurs porteurs.',match:'✅ Adapté TPE restauration',mc:'#D1FAE5',mt:'#065F46'},{nom:'Kafo Jiginew — Microfinance',badge:'🤝 Microfinance',bc:'#DBEAFE',bt:'#1E40AF',montant:'100 000 à 2 000 000 FCFA',desc:'Microfinance pour entrepreneurs secteur informel et TPE en croissance.',match:'⭐ Très accessible',mc:'#D1FAE5',mt:'#065F46'},{nom:'BMS Pro Jeunes',badge:'🏦 Prêt',bc:'#FEE2E2',bt:'#991B1B',montant:'500 000 à 5 000 000 FCFA',desc:'Prêts jeunes entrepreneurs avec accompagnement BMS.',match:'⚠️ Garanties nécessaires',mc:'#FEF3C7',mt:'#92400E'}],
+  default:[{nom:'POESAM 2026 — Orange Mali',badge:'🏆 Compétition',bc:'#FEF3C7',bt:'#92400E',montant:'Jusqu\'à 10 000 000 FCFA',desc:'Compétition nationale ouverte à tous secteurs innovants.',match:'⭐ Vérifiez l\'éligibilité',mc:'#FEF3C7',mt:'#92400E'},{nom:'ODC Start — Orange Digital Center',badge:'🚀 Incubation',bc:'#EEEDFE',bt:'#3C3489',montant:'Accompagnement + 2 000 000 FCFA',desc:'Incubation pour startups tech et innovantes maliennes.',match:'⚠️ Priorité tech/digital',mc:'#FEF3C7',mt:'#92400E'},{nom:'BMS Pro Jeunes',badge:'🏦 Prêt',bc:'#FEE2E2',bt:'#991B1B',montant:'500 000 à 5 000 000 FCFA',desc:'Prêts préférentiels aux jeunes entrepreneurs maliens.',match:'⭐ Accessible tous secteurs',mc:'#D1FAE5',mt:'#065F46'}],
+};
+FINS.tech=FINS.edtech;FINS.design=FINS.default;FINS.sante=FINS.default;FINS.agriculture=FINS.default;FINS.finance=FINS.default;FINS.mode=FINS.default;FINS.media=FINS.default;
+
+const RECS={
+  edtech:['📱 Optimisez pour mobile : 80% de vos apprenants viendront du téléphone. Testez sur Android bas de gamme et réseau 3G.','🎓 Créez une version "light data" de vos formations (audios compressés, PDFs légers) pour zones à faible connectivité.','🤝 Approchez les universités (USTTB, FMPOS) et grandes entreprises (Orange, Coris Bank) pour des formations B2B.','📊 Suivez ces KPIs EdTech : taux de complétion (>60%), NPS (>40), taux retour emploi (objectif >30%).','💼 Proposez un certificat reconnu par des entreprises partenaires. La valeur de votre formation = crédibilité du certificat.','🏆 Candidatez au POESAM 2026 — c\'est votre meilleure opportunité de financement et visibilité cette année.'],
+  ecommerce:['💳 Intégrez Orange Money ET Moov Money dès le lancement. 70% de vos clients paieront par mobile.','🚚 Commencez par la livraison dans les communes 1-6 de Bamako seulement. Maîtrisez la logistique avant d\'étendre.','📸 La qualité des photos produits est votre argument de vente n°1. Investissez dans un fond photo professionnel.','🔄 Créez un programme de fidélité simple (5% cashback) — la rétention coûte 5x moins cher que l\'acquisition.','📦 Proposez le "paiement à la livraison" pour les nouveaux clients — c\'est la principale barrière à l\'achat en ligne au Mali.'],
+  restauration:['🍽️ Lancez le service traiteur pour événements (mariages, baptêmes, réunions) — marché récurrent et très rentable à Bamako.','📱 Page Facebook + WhatsApp Business. Publiez les menus du jour avant 9h. Les commandes suivront.','💰 Calculez précisément vos coûts matières. La marge idéale restauration : coût matières < 30-35% du prix de vente.','🤝 Partenariat avec les entreprises voisines pour les déjeuners du midi — un contrat cantine assure un revenu fixe mensuel.','🥡 Livraison via WhatsApp + paiement Orange Money = votre canal le moins coûteux. Commencez sans application.'],
+  tech:['👥 Recrutez un associé technique si vous n\'êtes pas développeur. CEO commercial + CTO technique = duo gagnant.','🔧 Méthode Agile : livrez une version simple en 4-6 semaines, testez, itérez. Ne passez pas 6 mois sans feedback client.','🌍 Ciblez d\'abord les entreprises (B2B) — tickets plus élevés et paiements plus fiables que les particuliers.','📱 Mobile-first obligatoire : 90% de la navigation au Mali se fait sur mobile. Testez sur réseaux 3G.','🔐 Protégez les données de vos utilisateurs. La confiance numérique est un avantage concurrentiel en Afrique.'],
+  design:['🎨 Publiez votre portfolio sur Behance ET Instagram. Behance pour clients internationaux, Instagram pour clients maliens.','💡 Proposez des packs design à tarifs fixes (ex: identité complète 150 000 FCFA) — les clients aiment la transparence.','📋 Créez un brief client standardisé à envoyer AVANT de commencer. Il réduit les révisions de 70%.','🌍 Rejoignez Upwork et 99designs pour clients internationaux (tarifs 3-5x plus élevés qu\'au Mali).','🤝 Partenariats avec développeurs web — design + code = projets complets. Répartition 50/50.'],
+  default:['📊 Suivez vos KPIs chaque semaine : CA, clients, rétention, coût acquisition.','💬 Interrogez vos 10 premiers clients chaque mois. Leurs feedbacks valent plus que toute étude de marché.','📱 Présent sur Facebook et WhatsApp Business dès le premier jour — gratuit et efficace au Mali.','💰 Conservez 3 mois de charges fixes en trésorerie avant de vous lancer.','🏆 Candidatez au POESAM 2026 — plus grande opportunité de financement pour startups maliennes.'],
+};
+RECS.sante=RECS.default;RECS.agriculture=RECS.default;RECS.finance=RECS.default;RECS.mode=RECS.default;RECS.media=RECS.default;
+
+function gs(id,d=''){const e=document.getElementById(id);return e?e.value||d:d;}
+function gn(id,d=0){return parseFloat(document.getElementById(id)?.value)||d;}
+function fmt(n){return Math.round(n).toLocaleString('fr-FR');}
+function fmtK(n){const a=Math.abs(n);const s=n<0?'-':'';if(a>=1000000)return s+(a/1000000).toFixed(1)+'M';if(a>=1000)return s+Math.round(a/1000)+'K';return Math.round(n).toString();}
+
+function st(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.tp').forEach((c,j)=>c.classList.toggle('active',i===j));
+  upd();
+}
+
+function calcRows(){
+  const prix=gn('prix',15000),cm1=gn('cm1',10),crois=gn('crois',15)/100,reten=gn('reten',70)/100;
+  const revsec=gn('revsec',0);
+  const cf=gn('sal',150000)+gn('loyer',50000)+gn('outils',20000)+gn('inet',25000)+gn('compta',15000)+gn('autf',20000);
+  const mkt=gn('mkt',50000),cvar=gn('cvar',3000);
+  let rows=[],clients=cm1,cumRes=0;
+  for(let m=1;m<=12;m++){
+    if(m>1) clients=Math.round(clients*(1+crois)*reten+cm1*(1-reten)*0.5);
+    const revT=clients*prix+revsec,cv=clients*cvar+mkt,ct=cf+cv,res=revT-ct;
+    cumRes+=res;
+    rows.push({m,clients,revT,cf,cv,ct,res,cumRes});
+  }
+  return rows;
+}
+
+function upd(){
+  const rows=calcRows();
+  const rev12=rows.reduce((s,r)=>s+r.revT,0);
+  const ch12=rows.reduce((s,r)=>s+r.ct,0);
+  const res12=rev12-ch12;
+  const cf=gn('sal')+gn('loyer')+gn('outils')+gn('inet')+gn('compta')+gn('autf');
+  const prix=gn('prix',15000),cvar=gn('cvar',3000);
+  const mu=prix-cvar,sr=mu>0?Math.ceil(cf/mu):999;
+  const bem=rows.findIndex(r=>r.cumRes>=0)+1;
+  const invest=gn('invest',500000);
+  const sect=gs('sect','edtech');
+  const sn=SNAMES[sect]||sect;
+  document.querySelectorAll('#sectlbl,#sectlbl2').forEach(e=>{if(e)e.textContent=sn;});
+
+  // Marché
+  const marche=gn('marche',500000),part=gn('part',0.5)/100;
+  const km=document.getElementById('kgm');
+  if(km) km.innerHTML=`<div class="kp p"><div class="kv">${fmtK(marche)}</div><div class="kl">Taille marché</div></div>
+    <div class="kp b"><div class="kv">${fmtK(Math.round(marche*part))}</div><div class="kl">Clients visés an 1</div></div>
+    <div class="kp g"><div class="kv">${fmtK(Math.round(marche*part)*gn('prix',15000)/12)}</div><div class="kl">CA mensuel potentiel</div></div>
+    <div class="kp o"><div class="kv">${gn('part',0.5)}%</div><div class="kl">Part marché visée</div></div>`;
+
+  // Rev KPIs
+  const kr=document.getElementById('kgr');
+  if(kr) kr.innerHTML=`<div class="kp g"><div class="kv">${fmt(rows[0].revT)}</div><div class="kl">CA mois 1</div></div>
+    <div class="kp g"><div class="kv">${fmt(rows[11].revT)}</div><div class="kl">CA mois 12</div></div>
+    <div class="kp p"><div class="kv">${fmt(rev12)}</div><div class="kl">CA annuel</div></div>
+    <div class="kp o"><div class="kv">${rows[11].clients}</div><div class="kl">Clients mois 12</div></div>`;
+
+  // Rev chart
+  const rc=document.getElementById('revchart');
+  if(rc){const mx=Math.max(...rows.map(r=>r.revT));
+    rc.innerHTML=rows.map(r=>`<div class="br"><div class="bl">M${r.m}</div><div class="bt"><div class="bf" style="width:${Math.max(4,Math.round(r.revT/mx*100))}%;background:#10B981">${fmt(r.revT)} F</div></div></div>`).join('');}
+
+  // Charges KPIs
+  const kc=document.getElementById('kgc');
+  if(kc) kc.innerHTML=`<div class="kp r"><div class="kv">${fmt(cf)}</div><div class="kl">Charges fixes/mois</div></div>
+    <div class="kp o"><div class="kv">${fmt(gn('mkt',50000))}</div><div class="kl">Budget marketing</div></div>
+    <div class="kp b"><div class="kv">${fmt(gn('cac',5000))}</div><div class="kl">CAC</div></div>
+    <div class="kp p"><div class="kv">${fmt(invest)}</div><div class="kl">Investissement</div></div>`;
+
+  // Table
+  const pt=document.getElementById('ptable');
+  if(pt) pt.innerHTML=`<thead><tr><th>Mois</th><th>Clients</th><th>CA (F)</th><th>Charges (F)</th><th>Résultat (F)</th><th>Cumulé (F)</th></tr></thead><tbody>`+
+    rows.map(r=>`<tr class="${r.res>=0?'pr':'ls'}"><td>M${r.m}</td><td>${r.clients}</td><td>${fmt(r.revT)}</td><td>${fmt(r.ct)}</td><td>${r.res>=0?'+':''}${fmt(r.res)}</td><td>${r.cumRes>=0?'+':''}${fmt(r.cumRes)}</td></tr>`).join('')+
+    `<tr class="tot"><td>TOTAL</td><td>—</td><td>${fmt(rev12)}</td><td>${fmt(ch12)}</td><td>${res12>=0?'+':''}${fmt(res12)}</td><td>—</td></tr></tbody>`;
+
+  // Résultat chart
+  const resc=document.getElementById('reschart');
+  if(resc){const mx=Math.max(...rows.map(r=>Math.abs(r.res)),1);
+    resc.innerHTML=rows.map(r=>`<div class="br"><div class="bl">M${r.m}</div><div class="bt"><div class="bf" style="width:${Math.max(4,Math.round(Math.abs(r.res)/mx*100))}%;background:${r.res>=0?'#10B981':'#EF4444'}">${r.res>=0?'+':''}${fmt(r.res)} F</div></div></div>`).join('');}
+
+  // KPIs indicateurs
+  const ki=document.getElementById('kgi');
+  if(ki){const marge=rev12>0?Math.round(res12/rev12*100):0,roi=invest>0?Math.round(res12/invest*100):0;
+    ki.innerHTML=`<div class="kp ${res12>=0?'g':'r'}"><div class="kv">${res12>=0?'+':''}${fmtK(res12)}</div><div class="kl">Résultat an 1</div></div>
+      <div class="kp ${marge>=0?'g':'r'}"><div class="kv">${marge}%</div><div class="kl">Marge nette</div></div>
+      <div class="kp ${roi>=0?'g':'r'}"><div class="kv">${roi}%</div><div class="kl">ROI an 1</div></div>
+      <div class="kp b"><div class="kv">${bem>0&&bem<=12?'M'+bem:'> 12m'}</div><div class="kl">Break-even</div></div>
+      <div class="kp o"><div class="kv">${sr}</div><div class="kl">Clients min/mois</div></div>`;}
+
+  // Score investisseur
+  const sb=document.getElementById('scorebox');
+  if(sb){let sc=0,det=[];
+    const nom=gs('nom'),prob=gs('prob'),sol=gs('sol'),cib=gs('cible');
+    if(nom.length>3){sc+=10;det.push(['✅','Projet nommé (+10)']);}else det.push(['❌','Nommez votre projet (-10)']);
+    if(prob.length>20){sc+=15;det.push(['✅','Problème défini (+15)']);}else det.push(['❌','Décrivez le problème (-15)']);
+    if(sol.length>20){sc+=15;det.push(['✅','Solution articulée (+15)']);}else det.push(['❌','Décrivez votre solution (-15)']);
+    if(cib.length>15){sc+=10;det.push(['✅','Cible définie (+10)']);}else det.push(['❌','Précisez votre cible (-10)']);
+    const marge=rev12>0?res12/rev12:0;
+    if(marge>0.2){sc+=20;det.push(['✅','Marge >20% (+20)']);}else if(marge>0){sc+=10;det.push(['⚠️','Marge positive (+10)']);}else det.push(['❌','Marge négative (+0)']);
+    if(bem>0&&bem<=12){sc+=15;det.push(['✅','Break-even <12m (+15)']);}else det.push(['❌','Rentabilité tardive (+0)']);
+    if(invest<rev12*0.5){sc+=10;det.push(['✅','Investissement raisonnable (+10)']);}else det.push(['⚠️','Investissement élevé (+5)']);
+    if(parseInt(gs('nbf','1'))>=2){sc+=5;det.push(['✅','Équipe multi-fondateurs (+5)']);}
+    sc=Math.min(100,Math.max(0,sc));
+    const niv=sc>=80?'Excellent — Prêt pour les investisseurs':sc>=60?'Solide — Quelques ajustements':sc>=40?'À améliorer — Plan incomplet':'Insuffisant — Reprenez les bases';
+    const col=sc>=80?'#0F6E56':sc>=60?'#534AB7':sc>=40?'#BA7517':'#A32D2D';
+    sb.innerHTML=`<div class="sv" style="color:${col}">${sc}/100</div><div class="sl">${niv}</div>
+      <div class="sbar"><div class="sbf" style="width:${sc}%"></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;text-align:left;margin-top:10px">
+        ${det.map(d=>`<div style="font-size:11px;color:#555;padding:3px 0">${d[0]} ${d[1]}</div>`).join('')}
+      </div>`;}
+
+  // SWOT sectoriel
+  const sw=document.getElementById('swotbox');
+  if(sw){const sd=SWOT[sect]||SWOT.design;
+    sw.innerHTML=`<div class="swot">
+      <div class="sw s"><div class="swt">💪 Forces — ${sn}</div>${sd.s.map(i=>`<div class="swi"><span>+</span><span>${i}</span></div>`).join('')}</div>
+      <div class="sw w"><div class="swt">⚠️ Faiblesses — ${sn}</div>${sd.w.map(i=>`<div class="swi"><span>-</span><span>${i}</span></div>`).join('')}</div>
+      <div class="sw o"><div class="swt">🚀 Opportunités Mali</div>${sd.o.map(i=>`<div class="swi"><span>→</span><span>${i}</span></div>`).join('')}</div>
+      <div class="sw t"><div class="swt">🛡️ Menaces</div>${sd.t.map(i=>`<div class="swi"><span>!</span><span>${i}</span></div>`).join('')}</div>
+    </div>`;}
+
+  // Financements sectoriels
+  const fb=document.getElementById('finbox');
+  if(fb){const fins=FINS[sect]||FINS.default;
+    fb.innerHTML=`<div class="fin-grid">${fins.map(f=>`<div class="fin-card">
+      <div class="fin-badge" style="background:${f.bc};color:${f.bt}">${f.badge}</div>
+      <div class="fin-name">${f.nom}</div>
+      <div class="fin-amount">${f.montant}</div>
+      <div class="fin-desc">${f.desc}</div>
+      <div class="fin-match" style="background:${f.mc};color:${f.mt}">${f.match}</div>
+    </div>`).join('')}</div>`;}
+
+  // Recommandations sectorielles
+  const rb=document.getElementById('recbox');
+  if(rb){const recs=RECS[sect]||RECS.default;
+    let extra=[];
+    const marge=rev12>0?res12/rev12:0;
+    if(marge<0) extra.push(['💰','Vos charges dépassent vos revenus. Réduisez les charges fixes de 20% OU augmentez votre prix. Visez une marge nette de 15-25%.']);
+    if(bem>12||bem<=0) extra.push(['⏱️','Votre break-even est trop tardif. Les financeurs veulent la rentabilité en 6-12 mois maximum.']);
+    if(gn('cm1',10)<5) extra.push(['👥','Identifiez vos 10 premiers clients AVANT le lancement. Validez votre offre avec eux.']);
+    const all=[...extra,...recs.map(r=>[r.split(' ')[0],r.slice(r.indexOf(' ')+1)])];
+    rb.innerHTML=all.map(r=>`<div class="rec"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('');}
+
+  // Partage
+  const ss=document.getElementById('share-summary');
+  if(ss){const marge=rev12>0?Math.round(res12/rev12*100):0;
+    ss.innerHTML=`<b>${gs('nom','Mon Projet')}</b> — Secteur : ${sn}<br>
+      <b>Problème résolu :</b> ${gs('prob','Non défini')}<br>
+      <b>Solution :</b> ${gs('sol','Non définie')}<br>
+      <b>Cible :</b> ${gs('cible','Non définie')}<br><br>
+      <b>Projections an 1 :</b><br>
+      • CA annuel : <b>${fmt(rev12)} FCFA</b><br>
+      • Résultat net : <b>${res12>=0?'+':''}${fmt(res12)} FCFA</b><br>
+      • Marge nette : <b>${marge}%</b><br>
+      • Break-even : <b>${bem>0&&bem<=12?'Mois '+bem:'Au-delà de 12 mois'}</b><br>
+      • Clients mois 12 : <b>${rows[11].clients} clients</b>`;}
+
+  // Email
+  const eb=document.getElementById('emailbox');
+  if(eb){const nom=gs('nom','Mon Projet');
+    eb.innerHTML=`<b>Objet :</b> Présentation Business Plan — ${nom}<br><br>
+      Bonjour [Prénom],<br><br>
+      Je me permets de vous contacter concernant mon projet <b>${nom}</b> (secteur ${sn}) qui s'attaque au problème suivant : ${gs('prob','...')}.<br><br>
+      Notre solution : ${gs('sol','...')}<br><br>
+      Projections an 1 : CA <b>${fmt(rev12)} FCFA</b>, break-even prévu au <b>mois ${bem>0&&bem<=12?bem:'N/A'}</b>.<br><br>
+      Je serais ravi(e) de vous présenter notre business plan complet en 20 minutes.<br><br>
+      Cordialement,<br>[Votre nom] | ${nom}`;}
+
+  // Conseils
+  const cb=document.getElementById('consbox');
+  if(cb) cb.innerHTML=`
+    <div class="rec">💡 <span>Structure ton pitch en 5 min : Problème (1min) → Solution (1min) → Marché (30s) → Business model (1min) → Équipe + demande (1.5min)</span></div>
+    <div class="rec">📊 <span>Commence par une histoire vraie : "Il y a 6 mois, Fatoumata cherchait une formation..." C'est plus impactant que des chiffres abstraits.</span></div>
+    <div class="rec">🎯 <span>Anticipe ces 3 questions : "Pourquoi vous ?" (équipe), "Pourquoi maintenant ?" (timing), "Pourquoi ça marchera ?" (preuve marché)</span></div>
+    <div class="rec">📱 <span>Envoie le résumé par WhatsApp AVANT la réunion pour que l'investisseur arrive préparé. C'est la pratique standard au Mali.</span></div>
+    <div class="rec">🤝 <span>Finissez toujours par : "Voici ce que je vous demande concrètement" — montant, contrepartie, délai de décision souhaité.</span></div>`;
+
+  renderAssocs();
+}
+
+function renderAssocs(){
+  const al=document.getElementById('assoclist');
+  const pb=document.getElementById('partsbar');
+  const pw=document.getElementById('partsw');
+  const db=document.getElementById('droitsbox');
+  if(!al) return;
+  const total=assocs.reduce((s,a)=>s+a.parts,0);
+  al.innerHTML=assocs.length===0?`<div style="text-align:center;color:#888;padding:16px;font-size:12px">Aucun associé ajouté. Utilisez le formulaire ci-dessous.</div>`:
+    assocs.map((a,i)=>`<div class="assoc-item">
+      <div class="assoc-avatar" style="background:${COLORS[i%COLORS.length]}">${a.nom.split(' ').map(n=>n[0]||'').join('').toUpperCase().slice(0,2)||'?'}</div>
+      <div style="flex:1"><div class="assoc-name">${a.nom}</div><div class="assoc-role">${a.role}</div></div>
+      <div class="assoc-parts">${a.parts}%</div>
+      <button class="btn-del" onclick="delAssoc(${i})">✕</button>
+    </div>`).join('');
+
+  if(pb){
+    if(assocs.length>0){
+      pb.innerHTML=`<div style="font-size:11px;color:#666;margin-bottom:6px">Répartition des parts (${total}% répartis sur 100%)</div>
+        <div class="parts-bar-wrap">${assocs.map((a,i)=>`<div class="parts-seg" style="width:${a.parts}%;background:${COLORS[i%COLORS.length]}">${a.parts}%</div>`).join('')}</div>
+        <div class="parts-legend">${assocs.map((a,i)=>`<div class="pl-item"><div class="pl-dot" style="background:${COLORS[i%COLORS.length]}"></div>${a.nom} (${a.parts}%)</div>`).join('')}</div>`;
+    } else pb.innerHTML=`<div style="text-align:center;color:#888;padding:16px;font-size:12px">Ajoutez des associés pour voir la répartition des parts</div>`;
+  }
+  if(pw){
+    if(total>100) pw.innerHTML=`<div class="pw err">⚠️ Total ${total}% — Vous dépassez 100%. Réduisez les parts.</div>`;
+    else if(total===100) pw.innerHTML=`<div class="pw ok">✅ Total 100% — Répartition complète et équilibrée !</div>`;
+    else if(assocs.length>0) pw.innerHTML=`<div class="pw info">ℹ️ Total ${total}% — Il reste ${100-total}% à répartir (réserve investisseurs ou options).</div>`;
+    else pw.innerHTML='';
+  }
+  if(db){
+    const rows=calcRows();
+    const res12=rows.reduce((s,r)=>s+r.res,0);
+    if(assocs.length>0){
+      db.innerHTML=assocs.map((a,i)=>`<div class="rec" style="border-left:3px solid ${COLORS[i%COLORS.length]}">
+        <span style="color:${COLORS[i%COLORS.length]};font-weight:600;min-width:100px">${a.nom} — ${a.parts}%</span>
+        <span style="color:#555">${a.parts>=50?'Décisions stratégiques (majorité)':a.parts>=25?'Droit de veto sur décisions majeures':a.parts>=10?'Droit au dividende + vote':'Part minoritaire — accompagnement'}. Dividendes estimés an 1 : <b style="color:#0F6E56">${fmt(Math.max(0,res12*a.parts/100))} FCFA</b></span>
+      </div>`).join('');
+    } else db.innerHTML=`<div style="font-size:12px;color:#666;padding:10px">Ajoutez des associés pour voir leurs droits et dividendes estimés.</div>`;
+  }
+}
+
+function addAssoc(){
+  const n=document.getElementById('anom').value.trim();
+  const r=document.getElementById('arole').value.trim();
+  const p=parseFloat(document.getElementById('aparts').value)||0;
+  if(!n||!r||p<=0||p>100){alert('Remplissez tous les champs (nom, rôle, parts entre 1 et 100)');return;}
+  assocs.push({nom:n,role:r,parts:p});
+  document.getElementById('anom').value='';
+  document.getElementById('arole').value='';
+  document.getElementById('aparts').value='';
+  renderAssocs();
+}
+function delAssoc(i){assocs.splice(i,1);renderAssocs();}
+
+function getBPText(){
+  const rows=calcRows();
+  const rev12=rows.reduce((s,r)=>s+r.revT,0);
+  const res12=rev12-rows.reduce((s,r)=>s+r.ct,0);
+  const bem=rows.findIndex(r=>r.cumRes>=0)+1;
+  const sn=SNAMES[gs('sect','edtech')]||gs('sect','edtech');
+  return `📊 BUSINESS PLAN — ${gs('nom','Mon Projet').toUpperCase()}
+Secteur : ${sn} | Ville : ${gs('ville','Bamako')}
+
+🎯 PROBLÈME : ${gs('prob','Non défini')}
+💡 SOLUTION : ${gs('sol','Non définie')}
+👥 CIBLE : ${gs('cible','Non définie')}
+
+📈 PROJECTIONS AN 1 :
+• CA annuel : ${fmt(rev12)} FCFA
+• Résultat net : ${res12>=0?'+':''}${fmt(res12)} FCFA
+• Marge nette : ${rev12>0?Math.round(res12/rev12*100):0}%
+• Break-even : ${bem>0&&bem<=12?'Mois '+bem:'Au-delà 12 mois'}
+• Clients mois 12 : ${rows[11].clients}
+
+${assocs.length>0?'👥 ASSOCIÉS :\n'+assocs.map(a=>`• ${a.nom} (${a.role}) — ${a.parts}%`).join('\n'):''}
+
+🌟 Créé avec Stageia Business Plan Simulator
+fondatrice@stageia.com | +223 78 31 48 44`;
+}
+
+function copyBP(){
+  const t=getBPText();
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(t).then(()=>{const c=document.getElementById('copied');c.style.display='block';setTimeout(()=>c.style.display='none',3000);});
+  } else {
+    const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    const c=document.getElementById('copied');c.style.display='block';setTimeout(()=>c.style.display='none',3000);
+  }
+}
+function shareWA(){window.open('https://wa.me/?text='+encodeURIComponent(getBPText()),'_blank');}
+
+upd();
+</script>
+</body>
+</html>

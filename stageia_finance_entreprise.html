@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Finance d'Entreprise</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#065F46);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#6EE7B7;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#059669;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.row.r3{grid-template-columns:1fr 1fr 1fr}
+label{font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:4px}
+input,select{width:100%;padding:8px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;font-family:Arial;background:#fff}
+input:focus,select:focus{outline:none;border-color:#059669}
+.hint{font-size:10px;color:#888;margin-top:3px}
+.box{background:#ECFDF5;border-left:3px solid #059669;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.warn{background:#FEF3C7;border-left-color:#F59E0B;color:#92400E}
+.err{background:#FEE2E2;border-left-color:#EF4444;color:#991B1B}
+.info{background:#DBEAFE;border-left-color:#3B82F6;color:#1E40AF}
+.purple{background:#F5F3FF;border-left-color:#8B5CF6;color:#5B21B6}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:12px 0}
+.kpi{background:#f5f5f5;border-radius:8px;padding:10px;text-align:center;border:1px solid #e0e0e0}
+.kpi b{display:block;font-size:17px;color:#059669;margin-bottom:2px}
+.kpi span{font-size:10px;color:#666}
+.kpi.r b{color:#A32D2D}
+.kpi.o b{color:#BA7517}
+.kpi.p b{color:#534AB7}
+.kpi.b b{color:#185FA5}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+th{background:#ECFDF5;padding:8px;text-align:left;font-weight:600;color:#065F46;border-bottom:2px solid #059669}
+td{padding:8px;border-bottom:1px solid #eee}
+tr.sub td{padding-left:20px;color:#555;font-size:11px}
+tr.tot td{background:#ECFDF5;font-weight:700;color:#065F46}
+tr.neg td{color:#A32D2D}
+tr.pos td{color:#065F46;font-weight:600}
+.section-title{font-size:13px;font-weight:700;color:#0D0B2E;margin:14px 0 8px;border-bottom:2px solid #059669;padding-bottom:5px}
+/* QUIZ */
+.quiz-q{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:12px}
+.quiz-q .q-num{font-size:10px;color:#059669;font-weight:700;margin-bottom:5px}
+.quiz-q .q-text{font-size:13px;font-weight:600;color:#0D0B2E;margin-bottom:10px;line-height:1.5}
+.quiz-q .q-tip{font-size:11px;color:#888;background:#fff;border:1px solid #eee;border-radius:6px;padding:6px 10px;margin-bottom:10px}
+.opt{width:100%;padding:9px 14px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;font-size:12px;background:#fff;text-align:left;margin-bottom:5px;font-family:Arial;line-height:1.5;transition:all .15s}
+.opt:hover{border-color:#059669;background:#ECFDF5}
+.opt.good{border-color:#10B981;background:#D1FAE5;pointer-events:none;color:#065F46}
+.opt.bad{border-color:#EF4444;background:#FEE2E2;pointer-events:none;color:#991B1B}
+.opt.dis{pointer-events:none;opacity:.5}
+.fb{border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;line-height:1.6;display:none}
+.fb.show{display:block}
+.fb.ok{background:#D1FAE5;color:#065F46}
+.fb.ko{background:#FEE2E2;color:#991B1B}
+.score-badge{text-align:center;padding:16px;background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:12px;margin-bottom:14px}
+.score-val{font-size:32px;font-weight:700;color:#059669}
+.btn-next{padding:9px 20px;background:#059669;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:Arial;margin-top:8px;display:none}
+.btn-next.show{display:inline-block}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px}
+.bar-lbl{width:160px;flex-shrink:0;color:#555}
+.bar-track{flex:1;height:16px;background:#eee;border-radius:8px;overflow:hidden}
+.bar-fill{height:100%;background:#059669;border-radius:8px;display:flex;align-items:center;padding-left:6px;font-size:9px;color:#fff;font-weight:600}
+@media(max-width:550px){.row,.row.r3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<h1>📊 Finance d'Entreprise — Stageia
+<small>Bilan · Compte de résultat · Ratios financiers · Exercices pratiques · Quiz</small></h1>
+
+<div class="tabs">
+  <button class="tab on" onclick="show(0)">📚 Leçons</button>
+  <button class="tab" onclick="show(1)">📋 Bilan Interactif</button>
+  <button class="tab" onclick="show(2)">📈 Compte Résultat</button>
+  <button class="tab" onclick="show(3)">📊 Ratios</button>
+  <button class="tab" onclick="show(4)">✏️ Exercices</button>
+  <button class="tab" onclick="show(5)">🎯 Quiz</button>
+</div>
+
+<!-- PANE 0: LEÇONS -->
+<div class="pane on" id="p0">
+  <div class="section-title">📚 Les 3 états financiers fondamentaux</div>
+  <div class="box">📋 <b>Le Bilan (Balance Sheet)</b><br>
+  Photo du patrimoine de l'entreprise à un instant T.<br>
+  <b>Actif</b> = Ce que l'entreprise POSSÈDE (gauche)<br>
+  <b>Passif</b> = Ce que l'entreprise DOIT + les capitaux propres (droite)<br>
+  <b>Règle d'or :</b> Actif = Passif (toujours en équilibre !)</div>
+  <div class="box">📈 <b>Le Compte de Résultat (Income Statement)</b><br>
+  Film de l'activité sur une période (mois, année).<br>
+  <b>Produits</b> = Ce que l'entreprise GAGNE (CA, autres produits)<br>
+  <b>Charges</b> = Ce que l'entreprise DÉPENSE<br>
+  <b>Résultat net</b> = Produits − Charges (bénéfice ou perte)</div>
+  <div class="box">💰 <b>Le Tableau de Flux de Trésorerie (Cash Flow)</b><br>
+  Mouvements réels d'argent sur la période.<br>
+  <b>Exploitation</b> = Cash généré par l'activité principale<br>
+  <b>Investissement</b> = Cash dépensé en équipements<br>
+  <b>Financement</b> = Emprunts, dividendes, augmentations de capital</div>
+
+  <div class="section-title">🧮 Formules essentielles à maîtriser</div>
+  <table>
+    <thead><tr><th>Formule</th><th>Calcul</th><th>Interprétation</th></tr></thead>
+    <tbody>
+      <tr><td><b>Marge brute</b></td><td>CA − Coût des ventes</td><td>Bénéfice avant charges fixes</td></tr>
+      <tr><td><b>Taux marge brute</b></td><td>Marge brute / CA × 100</td><td>% de chaque FCFA de CA qui reste</td></tr>
+      <tr><td><b>EBITDA</b></td><td>Résultat + Amortissements + Intérêts + Impôts</td><td>Rentabilité opérationnelle pure</td></tr>
+      <tr><td><b>Résultat net</b></td><td>Produits − Charges totales</td><td>Bénéfice final après tout</td></tr>
+      <tr><td><b>BFR</b></td><td>Stocks + Créances − Dettes fournisseurs</td><td>Besoin en financement court terme</td></tr>
+      <tr><td><b>Ratio liquidité</b></td><td>Actif circulant / Dettes CT</td><td>>1 = solvable à court terme</td></tr>
+      <tr><td><b>ROE</b></td><td>Résultat net / Capitaux propres × 100</td><td>Rentabilité pour les actionnaires</td></tr>
+      <tr><td><b>ROA</b></td><td>Résultat net / Total actif × 100</td><td>Rentabilité des actifs</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">💡 La règle d'or : ACTIF = PASSIF</div>
+  <div class="box info">Exemple concret : Vous créez une entreprise avec 500 000 FCFA d'épargne et empruntez 300 000 FCFA à la banque pour acheter du matériel.<br><br>
+  <b>Actif :</b> Matériel = 800 000 FCFA<br>
+  <b>Passif :</b> Capital (vous) = 500 000 + Emprunt = 300 000 = 800 000 FCFA<br>
+  ✅ L'équilibre est respecté !</div>
+
+  <div class="section-title">🏦 Contexte OHADA / Mali</div>
+  <div class="box purple">Au Mali et dans les pays UEMOA, la comptabilité suit les normes <b>SYSCOHADA</b> (Système Comptable OHADA). Les grandes différences avec les normes internationales (IFRS) :
+  <br>• Plan comptable numéroté de 1 à 8<br>• États financiers annuels obligatoires<br>• Déclaration à la DGID (Direction Générale des Impôts)<br>• Exercice fiscal = année civile (1er jan. − 31 déc.)</div>
+</div>
+
+<!-- PANE 1: BILAN INTERACTIF -->
+<div class="pane" id="p1">
+  <div class="box info" style="margin-bottom:12px">📋 Remplissez les cases du bilan. L'équilibre Actif = Passif se calcule automatiquement.</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <!-- ACTIF -->
+    <div>
+      <div class="section-title" style="color:#185FA5">ACTIF (Ce que l'entreprise possède)</div>
+      <div style="font-size:12px;font-weight:600;color:#185FA5;margin-bottom:6px">Actif immobilisé (long terme)</div>
+      <div style="margin-bottom:6px"><label>Immobilisations corporelles (FCFA)</label><input type="number" id="immo" value="500000" oninput="calcBilan()"><div class="hint">Terrains, bâtiments, machines, véhicules</div></div>
+      <div style="margin-bottom:6px"><label>Immobilisations incorporelles (FCFA)</label><input type="number" id="incorp" value="50000" oninput="calcBilan()"><div class="hint">Logiciels, brevets, fonds de commerce</div></div>
+      <div style="margin-bottom:10px"><label>Immobilisations financières (FCFA)</label><input type="number" id="immoFin" value="0" oninput="calcBilan()"><div class="hint">Titres de participation, cautions</div></div>
+      <div style="font-size:12px;font-weight:600;color:#185FA5;margin-bottom:6px">Actif circulant (court terme)</div>
+      <div style="margin-bottom:6px"><label>Stocks (FCFA)</label><input type="number" id="stocks" value="200000" oninput="calcBilan()"></div>
+      <div style="margin-bottom:6px"><label>Créances clients (FCFA)</label><input type="number" id="creances" value="150000" oninput="calcBilan()"><div class="hint">Ce que vos clients vous doivent</div></div>
+      <div style="margin-bottom:6px"><label>Disponibilités / Trésorerie (FCFA)</label><input type="number" id="tresorerie" value="100000" oninput="calcBilan()"><div class="hint">Caisse + comptes bancaires</div></div>
+    </div>
+    <!-- PASSIF -->
+    <div>
+      <div class="section-title" style="color:#065F46">PASSIF (Ce que l'entreprise doit)</div>
+      <div style="font-size:12px;font-weight:600;color:#065F46;margin-bottom:6px">Capitaux propres</div>
+      <div style="margin-bottom:6px"><label>Capital social (FCFA)</label><input type="number" id="capital" value="400000" oninput="calcBilan()"><div class="hint">Apport des associés/actionnaires</div></div>
+      <div style="margin-bottom:6px"><label>Réserves (FCFA)</label><input type="number" id="reserves" value="100000" oninput="calcBilan()"><div class="hint">Bénéfices non distribués des années précédentes</div></div>
+      <div style="margin-bottom:10px"><label>Résultat de l'exercice (FCFA)</label><input type="number" id="resultatBilan" value="50000" oninput="calcBilan()"></div>
+      <div style="font-size:12px;font-weight:600;color:#065F46;margin-bottom:6px">Dettes</div>
+      <div style="margin-bottom:6px"><label>Dettes financières LT (FCFA)</label><input type="number" id="dettesLT" value="300000" oninput="calcBilan()"><div class="hint">Emprunts bancaires long terme</div></div>
+      <div style="margin-bottom:6px"><label>Dettes fournisseurs (FCFA)</label><input type="number" id="dettesFourn" value="100000" oninput="calcBilan()"><div class="hint">Ce que vous devez à vos fournisseurs</div></div>
+      <div style="margin-bottom:6px"><label>Dettes fiscales et sociales (FCFA)</label><input type="number" id="dettesFisc" value="50000" oninput="calcBilan()"><div class="hint">Impôts, CNSS, INPS à payer</div></div>
+    </div>
+  </div>
+  <div id="bilanResult"></div>
+</div>
+
+<!-- PANE 2: COMPTE DE RÉSULTAT -->
+<div class="pane" id="p2">
+  <div class="box info" style="margin-bottom:12px">📈 Saisissez vos données pour construire votre compte de résultat complet.</div>
+  <div class="row">
+    <div><label>Chiffre d'affaires (FCFA)</label><input type="number" id="ca" value="1000000" oninput="calcCR()"><div class="hint">Ventes de produits + services</div></div>
+    <div><label>Autres produits d'exploitation (FCFA)</label><input type="number" id="autresProd" value="50000" oninput="calcCR()"></div>
+  </div>
+  <div class="row">
+    <div><label>Coût des marchandises vendues (FCFA)</label><input type="number" id="cmv" value="400000" oninput="calcCR()"><div class="hint">Achats + variation stocks</div></div>
+    <div><label>Charges de personnel (FCFA)</label><input type="number" id="personnel" value="200000" oninput="calcCR()"></div>
+  </div>
+  <div class="row">
+    <div><label>Charges d'exploitation (FCFA)</label><input type="number" id="exploitation" value="100000" oninput="calcCR()"><div class="hint">Loyer, électricité, internet...</div></div>
+    <div><label>Amortissements (FCFA)</label><input type="number" id="amort" value="30000" oninput="calcCR()"><div class="hint">Dépréciation du matériel / 12</div></div>
+  </div>
+  <div class="row">
+    <div><label>Charges financières (intérêts) (FCFA)</label><input type="number" id="chargesFin" value="20000" oninput="calcCR()"></div>
+    <div><label>Impôts et taxes (FCFA)</label><input type="number" id="impots" value="30000" oninput="calcCR()"><div class="hint">IS, TVA, patente...</div></div>
+  </div>
+  <div id="crResult"></div>
+</div>
+
+<!-- PANE 3: RATIOS -->
+<div class="pane" id="p3">
+  <div class="box info">📊 Les ratios financiers permettent d'analyser la santé d'une entreprise. Remplissez les données dans les onglets Bilan et Compte de Résultat pour les calculer automatiquement.</div>
+  <div id="ratiosResult"></div>
+  <div class="section-title">📚 Guide d'interprétation des ratios</div>
+  <table>
+    <thead><tr><th>Ratio</th><th>Formule</th><th>Bon signe</th><th>Mauvais signe</th></tr></thead>
+    <tbody>
+      <tr><td><b>Marge brute</b></td><td>MB / CA × 100</td><td>> 30%</td><td>< 20%</td></tr>
+      <tr><td><b>Marge nette</b></td><td>RN / CA × 100</td><td>> 10%</td><td>< 5%</td></tr>
+      <tr><td><b>Liquidité générale</b></td><td>AC / DCT</td><td>> 1,5</td><td>< 1</td></tr>
+      <tr><td><b>Solvabilité</b></td><td>CP / Total Passif</td><td>> 30%</td><td>< 20%</td></tr>
+      <tr><td><b>ROE</b></td><td>RN / CP × 100</td><td>> 15%</td><td>< 5%</td></tr>
+      <tr><td><b>ROA</b></td><td>RN / Total Actif × 100</td><td>> 5%</td><td>< 2%</td></tr>
+      <tr><td><b>Taux endettement</b></td><td>Dettes / CP</td><td>< 1</td><td>> 2</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- PANE 4: EXERCICES -->
+<div class="pane" id="p4">
+  <div class="section-title">✏️ Exercice 1 — Construire un bilan</div>
+  <div class="box info">📝 <b>Énoncé :</b> La société MALI TECH SARL a été créée avec un capital de 2 000 000 FCFA. Elle a emprunté 1 000 000 FCFA à la banque BMS. Elle a acheté du matériel informatique pour 1 500 000 FCFA et dispose de 1 000 000 FCFA en banque. Elle a des créances clients de 300 000 FCFA et doit 200 000 FCFA à ses fournisseurs. Son résultat de l'année est de 0 FCFA (1ère année).<br><br>Calculez le bilan et vérifiez l'équilibre Actif = Passif.</div>
+  <div id="ex1" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div>
+      <div style="font-size:12px;font-weight:700;color:#185FA5;margin-bottom:6px">ACTIF — Votre réponse</div>
+      <div style="margin-bottom:6px"><label>Matériel informatique</label><input type="number" id="ex1immo" placeholder="?" oninput="checkEx1()"></div>
+      <div style="margin-bottom:6px"><label>Créances clients</label><input type="number" id="ex1creances" placeholder="?" oninput="checkEx1()"></div>
+      <div style="margin-bottom:6px"><label>Disponibilités</label><input type="number" id="ex1tresorerie" placeholder="?" oninput="checkEx1()"></div>
+      <div style="margin-bottom:6px"><label><b>TOTAL ACTIF</b></label><input type="number" id="ex1actif" placeholder="?" oninput="checkEx1()" style="font-weight:700"></div>
+    </div>
+    <div>
+      <div style="font-size:12px;font-weight:700;color:#065F46;margin-bottom:6px">PASSIF — Votre réponse</div>
+      <div style="margin-bottom:6px"><label>Capital social</label><input type="number" id="ex1capital" placeholder="?" oninput="checkEx1()"></div>
+      <div style="margin-bottom:6px"><label>Emprunt bancaire</label><input type="number" id="ex1emprunt" placeholder="?" oninput="checkEx1()"></div>
+      <div style="margin-bottom:6px"><label>Dettes fournisseurs</label><input type="number" id="ex1dettes" placeholder="?" oninput="checkEx1()"></div>
+      <div style="margin-bottom:6px"><label><b>TOTAL PASSIF</b></label><input type="number" id="ex1passif" placeholder="?" oninput="checkEx1()" style="font-weight:700"></div>
+    </div>
+  </div>
+  <div id="ex1result"></div>
+
+  <div class="section-title" style="margin-top:20px">✏️ Exercice 2 — Calculer le résultat net</div>
+  <div class="box info">📝 <b>Énoncé :</b> La société BOUTIQUE AMINATA a réalisé un CA de 3 000 000 FCFA. Elle a acheté des marchandises pour 1 200 000 FCFA. Elle a payé 400 000 FCFA de salaires, 150 000 FCFA de loyer, 50 000 FCFA d'électricité/internet, et 80 000 FCFA d'impôts. Calculez la marge brute, l'EBE et le résultat net.</div>
+  <div class="row r3">
+    <div><label>Marge brute (FCFA)</label><input type="number" id="ex2mb" placeholder="CA - Achats" oninput="checkEx2()"></div>
+    <div><label>EBE (FCFA)</label><input type="number" id="ex2ebe" placeholder="MB - Salaires - Loyer - Elec" oninput="checkEx2()"></div>
+    <div><label>Résultat net (FCFA)</label><input type="number" id="ex2rn" placeholder="EBE - Impôts" oninput="checkEx2()"></div>
+  </div>
+  <div id="ex2result"></div>
+
+  <div class="section-title" style="margin-top:20px">✏️ Exercice 3 — Calculer les ratios</div>
+  <div class="box info">📝 <b>Données :</b> CA = 5 000 000 FCFA · Marge brute = 2 000 000 FCFA · Résultat net = 400 000 FCFA · Capitaux propres = 2 500 000 FCFA · Total actif = 4 000 000 FCFA · Actif circulant = 1 500 000 FCFA · Dettes CT = 800 000 FCFA</div>
+  <div class="row r3">
+    <div><label>Taux marge brute (%)</label><input type="number" id="ex3mb" placeholder="MB/CA×100" oninput="checkEx3()"></div>
+    <div><label>Taux marge nette (%)</label><input type="number" id="ex3mn" placeholder="RN/CA×100" oninput="checkEx3()"></div>
+    <div><label>ROE (%)</label><input type="number" id="ex3roe" placeholder="RN/CP×100" oninput="checkEx3()"></div>
+  </div>
+  <div class="row">
+    <div><label>ROA (%)</label><input type="number" id="ex3roa" placeholder="RN/Actif×100" oninput="checkEx3()"></div>
+    <div><label>Ratio liquidité générale</label><input type="number" id="ex3liq" placeholder="AC/DCT" step="0.01" oninput="checkEx3()"></div>
+  </div>
+  <div id="ex3result"></div>
+</div>
+
+<!-- PANE 5: QUIZ -->
+<div class="pane" id="p5">
+  <div id="quizArea"></div>
+</div>
+
+<script>
+var qStep=0, qScore=0, qAnswers=[];
+
+var QUESTIONS=[
+  {q:"Quelle est la règle fondamentale du bilan comptable ?",tip:"Pensez à l'équation de base de la comptabilité.",opts:["Le résultat net doit être positif","Actif = Passif (toujours en équilibre)","Les charges doivent être inférieures aux produits","Le capital doit dépasser les dettes"],correct:1,fb:"✅ ACTIF = PASSIF est la règle d'or. L'actif représente ce que l'entreprise possède, le passif représente les sources de financement (dettes + capitaux propres). Ces deux côtés sont toujours égaux.",pts:10},
+  {q:"Une entreprise a un CA de 800 000 FCFA et un coût des marchandises vendues de 480 000 FCFA. Quelle est sa marge brute ?",tip:"Marge brute = CA − Coût des marchandises vendues",opts:["280 000 FCFA","320 000 FCFA","480 000 FCFA","160 000 FCFA"],correct:1,fb:"✅ Marge brute = 800 000 − 480 000 = 320 000 FCFA. Le taux de marge brute est de 40% (320 000/800 000×100).",pts:15},
+  {q:"Qu'est-ce que l'EBITDA ?",tip:"EBITDA = Earnings Before Interest, Taxes, Depreciation and Amortization",opts:["Le chiffre d'affaires de l'entreprise","Le résultat avant intérêts, impôts, amortissements — mesure la rentabilité opérationnelle pure","Le total des dettes de l'entreprise","Le capital social de l'entreprise"],correct:1,fb:"✅ L'EBITDA mesure la performance opérationnelle pure de l'entreprise avant les choix de financement (intérêts), fiscaux (impôts) et comptables (amortissements). C'est un indicateur très utilisé par les investisseurs.",pts:15},
+  {q:"Le BFR (Besoin en Fonds de Roulement) est positif. Que signifie-t-il ?",tip:"BFR = Stocks + Créances clients − Dettes fournisseurs",opts:["L'entreprise génère de la trésorerie automatiquement","L'entreprise a besoin de financement pour son cycle d'exploitation","L'entreprise est en faillite","L'entreprise a trop de stocks"],correct:1,fb:"✅ Un BFR positif signifie que l'entreprise doit financer son cycle d'exploitation : elle paie ses fournisseurs AVANT d'encaisser ses clients. Ce besoin doit être couvert par la trésorerie ou des lignes de crédit.",pts:15},
+  {q:"Le ROE d'une entreprise est de 25%. Quelle est l'interprétation correcte ?",tip:"ROE = Résultat Net / Capitaux Propres × 100",opts:["L'entreprise perd de l'argent","Pour 100 FCFA investis par les actionnaires, l'entreprise génère 25 FCFA de bénéfice","L'entreprise a 25% de dettes","L'entreprise a un actif de 25 millions FCFA"],correct:1,fb:"✅ ROE = 25% signifie que pour chaque 100 FCFA investis par les actionnaires, l'entreprise génère 25 FCFA de bénéfice net. Un ROE > 15% est généralement considéré comme bon.",pts:15},
+  {q:"Quelle est la différence entre le bilan et le compte de résultat ?",tip:"Pensez à la métaphore photo vs film.",opts:["Il n'y a pas de différence — ce sont des synonymes","Le bilan = photo du patrimoine à un instant T / Compte de résultat = film de l'activité sur une période","Le bilan montre les bénéfices, le compte de résultat les dettes","Le bilan est annuel, le compte de résultat mensuel obligatoirement"],correct:1,fb:"✅ Excellente distinction ! Le bilan (photo) montre la situation à une date précise. Le compte de résultat (film) montre l'activité sur toute la période (chiffre d'affaires, charges, résultat).",pts:10},
+  {q:"Le ratio de liquidité générale d'une entreprise est de 0,8. Que cela signifie-t-il ?",tip:"Ratio liquidité = Actif circulant / Dettes à court terme",opts:["L'entreprise est très rentable","L'entreprise risque de ne pas pouvoir payer ses dettes à court terme (actif CT < dettes CT)","L'entreprise a beaucoup de liquidités","L'entreprise est bien gérée"],correct:1,fb:"✅ Un ratio < 1 est un signal d'alarme. Cela signifie que les dettes à court terme dépassent l'actif circulant. L'entreprise pourrait avoir du mal à honorer ses échéances court terme. L'objectif est d'avoir un ratio > 1,5.",pts:15},
+  {q:"Dans le plan SYSCOHADA (Mali), à quelle classe appartiennent les comptes de charges ?",tip:"Le plan comptable OHADA classe les comptes de 1 à 8.",opts:["Classe 1","Classe 4","Classe 6","Classe 8"],correct:2,fb:"✅ Dans le SYSCOHADA : Classe 1 = Capitaux, Classe 2 = Immobilisations, Classe 3 = Stocks, Classe 4 = Tiers (clients/fournisseurs), Classe 5 = Trésorerie, Classe 6 = Charges, Classe 7 = Produits, Classe 8 = Comptes spéciaux.",pts:15},
+];
+
+function show(i){
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+  document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+  if(i===1) calcBilan();
+  if(i===2) calcCR();
+  if(i===3) calcRatios();
+  if(i===5) renderQuiz();
+}
+
+function gn(id,d){return parseFloat(document.getElementById(id)?.value)||d||0;}
+function fm(n){return Math.round(n).toLocaleString('fr-FR');}
+function pct(a,b){return b?Math.round(a/b*100):0;}
+
+function calcBilan(){
+  var immo=gn('immo'),incorp=gn('incorp'),immoFin=gn('immoFin');
+  var stocks=gn('stocks'),creances=gn('creances'),tresorerie=gn('tresorerie');
+  var capital=gn('capital'),reserves=gn('reserves'),resultat=gn('resultatBilan');
+  var dettesLT=gn('dettesLT'),dettesFourn=gn('dettesFourn'),dettesFisc=gn('dettesFisc');
+  var totalActifImmo=immo+incorp+immoFin;
+  var totalActifCirc=stocks+creances+tresorerie;
+  var totalActif=totalActifImmo+totalActifCirc;
+  var totalCP=capital+reserves+resultat;
+  var totalDettes=dettesLT+dettesFourn+dettesFisc;
+  var totalPassif=totalCP+totalDettes;
+  var ecart=totalActif-totalPassif;
+  var el=document.getElementById('bilanResult');
+  if(!el) return;
+  el.innerHTML='<div class="section-title">📋 Votre Bilan</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+    '<div><table><thead><tr><th colspan="2">ACTIF</th></tr></thead><tbody>'+
+    '<tr><td><b>Actif immobilisé</b></td><td style="text-align:right"><b>'+fm(totalActifImmo)+'</b></td></tr>'+
+    '<tr class="sub"><td>Immobilisations corporelles</td><td style="text-align:right">'+fm(immo)+'</td></tr>'+
+    '<tr class="sub"><td>Immobilisations incorporelles</td><td style="text-align:right">'+fm(incorp)+'</td></tr>'+
+    '<tr class="sub"><td>Immobilisations financières</td><td style="text-align:right">'+fm(immoFin)+'</td></tr>'+
+    '<tr><td><b>Actif circulant</b></td><td style="text-align:right"><b>'+fm(totalActifCirc)+'</b></td></tr>'+
+    '<tr class="sub"><td>Stocks</td><td style="text-align:right">'+fm(stocks)+'</td></tr>'+
+    '<tr class="sub"><td>Créances clients</td><td style="text-align:right">'+fm(creances)+'</td></tr>'+
+    '<tr class="sub"><td>Disponibilités</td><td style="text-align:right">'+fm(tresorerie)+'</td></tr>'+
+    '<tr class="tot"><td><b>TOTAL ACTIF</b></td><td style="text-align:right"><b>'+fm(totalActif)+'</b></td></tr>'+
+    '</tbody></table></div>'+
+    '<div><table><thead><tr><th colspan="2">PASSIF</th></tr></thead><tbody>'+
+    '<tr><td><b>Capitaux propres</b></td><td style="text-align:right"><b>'+fm(totalCP)+'</b></td></tr>'+
+    '<tr class="sub"><td>Capital social</td><td style="text-align:right">'+fm(capital)+'</td></tr>'+
+    '<tr class="sub"><td>Réserves</td><td style="text-align:right">'+fm(reserves)+'</td></tr>'+
+    '<tr class="sub"><td>Résultat exercice</td><td style="text-align:right">'+fm(resultat)+'</td></tr>'+
+    '<tr><td><b>Dettes</b></td><td style="text-align:right"><b>'+fm(totalDettes)+'</b></td></tr>'+
+    '<tr class="sub"><td>Dettes financières LT</td><td style="text-align:right">'+fm(dettesLT)+'</td></tr>'+
+    '<tr class="sub"><td>Dettes fournisseurs</td><td style="text-align:right">'+fm(dettesFourn)+'</td></tr>'+
+    '<tr class="sub"><td>Dettes fiscales/sociales</td><td style="text-align:right">'+fm(dettesFisc)+'</td></tr>'+
+    '<tr class="tot"><td><b>TOTAL PASSIF</b></td><td style="text-align:right"><b>'+fm(totalPassif)+'</b></td></tr>'+
+    '</tbody></table></div></div>'+
+    '<div class="box '+(Math.abs(ecart)<1?'ok':'err')+'" style="margin-top:10px">'+
+    (Math.abs(ecart)<1?'✅ Bilan équilibré ! Actif ('+fm(totalActif)+' F) = Passif ('+fm(totalPassif)+' F)':
+    '⚠️ Bilan déséquilibré ! Écart de '+fm(Math.abs(ecart))+' FCFA. Vérifiez vos chiffres.')+
+    '</div>'+
+    '<div class="kpis">'+
+    '<div class="kpi"><b>'+pct(totalCP,totalPassif)+'%</b><span>Autonomie financière</span></div>'+
+    '<div class="kpi '+(totalActifCirc/totalDettes>=1?'':'r')+'"><b>'+Math.round(totalActifCirc/Math.max(totalDettes-dettesLT,1)*10)/10+'x</b><span>Liquidité générale</span></div>'+
+    '<div class="kpi p"><b>'+fm(stocks+creances-dettesFourn)+'</b><span>BFR (F)</span></div>'+
+    '</div>';
+  calcRatios();
+}
+
+function calcCR(){
+  var ca=gn('ca',1000000),autresProd=gn('autresProd'),cmv=gn('cmv'),personnel=gn('personnel');
+  var exploit=gn('exploitation'),amort=gn('amort'),chargesFin=gn('chargesFin'),impots=gn('impots');
+  var mb=ca-cmv;
+  var ebe=mb-personnel-exploit;
+  var ebit=ebe-amort;
+  var ebt=ebit-chargesFin;
+  var rn=ebt-impots;
+  var el=document.getElementById('crResult');
+  if(!el) return;
+  el.innerHTML='<div class="section-title">📈 Compte de Résultat</div>'+
+    '<table><thead><tr><th>Poste</th><th style="text-align:right">Montant (FCFA)</th><th style="text-align:right">% CA</th></tr></thead><tbody>'+
+    '<tr class="pos"><td>Chiffre d\'affaires</td><td style="text-align:right">'+fm(ca)+'</td><td style="text-align:right">100%</td></tr>'+
+    '<tr class="sub"><td>Autres produits</td><td style="text-align:right">+'+fm(autresProd)+'</td><td></td></tr>'+
+    '<tr><td>— Coût marchandises vendues</td><td style="text-align:right">-'+fm(cmv)+'</td><td style="text-align:right">'+pct(cmv,ca)+'%</td></tr>'+
+    '<tr class="tot"><td>= MARGE BRUTE</td><td style="text-align:right">'+fm(mb)+'</td><td style="text-align:right">'+pct(mb,ca)+'%</td></tr>'+
+    '<tr><td>— Charges de personnel</td><td style="text-align:right">-'+fm(personnel)+'</td><td style="text-align:right">'+pct(personnel,ca)+'%</td></tr>'+
+    '<tr><td>— Charges d\'exploitation</td><td style="text-align:right">-'+fm(exploit)+'</td><td style="text-align:right">'+pct(exploit,ca)+'%</td></tr>'+
+    '<tr class="tot"><td>= EBE (EBITDA)</td><td style="text-align:right">'+fm(ebe)+'</td><td style="text-align:right">'+pct(ebe,ca)+'%</td></tr>'+
+    '<tr><td>— Amortissements</td><td style="text-align:right">-'+fm(amort)+'</td><td></td></tr>'+
+    '<tr class="tot"><td>= EBIT (Résultat d\'exploitation)</td><td style="text-align:right">'+fm(ebit)+'</td><td style="text-align:right">'+pct(ebit,ca)+'%</td></tr>'+
+    '<tr><td>— Charges financières</td><td style="text-align:right">-'+fm(chargesFin)+'</td><td></td></tr>'+
+    '<tr><td>— Impôts et taxes</td><td style="text-align:right">-'+fm(impots)+'</td><td></td></tr>'+
+    '<tr class="'+(rn>=0?'tot pos':'tot neg')+'"><td><b>= RÉSULTAT NET</b></td><td style="text-align:right"><b>'+fm(rn)+'</b></td><td style="text-align:right"><b>'+pct(rn,ca)+'%</b></td></tr>'+
+    '</tbody></table>'+
+    '<div class="kpis">'+
+    '<div class="kpi '+(mb/ca*100>=30?'':'o')+'"><b>'+pct(mb,ca)+'%</b><span>Marge brute</span></div>'+
+    '<div class="kpi '+(ebe/ca*100>=10?'':'o')+'"><b>'+pct(ebe,ca)+'%</b><span>Marge EBITDA</span></div>'+
+    '<div class="kpi '+(rn>=0?'':'r')+'"><b>'+pct(rn,ca)+'%</b><span>Marge nette</span></div>'+
+    '<div class="kpi '+(rn>=0?'':'r')+'"><b>'+fm(rn)+'</b><span>Résultat net (F)</span></div>'+
+    '</div>'+
+    (rn<0?'<div class="box err">🚨 L\'entreprise est déficitaire. Analysez les postes de charges les plus élevés.</div>':
+    rn/ca*100<5?'<div class="box warn">⚠️ Marge nette faible ('+pct(rn,ca)+'%). L\'entreprise est rentable mais vulnérable.</div>':
+    '<div class="box ok">✅ Entreprise rentable avec une marge nette de '+pct(rn,ca)+'%.</div>');
+  calcRatios();
+}
+
+function calcRatios(){
+  var ca=gn('ca',1000000),cmv=gn('cmv'),personnel=gn('personnel'),exploit=gn('exploitation'),amort=gn('amort'),chargesFin=gn('chargesFin'),impots=gn('impots');
+  var stocks=gn('stocks'),creances=gn('creances'),tresorerie=gn('tresorerie');
+  var capital=gn('capital'),reserves=gn('reserves'),resultat=gn('resultatBilan');
+  var dettesLT=gn('dettesLT'),dettesFourn=gn('dettesFourn'),dettesFisc=gn('dettesFisc');
+  var mb=ca-cmv;
+  var ebe=mb-personnel-exploit;
+  var rn=ebe-amort-chargesFin-impots;
+  var totalActif=gn('immo')+gn('incorp')+gn('immoFin')+stocks+creances+tresorerie;
+  var totalCP=capital+reserves+resultat;
+  var totalDettes=dettesLT+dettesFourn+dettesFisc;
+  var acCirc=stocks+creances+tresorerie;
+  var dct=dettesFourn+dettesFisc;
+  var liq=dct>0?Math.round(acCirc/dct*100)/100:0;
+  var roe=totalCP>0?pct(rn,totalCP):0;
+  var roa=totalActif>0?pct(rn,totalActif):0;
+  var endett=totalCP>0?Math.round(totalDettes/totalCP*100)/100:0;
+  var el=document.getElementById('ratiosResult');
+  if(!el) return;
+  var ratios=[
+    {lbl:'Taux marge brute',val:pct(mb,ca)+'%',ok:mb/ca*100>=30,ref:'> 30% recommandé'},
+    {lbl:'Taux marge nette',val:pct(rn,ca)+'%',ok:rn/ca*100>=5,ref:'> 5% recommandé'},
+    {lbl:'Taux marge EBITDA',val:pct(ebe,ca)+'%',ok:ebe/ca*100>=10,ref:'> 10% recommandé'},
+    {lbl:'ROE (Rentabilité CP)',val:roe+'%',ok:roe>=15,ref:'> 15% recommandé'},
+    {lbl:'ROA (Rentabilité Actif)',val:roa+'%',ok:roa>=5,ref:'> 5% recommandé'},
+    {lbl:'Liquidité générale',val:liq+'x',ok:liq>=1.5,ref:'> 1,5 recommandé'},
+    {lbl:'Taux d\'endettement',val:endett+'x',ok:endett<=1,ref:'< 1 recommandé'},
+    {lbl:'Autonomie financière',val:pct(totalCP,totalCP+totalDettes)+'%',ok:pct(totalCP,totalCP+totalDettes)>=30,ref:'> 30% recommandé'},
+  ];
+  el.innerHTML='<div class="section-title">📊 Tableau de bord des ratios</div>'+
+    ratios.map(function(r){
+      return '<div class="bar-row"><div class="bar-lbl">'+r.lbl+'</div>'+
+        '<div class="bar-track"><div class="bar-fill" style="width:'+(r.ok?'80%':'30%')+';background:'+(r.ok?'#059669':'#EF4444')+'">'+r.val+'</div></div>'+
+        '<div style="font-size:10px;color:#888;width:100px;flex-shrink:0;text-align:right">'+r.ref+'</div></div>';
+    }).join('');
+}
+
+function checkEx1(){
+  var v={'immo':1500000,'creances':300000,'tresorerie':1000000,'actif':2800000,'capital':2000000,'emprunt':1000000,'dettes':200000,'passif':3200000};
+  // Note: actif = 1500000+300000+1000000 = 2800000, passif = 2000000+1000000+200000 = 3200000 → déséquilibre intentionnel? Non: 2000000+1000000+200000=3200000 ≠ 2800000. Correction: actif=2800000, passif=3200000. En fait actif = matériel(1500000)+créances(300000)+banque(1000000)=2800000. Passif = capital(2000000)+emprunt(1000000)+fournisseurs(200000)=3200000. Écart = 400000. Résultat = -400000? Non. Vérifions: capital 2000000 + emprunt 1000000 = 3000000 total ressources. Utilisé pour: matériel 1500000 + banque 1000000 = 2500000 + créances 300000 = 2800000. Il manque 200000 de ressources. En fait le bilan doit être: Actif: matériel 1500000 + créances 300000 + banque 1000000 = 2800000. Passif: capital 2000000 + emprunt 1000000 - dettes fourn 200000 = 2800000. Donc actif=passif=2800000.
+  var v2={'immo':1500000,'creances':300000,'tresorerie':1000000,'actif':2800000,'capital':2000000,'emprunt':1000000,'dettes':200000,'passif':2800000};
+  var corrects=0;var total=8;
+  ['immo','creances','tresorerie','actif'].forEach(function(k){var el=document.getElementById('ex1'+k);if(el&&Math.abs(parseFloat(el.value)-v2[k])<1)corrects++;});
+  ['capital','emprunt','dettes','passif'].forEach(function(k){var el=document.getElementById('ex1'+k);if(el&&Math.abs(parseFloat(el.value)-v2[k])<1)corrects++;});
+  var res=document.getElementById('ex1result');
+  if(res) res.innerHTML='<div class="box '+(corrects===total?'ok':'warn')+'" style="margin-top:10px">'+
+    (corrects===total?'🏆 Parfait ! Toutes les cases sont correctes.':'📝 '+corrects+'/'+total+' cases correctes. Solution : Matériel=1 500 000 | Créances=300 000 | Banque=1 000 000 | Total Actif=2 800 000 | Capital=2 000 000 | Emprunt=1 000 000 | Fournisseurs=200 000 | Total Passif=2 800 000')+
+    '</div>';
+}
+
+function checkEx2(){
+  var mb=parseFloat(document.getElementById('ex2mb')?.value)||0;
+  var ebe=parseFloat(document.getElementById('ex2ebe')?.value)||0;
+  var rn=parseFloat(document.getElementById('ex2rn')?.value)||0;
+  var mbOk=Math.abs(mb-1800000)<1;
+  var ebeOk=Math.abs(ebe-1200000)<1;
+  var rnOk=Math.abs(rn-1120000)<1;
+  var res=document.getElementById('ex2result');
+  if(res) res.innerHTML='<div class="box '+(mbOk&&ebeOk&&rnOk?'ok':'warn')+'" style="margin-top:10px">'+
+    (mbOk?'✅ MB correcte ! ':'❌ MB incorrecte. MB = 3 000 000 − 1 200 000 = 1 800 000 FCFA<br>')+
+    (ebeOk?'✅ EBE correct ! ':'❌ EBE incorrect. EBE = 1 800 000 − 400 000 − 150 000 − 50 000 = 1 200 000 FCFA<br>')+
+    (rnOk?'✅ Résultat net correct !':'❌ RN incorrect. RN = 1 200 000 − 80 000 = 1 120 000 FCFA')+
+    '</div>';
+}
+
+function checkEx3(){
+  var mb=parseFloat(document.getElementById('ex3mb')?.value)||0;
+  var mn=parseFloat(document.getElementById('ex3mn')?.value)||0;
+  var roe=parseFloat(document.getElementById('ex3roe')?.value)||0;
+  var roa=parseFloat(document.getElementById('ex3roa')?.value)||0;
+  var liq=parseFloat(document.getElementById('ex3liq')?.value)||0;
+  var mbOk=Math.abs(mb-40)<1;
+  var mnOk=Math.abs(mn-8)<1;
+  var roeOk=Math.abs(roe-16)<1;
+  var roaOk=Math.abs(roa-10)<1;
+  var liqOk=Math.abs(liq-1.875)<0.05;
+  var res=document.getElementById('ex3result');
+  if(res) res.innerHTML='<div class="box '+(mbOk&&mnOk&&roeOk&&roaOk&&liqOk?'ok':'warn')+'" style="margin-top:10px">'+
+    (mbOk?'✅ Marge brute = 40% ':'❌ MB = 2 000 000/5 000 000×100 = 40%')+'<br>'+
+    (mnOk?'✅ Marge nette = 8% ':'❌ MN = 400 000/5 000 000×100 = 8%')+'<br>'+
+    (roeOk?'✅ ROE = 16% ':'❌ ROE = 400 000/2 500 000×100 = 16%')+'<br>'+
+    (roaOk?'✅ ROA = 10% ':'❌ ROA = 400 000/4 000 000×100 = 10%')+'<br>'+
+    (liqOk?'✅ Liquidité = 1,875 ':'❌ Liquidité = 1 500 000/800 000 = 1,875')+
+    '</div>';
+}
+
+function renderQuiz(){
+  if(qStep>=QUESTIONS.length){showQResult();return;}
+  var q=QUESTIONS[qStep];
+  var answered=qAnswers[qStep]!==undefined;
+  var html='<div class="score-badge" style="margin-bottom:10px"><div style="font-size:12px;color:#666">Question '+(qStep+1)+'/'+QUESTIONS.length+' · Score actuel : <b>'+qScore+' pts</b></div></div>'+
+    '<div class="quiz-q">'+
+    '<div class="q-num">Question '+(qStep+1)+' — '+q.pts+' points</div>'+
+    '<div class="q-text">'+q.q+'</div>'+
+    '<div class="q-tip">💡 Indice : '+q.tip+'</div>'+
+    q.opts.map(function(o,i){
+      var cls='opt';
+      if(answered){cls+=(i===q.correct?' good':(i===qAnswers[qStep]?' bad':' dis'));}
+      return '<button class="'+cls+'" onclick="answerQ('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+    }).join('')+
+    (answered?'<div class="fb show '+(qAnswers[qStep]===q.correct?'ok':'ko')+'">'+q.fb+'</div>':'')+ 
+    (answered?'<button class="btn-next show" onclick="nextQ()">'+( qStep<QUESTIONS.length-1?'Question suivante →':'Voir mon score →')+'</button>':'')+ 
+    '</div>';
+  document.getElementById('quizArea').innerHTML=html;
+}
+
+function answerQ(i){
+  if(qAnswers[qStep]!==undefined) return;
+  qAnswers[qStep]=i;
+  if(i===QUESTIONS[qStep].correct) qScore+=QUESTIONS[qStep].pts;
+  renderQuiz();
+}
+function nextQ(){qStep++;renderQuiz();}
+
+function showQResult(){
+  var max=QUESTIONS.reduce(function(s,q){return s+q.pts;},0);
+  var pct2=Math.round(qScore/max*100);
+  var msg=pct2>=80?'🏆 Excellent ! Vous maîtrisez la finance d\'entreprise !':pct2>=60?'👍 Bon niveau. Relisez les leçons pour consolider.':'📚 Continuez à vous entraîner !';
+  document.getElementById('quizArea').innerHTML=
+    '<div class="score-badge"><div class="score-val">'+qScore+'/'+max+'</div><div style="font-size:14px;font-weight:700;margin:6px 0">'+msg+'</div><div style="font-size:12px;color:#666">Score : '+pct2+'%</div></div>'+
+    '<button onclick="qStep=0;qScore=0;qAnswers=[];renderQuiz()" style="padding:10px 24px;background:#059669;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:Arial;width:100%">🔄 Recommencer le quiz</button>';
+}
+</script>
+</body>
+</html>

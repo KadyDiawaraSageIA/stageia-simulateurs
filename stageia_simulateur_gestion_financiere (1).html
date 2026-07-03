@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Gestion Financière PME</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f5;color:#1a1a1a;padding:16px}
+.header{background:linear-gradient(135deg,#0D0B2E,#1a1060);border-radius:12px;padding:18px 22px;margin-bottom:16px;color:#fff;display:flex;align-items:center;gap:12px}
+.h-icon{width:44px;height:44px;background:rgba(37,211,102,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.h-title{font-size:16px;font-weight:600}.h-sub{font-size:11px;color:#AFA9EC;margin-top:3px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:#fff;border-radius:10px;padding:12px;text-align:center;border:1px solid #e0e0e0}
+.kpi-val{font-size:20px;font-weight:700;margin-bottom:3px}
+.kpi-lbl{font-size:10px;color:#666}
+.kpi.g .kpi-val{color:#0F6E56}.kpi.r .kpi-val{color:#A32D2D}.kpi.o .kpi-val{color:#BA7517}.kpi.p .kpi-val{color:#534AB7}.kpi.b .kpi-val{color:#185FA5}
+.tabs{display:flex;gap:2px;border-bottom:1px solid #ddd;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:8px 14px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;color:#666;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:Arial}
+.tab.active{color:#25D366;border-bottom-color:#25D366}
+.tp{display:none}.tp.active{display:block}
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid #e0e0e0}
+.ctitle{font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.cicon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.frow.full{grid-template-columns:1fr}
+.frow.t3{grid-template-columns:1fr 1fr 1fr}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fl{font-size:11px;color:#666;font-weight:500}
+.fi{padding:7px 9px;border:1px solid #ddd;border-radius:8px;font-size:13px;color:#1a1a1a;background:#fff;font-family:Arial;width:100%}
+.fi:focus{outline:none;border-color:#25D366}
+.fh{font-size:10px;color:#888}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{background:#f5f5f5;padding:7px 8px;text-align:left;font-weight:500;color:#666;border-bottom:1px solid #eee}
+td{padding:7px 8px;border-bottom:1px solid #eee;color:#1a1a1a}
+tr.tot td{font-weight:600;background:#f5f5f5}
+tr.pr td{color:#0F6E56;font-weight:500}
+tr.ls td{color:#A32D2D;font-weight:500}
+tr.warn td{background:#FEF3C7}
+.tw{overflow-x:auto;margin-bottom:12px}
+.bch{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.br{display:flex;align-items:center;gap:6px;font-size:11px}
+.bl{width:60px;color:#666;text-align:right;flex-shrink:0;font-size:10px}
+.bt{flex:1;height:16px;background:#f0f0f0;border-radius:3px;overflow:hidden}
+.bf{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:9px;font-weight:600;color:#fff;white-space:nowrap;transition:width .4s}
+.alert{border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6;display:flex;gap:8px}
+.alert.ok{background:#D1FAE5;border:1px solid #10B981;color:#065F46}
+.alert.warn{background:#FEF3C7;border:1px solid #F59E0B;color:#92400E}
+.alert.danger{background:#FEE2E2;border:1px solid #EF4444;color:#991B1B}
+.alert.info{background:#DBEAFE;border:1px solid #3B82F6;color:#1E40AF}
+.conseil{font-size:12px;padding:8px 12px;background:#f5f5f5;border-radius:8px;margin-bottom:6px;display:flex;gap:8px;line-height:1.5;border-left:3px solid #25D366}
+.scenario-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.sc-btn{padding:7px 14px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#555;font-size:12px;cursor:pointer;font-family:Arial;transition:all .15s}
+.sc-btn:hover{border-color:#25D366;color:#25D366}
+.sc-btn.active{background:#25D366;color:#fff;border-color:#25D366}
+.ratio-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.ratio-card{border-radius:10px;padding:12px;text-align:center}
+.ratio-val{font-size:20px;font-weight:700;margin-bottom:3px}
+.ratio-lbl{font-size:10px;color:#666;margin-bottom:4px}
+.ratio-status{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;display:inline-block}
+.ratio-card.ok2{background:#D1FAE5}.ratio-card.ok2 .ratio-val{color:#0F6E56}.ratio-card.ok2 .ratio-status{background:#0F6E56;color:#fff}
+.ratio-card.warn2{background:#FEF3C7}.ratio-card.warn2 .ratio-val{color:#BA7517}.ratio-card.warn2 .ratio-status{background:#F59E0B;color:#fff}
+.ratio-card.bad2{background:#FEE2E2}.ratio-card.bad2 .ratio-val{color:#A32D2D}.ratio-card.bad2 .ratio-status{background:#EF4444;color:#fff}
+.btn-sim{padding:10px;background:#25D366;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:Arial;width:100%;margin-top:8px}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600}
+.badge.ok{background:#D1FAE5;color:#065F46;border:1px solid #10B981}
+.badge.warn{background:#FEF3C7;color:#92400E;border:1px solid #F59E0B}
+.badge.bad{background:#FEE2E2;color:#991B1B;border:1px solid #EF4444}
+.badge.info{background:#DBEAFE;color:#1E40AF;border:1px solid #3B82F6}
+@media(max-width:600px){.frow,.frow.t3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="h-icon">💰</div>
+  <div><div class="h-title">Stageia — Gestion Financière PME</div>
+  <div class="h-sub">Trésorerie · Rentabilité · Ratios financiers · Scénarios · Alertes automatiques</div></div>
+</div>
+
+<div class="kpis" id="topKPIs"></div>
+
+<div class="tabs">
+  <button class="tab active" onclick="st(0)">🏢 Entreprise</button>
+  <button class="tab" onclick="st(1)">💰 Trésorerie</button>
+  <button class="tab" onclick="st(2)">📊 Rentabilité</button>
+  <button class="tab" onclick="st(3)">📈 Ratios</button>
+  <button class="tab" onclick="st(4)">🎯 Scénarios</button>
+  <button class="tab" onclick="st(5)">⚠️ Alertes</button>
+</div>
+
+<!-- TAB 0: ENTREPRISE -->
+<div class="tp active" id="t0">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#EEEDFE;color:#534AB7">🏢</div>Informations de l'entreprise</div>
+  <div class="frow full"><div class="fg"><label class="fl">Nom de l'entreprise</label>
+  <input class="fi" id="nom" placeholder="Ex: Boutique Aminata, Restaurant Djenné, TechMali..." oninput="upd()"></div></div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Secteur d'activité</label>
+    <select class="fi" id="sect" onchange="upd()">
+      <option value="commerce">Commerce / Retail</option>
+      <option value="restauration">Restauration / Alimentation</option>
+      <option value="services">Services aux entreprises</option>
+      <option value="tech">Tech / Digital</option>
+      <option value="artisanat">Artisanat / Mode</option>
+      <option value="agriculture">Agriculture / Agro</option>
+    </select></div>
+    <div class="fg"><label class="fl">Taille de l'entreprise</label>
+    <select class="fi" id="taille" onchange="upd()">
+      <option value="micro">Micro-entreprise (1-3 pers.)</option>
+      <option value="tpe">TPE (4-9 personnes)</option>
+      <option value="pme">PME (10-49 personnes)</option>
+    </select></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Chiffre d'affaires mensuel moyen (FCFA)</label>
+    <input class="fi" type="number" id="ca" value="500000" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Trésorerie disponible actuellement (FCFA)</label>
+    <input class="fi" type="number" id="tresoActuelle" value="200000" oninput="upd()"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Nombre d'employés</label>
+    <input class="fi" type="number" id="employes" value="3" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Ancienneté (mois)</label>
+    <input class="fi" type="number" id="anciennete" value="12" oninput="upd()"></div>
+  </div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">📊</div>Tableau de bord synthétique</div>
+  <div class="kpis" id="synthKPIs"></div>
+  <div id="synthAlertes"></div>
+</div>
+</div>
+
+<!-- TAB 1: TRÉSORERIE -->
+<div class="tp" id="t1">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">💵</div>Entrées de trésorerie mensuelles</div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Ventes comptant (FCFA)</label>
+    <input class="fi" type="number" id="ventesComptant" value="300000" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Recouvrements créances (FCFA)</label>
+    <input class="fi" type="number" id="recouvrements" value="100000" oninput="upd()"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Autres entrées (FCFA)</label>
+    <input class="fi" type="number" id="autresEntrees" value="50000" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Délai de paiement clients (jours)</label>
+    <input class="fi" type="number" id="delaiClient" value="30" oninput="upd()">
+    <span class="fh">Délai moyen avant que vos clients paient</span></div>
+  </div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FEE2E2;color:#A32D2D">💸</div>Sorties de trésorerie mensuelles</div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Salaires et charges sociales (FCFA)</label>
+    <input class="fi" type="number" id="salaires" value="150000" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Loyer et charges locatives (FCFA)</label>
+    <input class="fi" type="number" id="loyer" value="50000" oninput="upd()"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Achats marchandises / matières (FCFA)</label>
+    <input class="fi" type="number" id="achats" value="150000" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Charges fixes diverses (FCFA)</label>
+    <input class="fi" type="number" id="chargesDiv" value="50000" oninput="upd()"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Remboursement dettes / emprunts (FCFA)</label>
+    <input class="fi" type="number" id="remboursements" value="0" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Délai de paiement fournisseurs (jours)</label>
+    <input class="fi" type="number" id="delaiFournisseur" value="15" oninput="upd()">
+    <span class="fh">Délai que vous accordent vos fournisseurs</span></div>
+  </div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#DBEAFE;color:#185FA5">📅</div>Prévision de trésorerie — 6 mois</div>
+  <div class="tw"><table id="tresoTable"></table></div>
+  <div id="tresoChart" class="bch"></div>
+</div>
+</div>
+
+<!-- TAB 2: RENTABILITÉ -->
+<div class="tp" id="t2">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">📈</div>Compte de résultat simplifié</div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Chiffre d'affaires mensuel (FCFA)</label>
+    <input class="fi" type="number" id="ca2" value="500000" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Coût des marchandises vendues (FCFA)</label>
+    <input class="fi" type="number" id="cmv" value="200000" oninput="upd()">
+    <span class="fh">Achats + variation de stocks</span></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Charges de personnel (FCFA)</label>
+    <input class="fi" type="number" id="personnel" value="150000" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Charges d'exploitation (FCFA)</label>
+    <input class="fi" type="number" id="exploitation" value="80000" oninput="upd()">
+    <span class="fh">Loyer + internet + outils + divers</span></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Budget marketing (FCFA)</label>
+    <input class="fi" type="number" id="mkt" value="30000" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Amortissements mensuels (FCFA)</label>
+    <input class="fi" type="number" id="amort" value="10000" oninput="upd()">
+    <span class="fh">Dépréciation du matériel / 12 mois</span></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Charges financières (intérêts emprunts)</label>
+    <input class="fi" type="number" id="chargesFin" value="0" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Impôts et taxes estimés (FCFA)</label>
+    <input class="fi" type="number" id="impots" value="15000" oninput="upd()"></div>
+  </div>
+  <div class="tw" style="margin-top:12px"><table id="crTable"></table></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#EEEDFE;color:#534AB7">🎯</div>Seuil de rentabilité</div>
+  <div id="seuilBox"></div>
+</div>
+</div>
+
+<!-- TAB 3: RATIOS -->
+<div class="tp" id="t3">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FEF3C7;color:#BA7517">📊</div>Ratios financiers clés</div>
+  <div class="ratio-grid" id="ratioGrid"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#DBEAFE;color:#185FA5">📚</div>Interprétation des ratios</div>
+  <div id="ratioInterp"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">💡</div>Benchmarks sectoriels — Mali</div>
+  <div id="benchmarks"></div>
+</div>
+</div>
+
+<!-- TAB 4: SCÉNARIOS -->
+<div class="tp" id="t4">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#EEEDFE;color:#534AB7">🎯</div>Simulation de scénarios</div>
+  <div class="scenario-btns">
+    <button class="sc-btn active" onclick="setSc('base')" id="sc-base">📊 Base</button>
+    <button class="sc-btn" onclick="setSc('opt')" id="sc-opt">🚀 Optimiste (+30%)</button>
+    <button class="sc-btn" onclick="setSc('pess')" id="sc-pess">📉 Pessimiste (-30%)</button>
+    <button class="sc-btn" onclick="setSc('crise')" id="sc-crise">🆘 Crise (-50%)</button>
+  </div>
+  <div id="scenarioDesc"></div>
+  <div class="kpis" id="scenarioKPIs"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">📈</div>Comparaison des 4 scénarios</div>
+  <div class="tw"><table id="scenarioTable"></table></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FEF3C7;color:#BA7517">🔮</div>Simulation personnalisée</div>
+  <div class="frow t3">
+    <div class="fg"><label class="fl">Variation CA (%)</label>
+    <input class="fi" type="number" id="simCA" value="0" oninput="upd()">
+    <span class="fh">Ex: 20 = +20% de CA</span></div>
+    <div class="fg"><label class="fl">Variation charges (%)</label>
+    <input class="fi" type="number" id="simCharges" value="0" oninput="upd()"></div>
+    <div class="fg"><label class="fl">Nouvel investissement (FCFA)</label>
+    <input class="fi" type="number" id="simInvest" value="0" oninput="upd()"></div>
+  </div>
+  <div id="simResult"></div>
+</div>
+</div>
+
+<!-- TAB 5: ALERTES -->
+<div class="tp" id="t5">
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#FEE2E2;color:#A32D2D">⚠️</div>Alertes financières automatiques</div>
+  <div id="alertesBox"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">💡</div>Plan d'action recommandé</div>
+  <div id="planAction"></div>
+</div>
+<div class="card">
+  <div class="ctitle"><div class="cicon" style="background:#DBEAFE;color:#185FA5">📋</div>Checklist gestion financière</div>
+  <div id="checklist"></div>
+</div>
+</div>
+
+<script>
+let curSc='base';
+function gs(id,d=''){return document.getElementById(id)?.value||d;}
+function gn(id,d=0){return parseFloat(document.getElementById(id)?.value)||d;}
+function fmt(n){return Math.round(n).toLocaleString('fr-FR');}
+function fmtK(n){const a=Math.abs(n),s=n<0?'-':'';if(a>=1000000)return s+(a/1000000).toFixed(1)+'M';if(a>=1000)return s+Math.round(a/1000)+'K';return Math.round(n).toString();}
+function st(i){document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));document.querySelectorAll('.tp').forEach((c,j)=>c.classList.toggle('active',i===j));upd();}
+function setSc(s){curSc=s;document.querySelectorAll('.sc-btn').forEach(b=>b.classList.remove('active'));document.getElementById('sc-'+s)?.classList.add('active');upd();}
+
+const BENCHMARKS={
+  commerce:{margeBrute:[25,40],margeNette:[5,15],liquidite:[1.2,2.0]},
+  restauration:{margeBrute:[60,70],margeNette:[10,20],liquidite:[0.8,1.5]},
+  services:{margeBrute:[50,70],margeNette:[15,30],liquidite:[1.5,2.5]},
+  tech:{margeBrute:[60,80],margeNette:[20,40],liquidite:[1.5,3.0]},
+  artisanat:{margeBrute:[40,60],margeNette:[10,25],liquidite:[1.0,2.0]},
+  agriculture:{margeBrute:[20,40],margeNette:[5,15],liquidite:[1.0,1.8]},
+};
+
+function upd(){
+  // Sync CA
+  const ca=gn('ca',500000);
+  const ca2el=document.getElementById('ca2');
+  if(ca2el&&ca2el.value==''){ca2el.value=ca;}
+
+  const caV=gn('ca2',ca||500000);
+  const cmv=gn('cmv',200000);
+  const personnel=gn('personnel',150000);
+  const exploitation=gn('exploitation',80000);
+  const mkt=gn('mkt',30000);
+  const amort=gn('amort',10000);
+  const chargesFin=gn('chargesFin',0);
+  const impots=gn('impots',15000);
+  const totalCharges=cmv+personnel+exploitation+mkt+amort+chargesFin+impots;
+  const margeBrute=caV-cmv;
+  const ebitda=margeBrute-personnel-exploitation-mkt;
+  const ebit=ebitda-amort;
+  const ebt=ebit-chargesFin;
+  const netResult=ebt-impots;
+
+  const ventesComptant=gn('ventesComptant',300000);
+  const recouvrements=gn('recouvrements',100000);
+  const autresEntrees=gn('autresEntrees',50000);
+  const totalEntrees=ventesComptant+recouvrements+autresEntrees;
+  const salaires=gn('salaires',150000);
+  const loyer=gn('loyer',50000);
+  const achats=gn('achats',150000);
+  const chargesDiv=gn('chargesDiv',50000);
+  const remboursements=gn('remboursements',0);
+  const totalSorties=salaires+loyer+achats+chargesDiv+remboursements;
+  const fluxNet=totalEntrees-totalSorties;
+  const tresoActuelle=gn('tresoActuelle',200000);
+
+  const sect=gs('sect','commerce');
+  const bench=BENCHMARKS[sect]||BENCHMARKS.commerce;
+  const margeBruteP=caV>0?Math.round(margeBrute/caV*100):0;
+  const margeNetteP=caV>0?Math.round(netResult/caV*100):0;
+  const invest=gn('simInvest',0);
+
+  // Top KPIs
+  const tk=document.getElementById('topKPIs');
+  if(tk) tk.innerHTML=`
+    <div class="kpi g"><div class="kpi-val">${fmtK(caV)}</div><div class="kpi-lbl">CA mensuel (F)</div></div>
+    <div class="kpi ${netResult>=0?'g':'r'}"><div class="kpi-val">${netResult>=0?'+':''}${fmtK(netResult)}</div><div class="kpi-lbl">Résultat net (F)</div></div>
+    <div class="kpi ${fluxNet>=0?'g':'r'}"><div class="kpi-val">${fluxNet>=0?'+':''}${fmtK(fluxNet)}</div><div class="kpi-lbl">Flux trésorerie (F)</div></div>
+    <div class="kpi ${margeBruteP>=bench.margeBrute[0]?'g':'o'}"><div class="kpi-val">${margeBruteP}%</div><div class="kpi-lbl">Marge brute</div></div>
+    <div class="kpi ${tresoActuelle>=totalSorties?'g':'r'}"><div class="kpi-val">${fmtK(tresoActuelle)}</div><div class="kpi-lbl">Trésorerie dispo (F)</div></div>`;
+
+  // Synth KPIs
+  const sk=document.getElementById('synthKPIs');
+  const couverture=totalSorties>0?Math.round(tresoActuelle/totalSorties*10)/10:0;
+  if(sk) sk.innerHTML=`
+    <div class="kpi g"><div class="kpi-val">${fmtK(caV)}</div><div class="kpi-lbl">CA/mois</div></div>
+    <div class="kpi ${netResult>=0?'g':'r'}"><div class="kpi-val">${netResult>=0?'+':''}${fmtK(netResult)}</div><div class="kpi-lbl">Résultat net/mois</div></div>
+    <div class="kpi ${margeBruteP>=bench.margeBrute[0]?'g':'r'}"><div class="kpi-val">${margeBruteP}%</div><div class="kpi-lbl">Marge brute</div></div>
+    <div class="kpi ${margeNetteP>=bench.margeNette[0]?'g':margeNetteP>=0?'o':'r'}"><div class="kpi-val">${margeNetteP}%</div><div class="kpi-lbl">Marge nette</div></div>
+    <div class="kpi ${couverture>=2?'g':couverture>=1?'o':'r'}"><div class="kpi-val">${couverture}x</div><div class="kpi-lbl">Couverture charges</div></div>`;
+
+  // Synth alertes
+  const sa=document.getElementById('synthAlertes');
+  if(sa){
+    let al=[];
+    if(netResult<0) al.push({t:'danger',m:'⚠️ Résultat net négatif — Votre entreprise perd de l\'argent ce mois. Action urgente requise.'});
+    if(tresoActuelle<totalSorties) al.push({t:'danger',m:'🆘 Trésorerie insuffisante — Votre trésorerie ne couvre pas 1 mois de charges. Risque de cessation de paiement.'});
+    if(margeBruteP<bench.margeBrute[0]) al.push({t:'warn',m:'⚠️ Marge brute trop faible ('+margeBruteP+'% vs benchmark '+bench.margeBrute[0]+'%+). Révisez vos prix ou réduisez le coût des achats.'});
+    if(fluxNet<0) al.push({t:'warn',m:'⚠️ Flux de trésorerie négatif — Vous dépensez plus que vous encaissez ce mois. Surveillez les délais de paiement.'});
+    if(netResult>0&&tresoActuelle>=totalSorties*2) al.push({t:'ok',m:'✅ Situation financière saine — Résultat positif et trésorerie confortable. Continuez ainsi !'});
+    sa.innerHTML=al.map(a=>`<div class="alert ${a.t}"><span>${a.m}</span></div>`).join('')||'<div class="alert ok">✅ Complétez vos données pour obtenir une analyse automatique.</div>';
+  }
+
+  // Trésorerie 6 mois
+  const tresoT=document.getElementById('tresoTable');
+  if(tresoT){
+    let treso=tresoActuelle,rows='';
+    const mois=['M1','M2','M3','M4','M5','M6'];
+    for(let i=0;i<6;i++){
+      const e=totalEntrees*(1+i*0.03),s=totalSorties*(1+i*0.01),f=e-s;
+      const tresoFin=treso+f;
+      const cls=tresoFin<0?'ls':tresoFin<totalSorties?'warn':'';
+      rows+=`<tr class="${cls}"><td>${mois[i]}</td><td>${fmt(Math.round(e))}</td><td>${fmt(Math.round(s))}</td><td>${f>=0?'+':''}${fmt(Math.round(f))}</td><td>${fmt(Math.round(tresoFin))}</td><td>${tresoFin<0?'🆘 DÉFICIT':tresoFin<totalSorties?'⚠️ Faible':'✅ OK'}</td></tr>`;
+      treso=tresoFin;
+    }
+    tresoT.innerHTML=`<thead><tr><th>Mois</th><th>Entrées (F)</th><th>Sorties (F)</th><th>Flux net (F)</th><th>Tréso fin (F)</th><th>Statut</th></tr></thead><tbody>${rows}</tbody>`;
+  }
+
+  // Chart tréso
+  const tc=document.getElementById('tresoChart');
+  if(tc){
+    let treso=tresoActuelle;const vals=[];
+    for(let i=0;i<6;i++){const f=totalEntrees*(1+i*0.03)-totalSorties*(1+i*0.01);treso+=f;vals.push(treso);}
+    const mx=Math.max(...vals.map(Math.abs),1);
+    tc.innerHTML=vals.map((v,i)=>`<div class="br"><div class="bl">Mois ${i+1}</div><div class="bt"><div class="bf" style="width:${Math.max(4,Math.round(Math.abs(v)/mx*100))}%;background:${v>=0?'#10B981':'#EF4444'}">${fmtK(v)} F</div></div></div>`).join('');
+  }
+
+  // Compte de résultat
+  const cr=document.getElementById('crTable');
+  if(cr){
+    const lignes=[
+      {lbl:'Chiffre d\'affaires',v:caV,c:'pr'},
+      {lbl:'— Coût marchandises vendues',v:-cmv,c:''},
+      {lbl:'= MARGE BRUTE',v:margeBrute,c:margeBrute>=0?'pr':'ls'},
+      {lbl:'Marge brute (%)',v:margeBruteP+'%',c:'',noFmt:true},
+      {lbl:'— Charges personnel',v:-personnel,c:''},
+      {lbl:'— Charges exploitation',v:-exploitation,c:''},
+      {lbl:'— Budget marketing',v:-mkt,c:''},
+      {lbl:'= EBITDA',v:ebitda,c:ebitda>=0?'pr':'ls'},
+      {lbl:'— Amortissements',v:-amort,c:''},
+      {lbl:'= EBIT (Résultat exploitation)',v:ebit,c:ebit>=0?'pr':'ls'},
+      {lbl:'— Charges financières',v:-chargesFin,c:''},
+      {lbl:'= EBT (Résultat avant impôts)',v:ebt,c:ebt>=0?'pr':'ls'},
+      {lbl:'— Impôts et taxes',v:-impots,c:''},
+      {lbl:'= RÉSULTAT NET',v:netResult,c:netResult>=0?'pr':'ls',bold:true},
+      {lbl:'Marge nette (%)',v:margeNetteP+'%',c:'',noFmt:true},
+    ];
+    cr.innerHTML='<thead><tr><th>Poste</th><th style="text-align:right">Montant (FCFA)</th></tr></thead><tbody>'+
+      lignes.map(l=>`<tr class="${l.c}"><td ${l.bold?'style="font-weight:700"':''}>${l.lbl}</td><td style="text-align:right;font-weight:${l.bold?'700':'400'}">${l.noFmt?l.v:(l.v>=0&&l.lbl.startsWith('=')?'+':'')+fmt(l.v)}</td></tr>`).join('')+'</tbody>';
+  }
+
+  // Seuil de rentabilité
+  const sb=document.getElementById('seuilBox');
+  if(sb){
+    const cf=personnel+exploitation+mkt+amort+chargesFin+impots;
+    const txMargeBrute=caV>0?margeBrute/caV:0;
+    const seuil=txMargeBrute>0?Math.round(cf/txMargeBrute):0;
+    const daysToSeuil=caV>0?Math.round(seuil/caV*30):0;
+    const ecart=caV-seuil;
+    sb.innerHTML=`
+      <div class="kpis">
+        <div class="kpi p"><div class="kpi-val">${fmt(seuil)}</div><div class="kpi-lbl">CA seuil/mois (F)</div></div>
+        <div class="kpi ${ecart>=0?'g':'r'}"><div class="kpi-val">${ecart>=0?'+':''}${fmtK(ecart)}</div><div class="kpi-lbl">Marge de sécurité (F)</div></div>
+        <div class="kpi ${ecart>=0?'g':'r'}"><div class="kpi-val">${ecart>=0?Math.round(ecart/caV*100):0}%</div><div class="kpi-lbl">Taux de sécurité</div></div>
+        <div class="kpi b"><div class="kpi-val">${daysToSeuil}j</div><div class="kpi-lbl">Jours pour atteindre SR</div></div>
+      </div>
+      <div class="alert ${ecart>=0?'ok':'danger'}">${ecart>=0?
+        `✅ Vous dépassez votre seuil de rentabilité de ${fmt(ecart)} FCFA. Marge de sécurité de ${Math.round(ecart/caV*100)}%.`:
+        `🆘 Vous êtes en dessous de votre seuil de rentabilité de ${fmt(Math.abs(ecart))} FCFA. Vous devez générer ${fmt(seuil)} FCFA de CA minimum pour couvrir vos charges.`}
+      </div>`;
+  }
+
+  // Ratios
+  const rg=document.getElementById('ratioGrid');
+  if(rg){
+    const liquidite=totalSorties>0?Math.round(tresoActuelle/totalSorties*100)/100:0;
+    const roiAnnuel=totalCharges>0?Math.round(netResult*12/totalCharges*100):0;
+    const productivite=gn('employes',3)>0?Math.round(caV/gn('employes',3)):0;
+    const delaiClient=gn('delaiClient',30);
+    const delaiFourn=gn('delaiFournisseur',15);
+    const bfr=delaiClient>delaiFourn?'Positif (risque)':'Négatif (favorable)';
+    const ratios=[
+      {lbl:'Ratio de liquidité',val:liquidite+'x',desc:'Tréso / Charges mensuelles',ok:liquidite>=2?'ok2':liquidite>=1?'warn2':'bad2',status:liquidite>=2?'Excellent':liquidite>=1?'Acceptable':'Critique'},
+      {lbl:'Marge brute',val:margeBruteP+'%',desc:'CA - CMV / CA',ok:margeBruteP>=bench.margeBrute[0]?'ok2':margeBruteP>=bench.margeBrute[0]*0.7?'warn2':'bad2',status:margeBruteP>=bench.margeBrute[0]?'Bon':'Faible'},
+      {lbl:'Marge nette',val:margeNetteP+'%',desc:'Résultat net / CA',ok:margeNetteP>=bench.margeNette[0]?'ok2':margeNetteP>=0?'warn2':'bad2',status:margeNetteP>=bench.margeNette[0]?'Bon':margeNetteP>=0?'Faible':'Négatif'},
+      {lbl:'ROI annualisé',val:roiAnnuel+'%',desc:'Résultat net × 12 / Charges',ok:roiAnnuel>=15?'ok2':roiAnnuel>=5?'warn2':'bad2',status:roiAnnuel>=15?'Excellent':roiAnnuel>=5?'Acceptable':'Faible'},
+      {lbl:'CA / Employé',val:fmtK(productivite)+' F',desc:'CA mensuel / Nb employés',ok:productivite>=150000?'ok2':productivite>=80000?'warn2':'bad2',status:productivite>=150000?'Productif':'À améliorer'},
+      {lbl:'BFR (Besoin Fonds Roul.)',val:bfr,desc:'Délai client vs fournisseur',ok:delaiClient<=delaiFourn?'ok2':'warn2',status:delaiClient<=delaiFourn?'Favorable':'À surveiller'},
+    ];
+    rg.innerHTML=ratios.map(r=>`<div class="ratio-card ${r.ok}"><div class="ratio-val">${r.val}</div><div class="ratio-lbl">${r.lbl}</div><div style="font-size:9px;color:#888;margin-bottom:4px">${r.desc}</div><div class="ratio-status">${r.status}</div></div>`).join('');
+  }
+
+  // Interprétation ratios
+  const ri=document.getElementById('ratioInterp');
+  if(ri){
+    const liquidite=totalSorties>0?Math.round(tresoActuelle/totalSorties*100)/100:0;
+    ri.innerHTML=[
+      {lbl:'Ratio de liquidité',ok:liquidite>=2,msg:liquidite>=2?`Excellent à ${liquidite}x — Votre trésorerie couvre plus de 2 mois de charges. Vous êtes en sécurité.`:liquidite>=1?`Acceptable à ${liquidite}x — Trésorerie = 1 à 2 mois de charges. Surveillez de près et constituez une réserve.`:`Critique à ${liquidite}x — Trésorerie insuffisante. Vous ne pouvez pas couvrir 1 mois de charges. Urgence !`},
+      {lbl:'Marge brute',ok:margeBruteP>=bench.margeBrute[0],msg:margeBruteP>=bench.margeBrute[0]?`Bonne marge brute à ${margeBruteP}% (benchmark secteur: ${bench.margeBrute[0]}-${bench.margeBrute[1]}%).`:`Marge brute faible à ${margeBruteP}% (benchmark: ${bench.margeBrute[0]}-${bench.margeBrute[1]}%). Augmentez vos prix ou réduisez le coût des achats.`},
+      {lbl:'Marge nette',ok:margeNetteP>=bench.margeNette[0],msg:margeNetteP>=bench.margeNette[0]?`Excellente marge nette à ${margeNetteP}%.`:margeNetteP>=0?`Marge nette positive mais faible à ${margeNetteP}% (benchmark: ${bench.margeNette[0]}-${bench.margeNette[1]}%). Réduisez les charges fixes.`:`Marge nette négative à ${margeNetteP}%. L'entreprise perd de l'argent. Action urgente requise.`},
+    ].map(r=>`<div class="conseil"><span>${r.ok?'✅':'⚠️'}</span><span><b>${r.lbl} :</b> ${r.msg}</span></div>`).join('');
+  }
+
+  // Benchmarks
+  const bm=document.getElementById('benchmarks');
+  if(bm){
+    const sect=gs('sect','commerce');
+    const bench2=BENCHMARKS[sect]||BENCHMARKS.commerce;
+    const sectNames={commerce:'Commerce',restauration:'Restauration',services:'Services',tech:'Tech/Digital',artisanat:'Artisanat/Mode',agriculture:'Agriculture'};
+    bm.innerHTML=`<div class="alert info">📊 Benchmarks pour le secteur <b>${sectNames[sect]||sect}</b> au Mali :</div>`+
+      [['Marge brute',bench2.margeBrute[0]+'-'+bench2.margeBrute[1]+'%',margeBruteP],
+       ['Marge nette',bench2.margeNette[0]+'-'+bench2.margeNette[1]+'%',margeNetteP],
+       ['Ratio liquidité',bench2.liquidite[0]+'x - '+bench2.liquidite[1]+'x',0]
+      ].map(b=>`<div class="conseil"><span>📌</span><span><b>${b[0]} :</b> Benchmark sectoriel = <b>${b[1]}</b>. Votre valeur actuelle = <b>${b[2]}${b[2].toString().includes('%')||b[2]===0?'':''}</b></span></div>`).join('');
+  }
+
+  // Scénarios
+  const scMults={base:{ca:1,charges:1},opt:{ca:1.3,charges:1.1},pess:{ca:0.7,charges:0.95},crise:{ca:0.5,charges:0.9}};
+  const scDescs={base:'📊 Scénario de base — Projection avec vos chiffres actuels.',opt:'🚀 Scénario optimiste (+30% CA) — Si votre marketing fonctionne bien et que vous gagnez de nouveaux clients.',pess:'📉 Scénario pessimiste (-30% CA) — Ralentissement de l\'activité, concurrence accrue ou saison creuse.',crise:'🆘 Scénario de crise (-50% CA) — Événement exceptionnel : épidémie, crise politique, perte d\'un client majeur.'};
+  const sd=document.getElementById('scenarioDesc');
+  if(sd) sd.innerHTML=`<div class="alert info">${scDescs[curSc]}</div>`;
+
+  const sk2=document.getElementById('scenarioKPIs');
+  if(sk2){
+    const m=scMults[curSc];
+    const scCA=caV*m.ca,scCharges=totalCharges*m.charges,scResult=scCA-scCharges;
+    const scFlux=(totalEntrees*m.ca)-(totalSorties*m.charges);
+    sk2.innerHTML=`
+      <div class="kpi g"><div class="kpi-val">${fmtK(scCA)}</div><div class="kpi-lbl">CA (F)</div></div>
+      <div class="kpi r"><div class="kpi-val">${fmtK(scCharges)}</div><div class="kpi-lbl">Charges (F)</div></div>
+      <div class="kpi ${scResult>=0?'g':'r'}"><div class="kpi-val">${scResult>=0?'+':''}${fmtK(scResult)}</div><div class="kpi-lbl">Résultat (F)</div></div>
+      <div class="kpi ${scFlux>=0?'g':'r'}"><div class="kpi-val">${scFlux>=0?'+':''}${fmtK(scFlux)}</div><div class="kpi-lbl">Flux tréso (F)</div></div>`;
+  }
+
+  // Table scénarios
+  const st2=document.getElementById('scenarioTable');
+  if(st2){
+    const rows=Object.entries(scMults).map(([k,m])=>{
+      const scCA=caV*m.ca,scCharges=totalCharges*m.charges,scResult=scCA-scCharges;
+      const mN=scCA>0?Math.round(scResult/scCA*100):0;
+      return `<tr class="${scResult>=0?'pr':'ls'}"><td>${k==='base'?'📊 Base':k==='opt'?'🚀 Optimiste':k==='pess'?'📉 Pessimiste':'🆘 Crise'}</td><td>${fmt(Math.round(scCA))}</td><td>${fmt(Math.round(scCharges))}</td><td>${scResult>=0?'+':''}${fmt(Math.round(scResult))}</td><td>${mN}%</td></tr>`;
+    }).join('');
+    st2.innerHTML=`<thead><tr><th>Scénario</th><th>CA (F)</th><th>Charges (F)</th><th>Résultat (F)</th><th>Marge</th></tr></thead><tbody>${rows}</tbody>`;
+  }
+
+  // Simulation perso
+  const sr2=document.getElementById('simResult');
+  if(sr2){
+    const simCA_pct=gn('simCA',0)/100;
+    const simCh_pct=gn('simCharges',0)/100;
+    const simInv=gn('simInvest',0);
+    const newCA=caV*(1+simCA_pct);
+    const newCharges=totalCharges*(1+simCh_pct)+simInv/12;
+    const newResult=newCA-newCharges;
+    const diffResult=newResult-netResult;
+    sr2.innerHTML=`<div class="kpis">
+      <div class="kpi g"><div class="kpi-val">${fmtK(newCA)}</div><div class="kpi-lbl">Nouveau CA</div></div>
+      <div class="kpi r"><div class="kpi-val">${fmtK(newCharges)}</div><div class="kpi-lbl">Nouvelles charges</div></div>
+      <div class="kpi ${newResult>=0?'g':'r'}"><div class="kpi-val">${newResult>=0?'+':''}${fmtK(newResult)}</div><div class="kpi-lbl">Nouveau résultat</div></div>
+      <div class="kpi ${diffResult>=0?'g':'r'}"><div class="kpi-val">${diffResult>=0?'+':''}${fmtK(diffResult)}</div><div class="kpi-lbl">Impact vs base</div></div>
+    </div>`;
+  }
+
+  // Alertes
+  const ab=document.getElementById('alertesBox');
+  if(ab){
+    let alertes=[];
+    const liquidite=totalSorties>0?tresoActuelle/totalSorties:0;
+    if(netResult<0) alertes.push({t:'danger',title:'🚨 URGENT — Résultat net négatif',msg:`Votre entreprise perd ${fmt(Math.abs(netResult))} FCFA ce mois. Sans action immédiate, la trésorerie sera épuisée dans ${liquidite>0?Math.ceil(tresoActuelle/Math.abs(fluxNet)):'?'} mois.`});
+    if(liquidite<1) alertes.push({t:'danger',title:'🆘 Trésorerie critique',msg:`Votre trésorerie couvre moins d'1 mois de charges (ratio: ${liquidite.toFixed(2)}x). Risque de cessation de paiement imminent.`});
+    else if(liquidite<2) alertes.push({t:'warn',title:'⚠️ Trésorerie insuffisante',msg:`Votre trésorerie couvre ${liquidite.toFixed(1)} mois de charges. L'objectif est 2-3 mois minimum. Constituez une réserve.`});
+    if(margeBruteP<bench.margeBrute[0]) alertes.push({t:'warn',title:'⚠️ Marge brute trop faible',msg:`Votre marge brute (${margeBruteP}%) est en dessous du benchmark sectoriel (${bench.margeBrute[0]}%+). Augmentez vos prix ou négociez mieux avec vos fournisseurs.`});
+    const delaiClient=gn('delaiClient',30);
+    const delaiFourn=gn('delaiFournisseur',15);
+    if(delaiClient>delaiFourn+15) alertes.push({t:'warn',title:'⚠️ BFR défavorable',msg:`Vos clients paient en ${delaiClient} jours mais vous payez vos fournisseurs en ${delaiFourn} jours. Ce décalage crée un besoin de financement chronique.`});
+    if(margeNetteP>=bench.margeNette[0]&&liquidite>=2) alertes.push({t:'ok',title:'✅ Situation financière saine',msg:`Votre marge nette (${margeNetteP}%) et votre liquidité (${liquidite.toFixed(1)}x) sont au-dessus des benchmarks sectoriels. Continuez sur cette lancée.`});
+    ab.innerHTML=alertes.length>0?alertes.map(a=>`<div class="alert ${a.t}"><div><b>${a.title}</b><br>${a.msg}</div></div>`).join(''):'<div class="alert info">📊 Complétez vos données financières pour générer des alertes automatiques personnalisées.</div>';
+  }
+
+  // Plan d'action
+  const pa=document.getElementById('planAction');
+  if(pa){
+    let actions=[];
+    if(netResult<0) actions.push(['🚨','IMMÉDIAT','Réduisez les charges non essentielles. Identifiez les 3 dépenses à couper d\'abord (abonnements inutiles, charges excessives). Objectif : revenir à l\'équilibre en 30 jours.']);
+    if(tresoActuelle<totalSorties*2) actions.push(['💰','7 JOURS','Relancez vos clients en retard de paiement. Identifiez 3 clients qui vous doivent de l\'argent et envoyez une relance aujourd\'hui. Objectif : encaisser +'+fmt(Math.round(totalSorties*2-tresoActuelle))+' FCFA.']);
+    if(margeBruteP<bench.margeBrute[0]) actions.push(['📈','30 JOURS','Analysez votre grille tarifaire. Une augmentation de 10% des prix = +'+ fmt(Math.round(caV*0.1))+' FCFA de CA mensuel. Commencez par vos nouveaux clients.']);
+    actions.push(['📊','MENSUEL','Mettez à jour ce tableau de bord chaque mois. Comparez prévu vs réel et ajustez votre stratégie.']);
+    actions.push(['🏦','60 JOURS','Contactez votre banque pour négocier une ligne de crédit préventive — avant d\'en avoir besoin. C\'est plus facile quand vous êtes solvable.']);
+    pa.innerHTML=actions.map(a=>`<div class="conseil"><span style="font-weight:700;color:${a[1]==='IMMÉDIAT'?'#A32D2D':a[1]==='7 JOURS'?'#BA7517':'#0F6E56'}">${a[0]} ${a[1]}</span><span>${a[2]}</span></div>`).join('');
+  }
+
+  // Checklist
+  const cl=document.getElementById('checklist');
+  if(cl){
+    const items=[
+      {ok:gn('tresoActuelle',0)>0,txt:'Trésorerie documentée et suivie régulièrement'},
+      {ok:caV>totalCharges,txt:'Chiffre d\'affaires supérieur aux charges totales'},
+      {ok:margeBruteP>=bench.margeBrute[0],txt:'Marge brute conforme au benchmark sectoriel'},
+      {ok:tresoActuelle>=totalSorties*2,txt:'Réserve de trésorerie ≥ 2 mois de charges'},
+      {ok:gn('delaiClient',30)<=45,txt:'Délai de paiement clients maîtrisé (< 45 jours)'},
+      {ok:netResult>0,txt:'Résultat net positif ce mois'},
+      {ok:gn('remboursements',0)<caV*0.2,txt:'Remboursements dettes < 20% du CA'},
+      {ok:parseInt(gs('anciennete','0'))>=12,txt:'Entreprise avec + de 12 mois d\'historique'},
+    ];
+    cl.innerHTML=items.map(i=>`<div class="alert ${i.ok?'ok':'warn'}">${i.ok?'✅':'❌'} ${i.txt}</div>`).join('');
+  }
+}
+
+upd();
+</script>
+</body>
+</html>

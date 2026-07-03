@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Marchés Financiers & Investissements</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#92400E);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#FCD34D;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#D97706;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+.box{background:#FFFBEB;border-left:3px solid #D97706;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.ok{background:#D1FAE5;border-left-color:#10B981;color:#065F46}
+.warn{background:#FEF3C7;border-left-color:#F59E0B;color:#92400E}
+.err{background:#FEE2E2;border-left-color:#EF4444;color:#991B1B}
+.info{background:#DBEAFE;border-left-color:#3B82F6;color:#1E40AF}
+.purple{background:#F5F3FF;border-left-color:#8B5CF6;color:#5B21B6}
+label{font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:4px}
+input,select{width:100%;padding:7px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;font-family:Arial;background:#fff}
+input:focus,select:focus{outline:none;border-color:#D97706}
+.hint{font-size:10px;color:#888;margin-top:3px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.row.r3{grid-template-columns:1fr 1fr 1fr}
+.row.r4{grid-template-columns:1fr 1fr 1fr 1fr}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:12px 0}
+.kpi{background:#f5f5f5;border-radius:8px;padding:10px;text-align:center;border:1px solid #e0e0e0}
+.kpi b{display:block;font-size:17px;color:#D97706;margin-bottom:2px}
+.kpi.g b{color:#065F46}.kpi.r b{color:#A32D2D}.kpi.b b{color:#185FA5}.kpi.p b{color:#534AB7}
+.section-title{font-size:13px;font-weight:700;color:#0D0B2E;margin:14px 0 8px;border-bottom:2px solid #D97706;padding-bottom:5px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+th{background:#92400E;color:#fff;padding:8px;text-align:left;font-weight:600}
+td{padding:8px;border-bottom:1px solid #eee}
+tr:nth-child(even) td{background:#FFFBEB}
+tr.tot td{background:#FFFBEB;font-weight:700;color:#92400E}
+/* ACTIF CARDS */
+.actif-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:12px 0}
+.actif-card{border:2px solid #ddd;border-radius:12px;padding:14px;cursor:pointer;transition:all .2s}
+.actif-card:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.actif-card.sel{border-color:#D97706;background:#FFFBEB}
+.actif-emoji{font-size:28px;margin-bottom:6px}
+.actif-nom{font-size:13px;font-weight:700;margin-bottom:4px}
+.actif-rend{font-size:11px;font-weight:600;margin-bottom:4px}
+.actif-risque{font-size:10px;padding:2px 8px;border-radius:10px;display:inline-block}
+/* PORTEFEUILLE */
+.portef-item{display:grid;grid-template-columns:1fr 100px 100px 100px auto;gap:8px;align-items:center;margin-bottom:8px;padding:8px 12px;border:1px solid #eee;border-radius:8px}
+.portef-item:hover{border-color:#D97706}
+.btn{padding:8px 16px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600}
+.btn-gold{background:#D97706;color:#fff}
+.btn-red{background:#EF4444;color:#fff}
+.btn-green{background:#10B981;color:#fff}
+.btn-blue{background:#3B82F6;color:#fff}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+/* QUIZ */
+.quiz-q{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:12px}
+.q-num{font-size:10px;color:#D97706;font-weight:700;margin-bottom:5px}
+.q-text{font-size:13px;font-weight:600;color:#0D0B2E;margin-bottom:10px;line-height:1.5}
+.q-tip{font-size:11px;color:#888;background:#fff;border:1px solid #eee;border-radius:6px;padding:6px 10px;margin-bottom:10px}
+.opt{width:100%;padding:9px 14px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;font-size:12px;background:#fff;text-align:left;margin-bottom:5px;font-family:Arial;line-height:1.5}
+.opt:hover{border-color:#D97706;background:#FFFBEB}
+.opt.good{border-color:#10B981;background:#D1FAE5;pointer-events:none;color:#065F46}
+.opt.bad{border-color:#EF4444;background:#FEE2E2;pointer-events:none;color:#991B1B}
+.opt.dis{pointer-events:none;opacity:.5}
+.fb{border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;line-height:1.6;display:none}
+.fb.show{display:block}
+.fb.ok{background:#D1FAE5;color:#065F46}
+.fb.ko{background:#FEE2E2;color:#991B1B}
+/* GRAPHIQUE SIMPLE */
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:150px;border-bottom:2px solid #ddd;margin:12px 0;padding-bottom:4px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
+.bar{border-radius:4px 4px 0 0;width:100%;transition:height .4s;min-height:4px}
+.bar-lbl{font-size:9px;color:#666;text-align:center}
+.bar-val{font-size:9px;font-weight:600}
+@media(max-width:600px){.row,.row.r3,.row.r4{grid-template-columns:1fr}.portef-item{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<h1>📈 Marchés Financiers & Investissements — Stageia
+<small>Types d'actifs · Rendement & Risque · Portefeuille · Intérêts composés · BRVM · Quiz</small></h1>
+
+<div class="tabs">
+  <button class="tab on" onclick="show(0)">📚 Leçons</button>
+  <button class="tab" onclick="show(1)">💹 Types d'Actifs</button>
+  <button class="tab" onclick="show(2)">📊 Simulateur Rendement</button>
+  <button class="tab" onclick="show(3)">💼 Mon Portefeuille</button>
+  <button class="tab" onclick="show(4)">✏️ Exercices</button>
+  <button class="tab" onclick="show(5)">🎯 Quiz</button>
+</div>
+
+<!-- PANE 0: LEÇONS -->
+<div class="pane on" id="p0">
+  <div class="section-title">📈 Qu'est-ce qu'un marché financier ?</div>
+  <div class="box">🏛️ <b>Marché financier</b> = lieu (physique ou virtuel) où s'échangent des actifs financiers (actions, obligations, devises...).<br><br>
+  <b>Rôle principal :</b> Connecter ceux qui ont besoin d'argent (entreprises, États) avec ceux qui ont de l'argent à investir.<br><br>
+  <b>En Afrique de l'Ouest :</b> La <b>BRVM</b> (Bourse Régionale des Valeurs Mobilières) est basée à Abidjan et couvre les 8 pays UEMOA dont le Mali.</div>
+
+  <div class="section-title">⚖️ Le principe fondamental : Rendement = f(Risque)</div>
+  <div class="box warn">⚠️ <b>Règle d'or :</b> Plus le rendement potentiel est élevé, plus le risque est grand. Il n'existe pas d'investissement à rendement élevé sans risque !<br><br>
+  Exemple :<br>
+  • Compte épargne BMS : 3-5%/an → risque quasi nul<br>
+  • Obligations État Mali : 6-8%/an → risque faible<br>
+  • Actions BRVM : 10-20%/an → risque moyen-élevé<br>
+  • Crypto-monnaies : +100%/-80% → risque très élevé</div>
+
+  <div class="section-title">🧮 Concepts essentiels à maîtriser</div>
+  <div class="box">💰 <b>Intérêts simples vs composés :</b><br>
+  • <b>Intérêts simples :</b> Calculés chaque année sur le capital initial seulement<br>
+  Formule : Capital × Taux × Durée<br>
+  • <b>Intérêts composés :</b> Les intérêts génèrent eux-mêmes des intérêts (capitalisation)<br>
+  Formule : Capital × (1 + Taux)^Durée<br><br>
+  <b>Exemple :</b> 1 000 000 FCFA à 8%/an pendant 10 ans :<br>
+  Simples : 1 800 000 FCFA | Composés : 2 158 925 FCFA</div>
+
+  <div class="box">📊 <b>Concepts clés :</b><br>
+  • <b>Rendement</b> = (Gain / Capital investi) × 100<br>
+  • <b>Dividende</b> = Part des bénéfices distribuée aux actionnaires<br>
+  • <b>Plus-value</b> = Prix de vente − Prix d'achat<br>
+  • <b>Diversification</b> = Répartir ses investissements pour réduire le risque<br>
+  • <b>Liquidité</b> = Facilité à convertir un actif en cash rapidement<br>
+  • <b>Volatilité</b> = Variation du prix d'un actif dans le temps</div>
+
+  <div class="section-title">🌍 La BRVM — Bourse Régionale Afrique de l'Ouest</div>
+  <div class="box purple">🏛️ <b>BRVM (Abidjan) :</b><br>
+  • Créée en 1998, couvre Mali + Sénégal + Côte d'Ivoire + Burkina + Togo + Bénin + Niger + Guinée-Bissau<br>
+  • Plus de 45 entreprises cotées dont Sonatel, Orange CI, NSIA, Total CI<br>
+  • Monnaie : FCFA → pas de risque de change pour les investisseurs maliens<br>
+  • Rendement moyen historique : 8-12%/an<br>
+  • Accès : Via un intermédiaire agréé (banque ou SGI)</div>
+
+  <div class="section-title">🛡️ Règles d'or pour investir intelligemment</div>
+  <div class="box ok">✅ <b>Les 7 règles d'or de l'investisseur :</b><br>
+  1. N'investissez jamais l'argent dont vous avez besoin à court terme<br>
+  2. Diversifiez — Ne mettez pas tous vos œufs dans le même panier<br>
+  3. Investissez régulièrement (DCA) plutôt qu'en une fois<br>
+  4. Pensez long terme — La patience est la clé de la richesse<br>
+  5. Comprenez ce dans quoi vous investissez avant d'investir<br>
+  6. Méfiez-vous des promesses de rendements extraordinaires<br>
+  7. Constituez d'abord une épargne de précaution (3-6 mois de charges)</div>
+</div>
+
+<!-- PANE 1: TYPES D'ACTIFS -->
+<div class="pane" id="p1">
+  <div class="box" style="margin-bottom:12px">💹 <span>Cliquez sur un actif pour voir son analyse détaillée adaptée au contexte malien.</span></div>
+  <div class="actif-grid" id="actifGrid"></div>
+  <div id="actifDetail"></div>
+</div>
+
+<!-- PANE 2: SIMULATEUR RENDEMENT -->
+<div class="pane" id="p2">
+  <div class="section-title">🧮 Simulateur d'intérêts composés</div>
+  <div class="box info" style="margin-bottom:12px">💡 <span>L'intérêt composé est la "8ème merveille du monde" selon Einstein. Simulez comment votre épargne/investissement évolue dans le temps.</span></div>
+  <div class="row r3">
+    <div><label>Capital initial (FCFA)</label><input type="number" id="simCapital" value="1000000" oninput="calcSim()"></div>
+    <div><label>Versement mensuel (FCFA)</label><input type="number" id="simVersement" value="50000" oninput="calcSim()"><div class="hint">0 si capital unique</div></div>
+    <div><label>Taux de rendement annuel (%)</label><input type="number" id="simTaux" value="8" step="0.5" oninput="calcSim()"></div>
+  </div>
+  <div class="row">
+    <div><label>Durée (années)</label><input type="number" id="simDuree" value="10" min="1" max="40" oninput="calcSim()"></div>
+    <div><label>Type d'intérêts</label>
+    <select id="simType" onchange="calcSim()">
+      <option value="compose">Intérêts composés (capitalisation)</option>
+      <option value="simple">Intérêts simples</option>
+    </select></div>
+  </div>
+  <div class="kpis" id="simKpis"></div>
+  <div class="section-title">📊 Évolution année par année</div>
+  <div id="simChart"></div>
+  <div id="simTable"></div>
+
+  <div class="section-title" style="margin-top:16px">📊 Comparaison de placements</div>
+  <div class="box" style="margin-bottom:10px">💡 Comparez différents placements avec le même capital initial de <span id="compCapital">1 000 000</span> FCFA sur <span id="compDuree">10</span> ans.</div>
+  <div id="comparPlacements"></div>
+</div>
+
+<!-- PANE 3: MON PORTEFEUILLE -->
+<div class="pane" id="p3">
+  <div class="box" style="margin-bottom:12px">💼 <span>Construisez votre portefeuille d'investissement virtuel. Ajoutez vos actifs et analysez la diversification et le rendement global.</span></div>
+  <div style="background:#f8f8f8;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #e0e0e0">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px">➕ Ajouter un actif au portefeuille</div>
+    <div class="row r4">
+      <div><label>Nom de l'actif</label><input id="pNom" placeholder="Ex: Actions BRVM, Immo..."></div>
+      <div><label>Montant investi (FCFA)</label><input type="number" id="pMontant" value="500000"></div>
+      <div><label>Rendement attendu (%/an)</label><input type="number" id="pRendement" value="8" step="0.5"></div>
+      <div><label>Niveau de risque</label>
+      <select id="pRisque">
+        <option value="faible">🟢 Faible</option>
+        <option value="moyen">🟡 Moyen</option>
+        <option value="eleve">🔴 Élevé</option>
+      </select></div>
+    </div>
+    <button class="btn btn-gold" onclick="addActif()">+ Ajouter au portefeuille</button>
+  </div>
+  <div id="portefList"></div>
+  <div id="portefAnalyse"></div>
+</div>
+
+<!-- PANE 4: EXERCICES -->
+<div class="pane" id="p4">
+  <div class="section-title">✏️ Exercice 1 — Calculer le rendement</div>
+  <div class="box info" style="margin-bottom:10px">📝 Vous avez acheté 100 actions de SONATEL à 12 000 FCFA l'action. Un an plus tard, l'action vaut 14 500 FCFA et vous avez reçu 800 FCFA de dividende par action. Calculez :</div>
+  <div class="row r3">
+    <div><label>Plus-value totale (FCFA)</label><input type="number" id="e1_pv" placeholder="(14500-12000)×100" oninput="checkE1()"></div>
+    <div><label>Dividendes totaux (FCFA)</label><input type="number" id="e1_div" placeholder="800×100" oninput="checkE1()"></div>
+    <div><label>Rendement total (%)</label><input type="number" id="e1_rend" placeholder="(PV+Div)/Capital×100" step="0.1" oninput="checkE1()"></div>
+  </div>
+  <div id="e1_res"></div>
+
+  <div class="section-title" style="margin-top:16px">✏️ Exercice 2 — Intérêts composés</div>
+  <div class="box info" style="margin-bottom:10px">📝 Vous placez 2 000 000 FCFA à la BRVM avec un rendement moyen de 10%/an. Calculez la valeur de votre investissement après 5 ans et après 10 ans (intérêts composés).</div>
+  <div class="row">
+    <div><label>Valeur après 5 ans (FCFA)</label><input type="number" id="e2_5ans" placeholder="2000000×(1.10)^5" oninput="checkE2()"></div>
+    <div><label>Valeur après 10 ans (FCFA)</label><input type="number" id="e2_10ans" placeholder="2000000×(1.10)^10" oninput="checkE2()"></div>
+  </div>
+  <div id="e2_res"></div>
+
+  <div class="section-title" style="margin-top:16px">✏️ Exercice 3 — Diversification & Risque</div>
+  <div class="box info" style="margin-bottom:10px">📝 Un investisseur a 5 000 000 FCFA à investir. Il hésite entre :<br>
+  A) Tout mettre dans 1 action très risquée à 25%/an<br>
+  B) Répartir : 40% épargne (5%), 30% obligations (8%), 30% actions BRVM (12%)<br>
+  Calculez le rendement attendu de la stratégie B et choisissez la meilleure stratégie.</div>
+  <div class="row">
+    <div><label>Rendement moyen stratégie B (%)</label><input type="number" id="e3_rend" placeholder="40%×5 + 30%×8 + 30%×12" step="0.1" oninput="checkE3()"></div>
+    <div><label>Quelle stratégie choisir ?</label>
+    <select id="e3_choix" onchange="checkE3()">
+      <option value="">— Choisissez —</option>
+      <option value="a">Stratégie A — Tout sur une action</option>
+      <option value="b">Stratégie B — Portefeuille diversifié</option>
+      <option value="egal">Les deux sont équivalentes</option>
+    </select></div>
+  </div>
+  <div id="e3_res"></div>
+</div>
+
+<!-- PANE 5: QUIZ -->
+<div class="pane" id="p5">
+  <div id="quizArea"></div>
+</div>
+
+<script>
+var portef=[];
+var qStep=0,qScore=0,qAnswers=[];
+var actifSel=null;
+
+var ACTIFS=[
+  {id:'epargne',emoji:'🏦',nom:'Compte Épargne / DAT',rend:'3-7%',risque:'Faible',risqueColor:'#10B981',risqueBg:'#D1FAE5',
+   desc:'Dépôt à terme dans une banque malienne (BMS, Coris Bank, Orange Bank). Capital garanti.',
+   avantages:['Capital 100% garanti','Disponible à tout moment (livret) ou à terme','Pas de compétences requises'],
+   inconvenients:['Rendement souvent inférieur à l\'inflation','Pas de création de richesse réelle','Taux limité'],
+   conseils:'Idéal pour votre épargne de précaution (3-6 mois de charges). Cherchez les meilleurs taux entre BMS Pro Jeunes (5-6%) et Coris Bank.'},
+  {id:'obligations',emoji:'📄',nom:'Obligations / Bons du Trésor',rend:'6-9%',risque:'Faible-Moyen',risqueColor:'#F59E0B',risqueBg:'#FEF3C7',
+   desc:'Prêt à l\'État malien ou à une entreprise. Taux fixe garanti sur toute la durée.',
+   avantages:['Rendement fixe et prévisible','Risque faible si émetteur fiable','Revenus réguliers (coupons)'],
+   inconvenients:['Capital bloqué jusqu\'à l\'échéance','Risque de défaut de paiement de l\'État','Rendement limité'],
+   conseils:'Les Bons du Trésor du Mali offrent 6-8%/an sur 1-3 ans. Accessibles via la BCEAO ou les banques. Minimum d\'entrée : 1 000 000 FCFA.'},
+  {id:'brvm',emoji:'📊',nom:'Actions BRVM',rend:'8-15%',risque:'Moyen',risqueColor:'#F59E0B',risqueBg:'#FEF3C7',
+   desc:'Part du capital d\'entreprises cotées : Sonatel, Orange CI, NSIA, Total CI, Coris Bank...',
+   avantages:['Potentiel de rendement élevé','Dividendes annuels','Participation à la croissance économique'],
+   inconvenients:['Capital non garanti','Volatilité des prix','Nécessite un compte titres (SGI)'],
+   conseils:'Commencez par des entreprises solides : Sonatel (dividende régulier), BOA Mali. Investissez sur le long terme (5+ ans). Contact : SGI comme Hudson & Cie ou Phoenix Capital.'},
+  {id:'immo',emoji:'🏠',nom:'Immobilier Locatif',rend:'8-15%',risque:'Moyen',risqueColor:'#F59E0B',risqueBg:'#FEF3C7',
+   desc:'Achat d\'un bien immobilier pour le louer. Rendement = loyers + plus-value à la revente.',
+   avantages:['Actif tangible et durable','Revenus réguliers (loyers)','Protection contre l\'inflation','Bien en héritage'],
+   inconvenients:['Capital initial très élevé','Illiquidité (difficile à vendre rapidement)','Gestion locative (locataires, travaux)'],
+   conseils:'À Bamako : ACI 2000, Hippodrome, Baco-Djicoroni sont les zones les plus rentables. Rendement locatif brut : 8-12%/an. Financement via BHMAO ou prêt bancaire.'},
+  {id:'microfinance',emoji:'🤝',nom:'Microfinance / Tontine',rend:'10-15%',risque:'Moyen',risqueColor:'#F59E0B',risqueBg:'#FEF3C7',
+   desc:'Participation à des tontines ou investissement dans des IMF (Kafo Jiginew, BNDA).',
+   avantages:['Très accessible (petits montants)','Liens communautaires forts','Rendement intéressant','Discipline d\'épargne forcée'],
+   inconvenients:['Risque de défaillance d\'un membre','Pas de garantie légale','Gestion informelle'],
+   conseils:'La tontine reste un outil puissant au Mali. Pour formaliser : créez une association d\'épargne avec statuts. Montant régulier + rotation disciplinée = richesse collective.'},
+  {id:'business',emoji:'🚀',nom:'Investissement dans une Entreprise',rend:'20-50%',risque:'Élevé',risqueColor:'#EF4444',risqueBg:'#FEE2E2',
+   desc:'Créer ou financer une PME malienne (la vôtre ou celle d\'un partenaire).',
+   avantages:['Potentiel de rendement le plus élevé','Contrôle direct sur l\'investissement','Impact économique local','Création d\'emplois'],
+   inconvenients:['Risque de perte totale du capital','Nécessite du temps et des compétences','Dépendance aux personnes clés'],
+   conseils:'C\'est l\'investissement le plus rentable mais aussi le plus risqué. Investissez dans des secteurs que vous connaissez. Candidatez au POESAM ou ODC Start pour du capital initial.'},
+];
+
+var QUESTIONS=[
+  {q:"Quelle est la relation fondamentale entre rendement et risque ?",tip:"Pensez à l'exemple du compte épargne vs actions.",
+   opts:["Plus le risque est élevé, plus le rendement est faible","Plus le risque est élevé, plus le rendement potentiel est élevé","Le rendement est indépendant du risque","Le risque diminue avec le temps"],
+   correct:1,fb:"✅ C'est LA règle fondamentale des marchés financiers. Un compte épargne à 5% = risque quasi nul. Une action à 20% potentiel = risque de perdre du capital. Il n'existe pas d'investissement 'sans risque à fort rendement' — méfiez-vous des arnaques !",pts:10},
+  {q:"Quelle est la différence entre intérêts simples et intérêts composés ?",tip:"Avec les intérêts composés, les intérêts génèrent eux-mêmes des intérêts.",
+   opts:["Il n'y a aucune différence","Avec les intérêts composés, les intérêts s'ajoutent au capital et génèrent eux-mêmes des intérêts — effet boule de neige","Les intérêts simples sont toujours plus élevés","Les intérêts composés ne s'appliquent qu'aux dettes"],
+   correct:1,fb:"✅ Les intérêts composés créent un effet exponentiel. Exemple : 1 000 000 FCFA à 10%/an pendant 20 ans = 6 727 500 FCFA avec intérêts composés vs 3 000 000 FCFA avec intérêts simples. La différence est énorme !",pts:15},
+  {q:"Qu'est-ce que la BRVM ?",tip:"BRVM = Bourse Régionale des Valeurs Mobilières",
+   opts:["Une banque centrale malienne","La Bourse Régionale des Valeurs Mobilières basée à Abidjan couvrant 8 pays UEMOA dont le Mali","Un programme de microfinance de l'UEMOA","Une institution de financement du développement"],
+   correct:1,fb:"✅ La BRVM basée à Abidjan permet aux investisseurs des 8 pays UEMOA (dont le Mali) d'acheter des actions d'entreprises régionales comme Sonatel, Orange CI, Total CI. Avantage : tout en FCFA, pas de risque de change !",pts:10},
+  {q:"Pourquoi diversifier son portefeuille d'investissement ?",tip:"Ne pas mettre tous ses œufs dans le même panier.",
+   opts:["Pour augmenter le rendement total","Pour réduire le risque global — si un actif perd de la valeur, les autres compensent","Pour payer moins d'impôts","Pour avoir plus de liquidités"],
+   correct:1,fb:"✅ La diversification est la seule stratégie qui réduit le risque SANS réduire le rendement espéré. Répartir entre actions, obligations, immobilier et épargne permet d'avoir un portefeuille stable qui résiste mieux aux crises.",pts:15},
+  {q:"Vous avez 500 000 FCFA. Vous achetez une obligation d'État à 7%/an sur 2 ans. Quel intérêt total percevrez-vous (intérêts simples) ?",tip:"Intérêts = Capital × Taux × Durée",
+   opts:["35 000 FCFA","70 000 FCFA","140 000 FCFA","500 000 FCFA"],
+   correct:1,fb:"✅ Intérêts = 500 000 × 7% × 2 = 70 000 FCFA. Soit 35 000 FCFA par an. Au bout de 2 ans, vous récupérez 570 000 FCFA (500 000 + 70 000). Avec intérêts composés : 500 000 × (1.07)² = 572 450 FCFA.",pts:15},
+  {q:"Qu'est-ce qu'un dividende ?",tip:"Lié aux actions d'entreprises.",
+   opts:["Un prêt accordé par une banque","Une part des bénéfices distribuée aux actionnaires d'une entreprise","Le prix d'achat d'une action","Le taux d'intérêt d'un compte épargne"],
+   correct:1,fb:"✅ Un dividende est la part des bénéfices qu'une entreprise distribue à ses actionnaires. Exemple : Sonatel distribue régulièrement des dividendes élevés. Si vous possédez 100 actions à 800 FCFA de dividende, vous recevez 80 000 FCFA.",pts:15},
+  {q:"Quelle est la règle d'or avant tout investissement ?",tip:"L'ordre des priorités financières personnelles.",
+   opts:["Investir immédiatement tout son argent disponible pour maximiser le rendement","Constituer d'abord une épargne de précaution (3-6 mois de charges) avant d'investir","Emprunter pour investir davantage","Mettre tout dans l'immobilier car c'est le plus sûr"],
+   correct:1,fb:"✅ Avant d'investir, constituez TOUJOURS une épargne de précaution. Si votre voiture tombe en panne ou si vous perdez un client, vous avez de quoi faire face sans toucher à vos investissements. C'est votre filet de sécurité.",pts:20},
+];
+
+function show(i){
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+  document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+  if(i===1) renderActifs();
+  if(i===2) calcSim();
+  if(i===3) renderPortef();
+  if(i===5) renderQuiz();
+}
+
+function gn(id,d){return parseFloat(document.getElementById(id)?.value)||d||0;}
+function fm(n){return Math.round(n).toLocaleString('fr-FR');}
+function fmk(n){if(n>=1000000)return (n/1000000).toFixed(1)+'M';if(n>=1000)return Math.round(n/1000)+'K';return Math.round(n)+'';};
+
+// ACTIFS
+function renderActifs(){
+  var ag=document.getElementById('actifGrid');
+  if(!ag) return;
+  ag.innerHTML=ACTIFS.map(function(a){
+    return '<div class="actif-card'+(actifSel===a.id?' sel':'')+'" onclick="selActif(\''+a.id+'\')">'+
+      '<div class="actif-emoji">'+a.emoji+'</div>'+
+      '<div class="actif-nom">'+a.nom+'</div>'+
+      '<div class="actif-rend" style="color:#D97706">📈 '+a.rend+'/an</div>'+
+      '<div class="actif-risque" style="background:'+a.risqueBg+';color:'+a.risqueColor+'">⚖️ '+a.risque+'</div>'+
+      '</div>';
+  }).join('');
+  renderActifDetail();
+}
+
+function selActif(id){actifSel=id;renderActifs();}
+
+function renderActifDetail(){
+  var el=document.getElementById('actifDetail');
+  if(!el) return;
+  if(!actifSel){el.innerHTML='<div class="box" style="margin-top:10px">👆 Cliquez sur un actif pour voir l\'analyse détaillée.</div>';return;}
+  var a=ACTIFS.find(function(x){return x.id===actifSel;});
+  if(!a) return;
+  el.innerHTML='<div style="margin-top:14px;border:2px solid '+a.risqueColor+';border-radius:12px;overflow:hidden">'+
+    '<div style="background:'+a.risqueColor+';padding:12px 16px;display:flex;align-items:center;gap:12px">'+
+    '<span style="font-size:28px">'+a.emoji+'</span>'+
+    '<div><div style="font-size:15px;font-weight:700;color:#fff">'+a.nom+'</div>'+
+    '<div style="font-size:12px;color:rgba(255,255,255,.85)">'+a.desc+'</div></div>'+
+    '</div>'+
+    '<div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+    '<div><div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ Avantages</div>'+
+    a.avantages.map(function(av){return '<div class="box ok" style="padding:5px 8px;font-size:11px;margin-bottom:4px">'+av+'</div>';}).join('')+
+    '</div><div><div style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:6px">⚠️ Inconvénients</div>'+
+    a.inconvenients.map(function(inc){return '<div class="box warn" style="padding:5px 8px;font-size:11px;margin-bottom:4px">'+inc+'</div>';}).join('')+
+    '</div></div>'+
+    '<div style="padding:0 14px 14px"><div class="box purple">💡 <b>Conseil Stageia :</b> '+a.conseils+'</div></div></div>';
+}
+
+// SIMULATEUR
+function calcSim(){
+  var capital=gn('simCapital',1000000);
+  var versement=gn('simVersement',0);
+  var taux=gn('simTaux',8)/100;
+  var duree=gn('simDuree',10);
+  var type=document.getElementById('simType')?.value||'compose';
+  var vals=[];
+  var totalVerse=capital;
+  for(var y=1;y<=duree;y++){
+    var val;
+    if(type==='compose'){
+      val=capital*Math.pow(1+taux,y);
+      for(var m=1;m<=y*12;m++) val+=versement*Math.pow(1+taux/12,(y*12-m));
+    } else {
+      val=capital*(1+taux*y)+versement*12*y;
+    }
+    totalVerse+=versement*12;
+    vals.push(Math.round(val));
+  }
+  var final=vals[vals.length-1];
+  var gain=final-totalVerse;
+  var kpi=document.getElementById('simKpis');
+  if(kpi) kpi.innerHTML=
+    '<div class="kpi"><b>'+fm(capital)+'</b><span>Capital initial (F)</span></div>'+
+    '<div class="kpi"><b>'+fm(totalVerse)+'</b><span>Total versé (F)</span></div>'+
+    '<div class="kpi g"><b>'+fm(final)+'</b><span>Capital final (F)</span></div>'+
+    '<div class="kpi g"><b>'+fm(gain)+'</b><span>Gains totaux (F)</span></div>'+
+    '<div class="kpi p"><b>'+Math.round(gain/totalVerse*100)+'%</b><span>Rendement total</span></div>'+
+    '<div class="kpi o"><b>'+Math.round(final/totalVerse*100)/100+'x</b><span>Multiplication capital</span></div>';
+
+  // Graphique
+  var chart=document.getElementById('simChart');
+  if(chart){
+    var maxV=Math.max.apply(null,vals);
+    var step=Math.max(1,Math.floor(duree/10));
+    var html='<div class="bar-chart">';
+    for(var y=1;y<=duree;y+=step){
+      var v=vals[y-1];
+      var h=Math.round(v/maxV*130);
+      html+='<div class="bar-col">'+
+        '<div class="bar-val" style="color:#D97706">'+fmk(v)+'</div>'+
+        '<div class="bar" style="height:'+h+'px;background:linear-gradient(to top,#D97706,#FCD34D)"></div>'+
+        '<div class="bar-lbl">An '+y+'</div>'+
+        '</div>';
+    }
+    chart.innerHTML=html+'</div>';
+  }
+
+  // Tableau
+  var tab=document.getElementById('simTable');
+  if(tab&&duree<=20){
+    var h='<table><thead><tr><th>Année</th><th>Capital (F)</th><th>Gains cumulés (F)</th><th>Multiplication</th></tr></thead><tbody>';
+    vals.forEach(function(v,i){
+      var g=v-Math.round(capital+versement*12*(i+1));
+      h+='<tr><td>Année '+(i+1)+'</td><td>'+fm(v)+'</td><td style="color:#10B981">+'+fm(Math.max(0,g))+'</td><td>'+Math.round(v/capital*10)/10+'x</td></tr>';
+    });
+    h+='</tbody></table>';
+    tab.innerHTML=h;
+  }
+
+  // Comparaison placements
+  var cp=document.getElementById('compCapital');
+  var cd=document.getElementById('compDuree');
+  if(cp) cp.textContent=fm(capital);
+  if(cd) cd.textContent=duree;
+  var placements=[
+    {nom:'🏦 Compte épargne BMS',taux:0.05},{nom:'📄 Bons du Trésor Mali',taux:0.07},
+    {nom:'📊 Actions BRVM (moy.)',taux:0.10},{nom:'🏠 Immobilier Bamako',taux:0.12},
+    {nom:'🚀 Startup (moy.)',taux:0.20},
+  ];
+  var cp2=document.getElementById('comparPlacements');
+  if(cp2){
+    var maxFinal=capital*Math.pow(1+0.20,duree);
+    cp2.innerHTML='<div style="display:flex;flex-direction:column;gap:6px">'+
+      placements.map(function(p){
+        var v=Math.round(capital*Math.pow(1+p.taux,duree));
+        var pct2=Math.round(v/maxFinal*100);
+        return '<div style="display:flex;align-items:center;gap:10px;font-size:12px">'+
+          '<div style="width:180px;flex-shrink:0">'+p.nom+'</div>'+
+          '<div style="flex:1;height:20px;background:#f0f0f0;border-radius:10px;overflow:hidden">'+
+          '<div style="width:'+pct2+'%;height:100%;background:linear-gradient(90deg,#D97706,#FCD34D);border-radius:10px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:600;color:#fff">'+fm(v)+' F</div>'+
+          '</div>'+
+          '<div style="width:50px;text-align:right;font-size:11px;color:#888">'+Math.round(p.taux*100)+'%</div>'+
+          '</div>';
+      }).join('')+'</div>';
+  }
+}
+
+// PORTEFEUILLE
+function addActif(){
+  var nom=document.getElementById('pNom')?.value?.trim();
+  if(!nom){alert('Ajoutez un nom');return;}
+  portef.push({id:Date.now(),nom:nom,montant:gn('pMontant',500000),rend:gn('pRendement',8),risque:document.getElementById('pRisque')?.value||'moyen'});
+  document.getElementById('pNom').value='';
+  renderPortef();
+}
+
+function delActif(id){portef=portef.filter(function(p){return p.id!==id;});renderPortef();}
+
+function renderPortef(){
+  var el=document.getElementById('portefList');
+  if(!el) return;
+  if(!portef.length){el.innerHTML='<div class="box" style="margin-bottom:10px">📋 Votre portefeuille est vide. Ajoutez des actifs ci-dessus !</div>';document.getElementById('portefAnalyse').innerHTML='';return;}
+  var risqCol={'faible':'#10B981','moyen':'#F59E0B','eleve':'#EF4444'};
+  el.innerHTML='<div style="font-size:13px;font-weight:700;margin-bottom:8px">Votre portefeuille :</div>'+
+    portef.map(function(p){
+      return '<div class="portef-item">'+
+        '<div><div style="font-size:12px;font-weight:600">'+p.nom+'</div>'+
+        '<div style="font-size:10px;padding:2px 8px;background:'+risqCol[p.risque]+'22;color:'+risqCol[p.risque]+';border-radius:10px;display:inline-block;margin-top:2px">⚖️ '+p.risque+'</div></div>'+
+        '<div style="font-size:11px;text-align:right"><b>'+fm(p.montant)+'</b><div style="color:#888">FCFA</div></div>'+
+        '<div style="font-size:11px;text-align:right"><b style="color:#D97706">'+p.rend+'%</b><div style="color:#888">/an</div></div>'+
+        '<div style="font-size:11px;text-align:right"><b style="color:#10B981">'+fm(Math.round(p.montant*p.rend/100))+'</b><div style="color:#888">gain/an</div></div>'+
+        '<button style="padding:4px 8px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:11px;color:#EF4444" onclick="delActif('+p.id+')">✕</button>'+
+        '</div>';
+    }).join('');
+  // Analyse
+  var totalInvesti=portef.reduce(function(s,p){return s+p.montant;},0);
+  var gainTotal=portef.reduce(function(s,p){return s+p.montant*p.rend/100;},0);
+  var rendMoyen=totalInvesti>0?Math.round(gainTotal/totalInvesti*100*10)/10:0;
+  var nbFaible=portef.filter(function(p){return p.risque==='faible';}).length;
+  var nbMoyen=portef.filter(function(p){return p.risque==='moyen';}).length;
+  var nbEleve=portef.filter(function(p){return p.risque==='eleve';}).length;
+  var divers=portef.length>=3&&nbFaible>0&&nbMoyen>0?'Bien diversifié ✅':'Peu diversifié ⚠️';
+  var an=document.getElementById('portefAnalyse');
+  if(an) an.innerHTML='<div class="kpis">'+
+    '<div class="kpi"><b>'+fm(totalInvesti)+'</b><span>Total investi (F)</span></div>'+
+    '<div class="kpi g"><b>'+fm(gainTotal)+'</b><span>Gains annuels (F)</span></div>'+
+    '<div class="kpi o"><b>'+rendMoyen+'%</b><span>Rendement moyen</span></div>'+
+    '<div class="kpi b"><b>'+portef.length+'</b><span>Actifs</span></div>'+
+    '</div>'+
+    '<div class="box '+(portef.length>=3?'ok':'warn')+'">'+divers+' — '+
+    (portef.length>=3?'Votre portefeuille est réparti sur plusieurs actifs. Continuez à diversifier.':'Ajoutez au moins 3 types d\'actifs différents pour réduire votre risque global.')+
+    '</div>'+
+    '<div class="box">📊 <b>Projection sur 10 ans (intérêts composés) :</b><br>'+
+    portef.map(function(p){var v=Math.round(p.montant*Math.pow(1+p.rend/100,10));return p.nom+' → '+fm(v)+' FCFA';}).join('<br>')+
+    '<br><b>Total estimé : '+fm(portef.reduce(function(s,p){return s+Math.round(p.montant*Math.pow(1+p.rend/100,10));},0))+' FCFA</b></div>';
+}
+
+// EXERCICES
+function checkE1(){
+  var pv=parseFloat(document.getElementById('e1_pv')?.value)||0;
+  var div=parseFloat(document.getElementById('e1_div')?.value)||0;
+  var rend=parseFloat(document.getElementById('e1_rend')?.value)||0;
+  var pvOk=Math.abs(pv-250000)<1;
+  var divOk=Math.abs(div-80000)<1;
+  var rendOk=Math.abs(rend-27.5)<0.1;
+  var el=document.getElementById('e1_res');
+  if(el) el.innerHTML='<div class="box '+(pvOk&&divOk&&rendOk?'ok':'warn')+'" style="margin-top:8px">'+
+    (pvOk?'✅ Plus-value = 250 000 F ':'❌ PV = (14 500−12 000)×100 = <b>250 000 FCFA</b><br>')+
+    (divOk?'✅ Dividendes = 80 000 F ':'❌ Dividendes = 800×100 = <b>80 000 FCFA</b><br>')+
+    (rendOk?'✅ Rendement = 27,5% ':'❌ Rend = (250 000+80 000)/(12 000×100)×100 = 330 000/1 200 000×100 = <b>27,5%</b>')+
+    '</div>';
+}
+
+function checkE2(){
+  var v5=parseFloat(document.getElementById('e2_5ans')?.value)||0;
+  var v10=parseFloat(document.getElementById('e2_10ans')?.value)||0;
+  var r5=2000000*Math.pow(1.10,5);
+  var r10=2000000*Math.pow(1.10,10);
+  var v5Ok=Math.abs(v5-Math.round(r5))<1000;
+  var v10Ok=Math.abs(v10-Math.round(r10))<1000;
+  var el=document.getElementById('e2_res');
+  if(el) el.innerHTML='<div class="box '+(v5Ok&&v10Ok?'ok':'warn')+'" style="margin-top:8px">'+
+    (v5Ok?'✅ 5 ans = '+fm(Math.round(r5))+' FCFA ':'❌ 5 ans = 2 000 000 × (1,10)^5 = <b>'+fm(Math.round(r5))+' FCFA</b><br>')+
+    (v10Ok?'✅ 10 ans = '+fm(Math.round(r10))+' FCFA !':'❌ 10 ans = 2 000 000 × (1,10)^10 = <b>'+fm(Math.round(r10))+' FCFA</b>')+
+    '<br>💡 En 10 ans, votre capital a été multiplié par '+Math.round(r10/2000000*10)/10+'x grâce aux intérêts composés !'+'</div>';
+}
+
+function checkE3(){
+  var rend=parseFloat(document.getElementById('e3_rend')?.value)||0;
+  var choix=document.getElementById('e3_choix')?.value;
+  var rendOk=Math.abs(rend-8.0)<0.1;
+  var choixOk=choix==='b';
+  var el=document.getElementById('e3_res');
+  if(el) el.innerHTML='<div class="box '+(rendOk&&choixOk?'ok':'warn')+'" style="margin-top:8px">'+
+    (rendOk?'✅ Rendement B = 8,0% ':'❌ Rend B = 0,40×5 + 0,30×8 + 0,30×12 = 2+2,4+3,6 = <b>8,0%</b><br>')+
+    (choixOk?'✅ Stratégie B est meilleure !':'❌ Stratégie B est meilleure !')+
+    '<br>💡 Même si A promet 25%, le risque de perte totale est élevé. B offre 8% stable avec diversification. Sur 10 ans, 8% composé × 5M FCFA = '+fm(Math.round(5000000*Math.pow(1.08,10)))+' FCFA en sécurité.'+'</div>';
+}
+
+// QUIZ
+function renderQuiz(){
+  if(qStep>=QUESTIONS.length){showResult();return;}
+  var q=QUESTIONS[qStep];
+  var ans=qAnswers[qStep]!==undefined;
+  var html='<div style="text-align:center;margin-bottom:10px;font-size:12px;color:#666">Question '+(qStep+1)+'/'+QUESTIONS.length+' · Score : <b>'+qScore+' pts</b></div>'+
+    '<div class="quiz-q"><div class="q-num">Question '+(qStep+1)+' — '+q.pts+' points</div>'+
+    '<div class="q-text">'+q.q+'</div>'+
+    '<div class="q-tip">💡 '+q.tip+'</div>'+
+    q.opts.map(function(o,i){
+      var cls='opt';
+      if(ans) cls+=(i===q.correct?' good':(i===qAnswers[qStep]?' bad':' dis'));
+      return '<button class="'+cls+'" onclick="ansQ('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+    }).join('')+
+    (ans?'<div class="fb show '+(qAnswers[qStep]===q.correct?'ok':'ko')+'">'+q.fb+'</div>':'')+
+    (ans?'<button class="btn btn-gold" style="margin-top:8px" onclick="nextQ()">'+( qStep<QUESTIONS.length-1?'Question suivante →':'Voir mon score →')+'</button>':'')+
+    '</div>';
+  document.getElementById('quizArea').innerHTML=html;
+}
+
+function ansQ(i){
+  if(qAnswers[qStep]!==undefined) return;
+  qAnswers[qStep]=i;
+  if(i===QUESTIONS[qStep].correct) qScore+=QUESTIONS[qStep].pts;
+  renderQuiz();
+}
+function nextQ(){qStep++;renderQuiz();}
+
+function showResult(){
+  var max=QUESTIONS.reduce(function(s,q){return s+q.pts;},0);
+  var p=Math.round(qScore/max*100);
+  var msg=p>=80?'🏆 Expert en investissements !':p>=60?'👍 Bon investisseur en herbe !':'📚 Continuez à apprendre !';
+  document.getElementById('quizArea').innerHTML=
+    '<div style="text-align:center;background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border-radius:12px;padding:20px;margin-bottom:14px;border:2px solid #D97706">'+
+    '<div style="font-size:36px;font-weight:700;color:#D97706">'+qScore+'/'+max+'</div>'+
+    '<div style="font-size:14px;font-weight:700;margin:6px 0">'+msg+'</div>'+
+    '<div style="font-size:12px;color:#666">Score : '+p+'%</div></div>'+
+    '<button onclick="qStep=0;qScore=0;qAnswers=[];renderQuiz()" class="btn btn-gold" style="width:100%;padding:12px">🔄 Recommencer le quiz</button>';
+}
+</script>
+</body>
+</html>
