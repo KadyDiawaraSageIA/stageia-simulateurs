@@ -55,10 +55,8 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#1a1a1a;padding:16px}
 .export-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
 .btn-export{padding:12px;border:none;border-radius:10px;cursor:pointer;font-size:12px;font-weight:600;font-family:Arial;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all .2s}
 .btn-export:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
-/* APERÇU DIRECT */
 .preview-wrap{border:2px solid #e0e0e0;border-radius:12px;overflow:hidden;background:#f0f0f0;padding:16px}
 .preview-inner{background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.1)}
-/* CV MODERNE */
 .cv-mod-header{padding:24px 28px;display:flex;align-items:center;gap:18px}
 .cv-mod-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;flex-shrink:0}
 .cv-mod-name{font-size:22px;font-weight:700;color:#fff;margin-bottom:3px}
@@ -76,7 +74,6 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#1a1a1a;padding:16px}
 .cv-skill-name{font-size:10px;margin-bottom:3px}
 .cv-skill-track{height:5px;background:#e0e0e0;border-radius:3px;overflow:hidden}
 .cv-skill-fill{height:100%;border-radius:3px}
-/* LM */
 .lm-wrap{padding:40px;font-family:Arial,sans-serif;font-size:13px;line-height:1.9;color:#333;background:#fff}
 .lm-top{display:flex;justify-content:space-between;margin-bottom:30px;flex-wrap:wrap;gap:12px}
 .lm-from{font-size:12px;line-height:1.7}
@@ -89,494 +86,451 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#1a1a1a;padding:16px}
 </head>
 <body>
 <div class="header">
-  <div class="h-icon">📝</div>
-  <div><div class="h-title">Stageia — CV & Lettre de Motivation</div>
-  <div class="h-sub">4 templates · Aperçu direct · Export PDF · CV + LM combinés · Score qualité</div></div>
+<div class="h-icon">📝</div>
+<div><div class="h-title">Stageia — CV & Lettre de Motivation</div>
+<div class="h-sub">4 templates · Aperçu direct · Export PDF · CV + LM combinés · Score qualité</div></div>
 </div>
-
 <div class="tabs">
-  <button class="tab active" onclick="st(0)">👤 Profil</button>
-  <button class="tab" onclick="st(1)">💼 Expériences</button>
-  <button class="tab" onclick="st(2)">🎓 Formation</button>
-  <button class="tab" onclick="st(3)">⚡ Compétences</button>
-  <button class="tab" onclick="st(4)">✉️ Lettre</button>
-  <button class="tab" onclick="st(5)">🎨 Design & Export</button>
-  <button class="tab" onclick="st(6)">📊 Score CV</button>
+<button class="tab active" onclick="st(0)">👤 Profil</button>
+<button class="tab" onclick="st(1)">💼 Expériences</button>
+<button class="tab" onclick="st(2)">🎓 Formation</button>
+<button class="tab" onclick="st(3)">⚡ Compétences</button>
+<button class="tab" onclick="st(4)">✉️ Lettre</button>
+<button class="tab" onclick="st(5)">🎨 Design & Export</button>
+<button class="tab" onclick="st(6)">📊 Score CV</button>
 </div>
-
-<!-- TAB 0 -->
 <div class="tp active" id="t0">
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">👤</div>Informations personnelles</div>
-  <div class="frow">
-    <div class="fg"><label class="fl">Prénom</label><input class="fi" id="prenom" placeholder="Ex: Fatoumata" oninput="upd()"></div>
-    <div class="fg"><label class="fl">Nom</label><input class="fi" id="nom" placeholder="Ex: Coulibaly" oninput="upd()"></div>
-  </div>
-  <div class="frow full"><div class="fg"><label class="fl">Titre / Poste visé</label>
-  <input class="fi" id="poste" placeholder="Ex: Développeur Web Full Stack | Designer UI/UX | Data Analyste..." oninput="upd()">
-  <span class="fh">Titre précis correspondant exactement au poste visé</span></div></div>
-  <div class="frow">
-    <div class="fg"><label class="fl">Email professionnel</label><input class="fi" id="email" placeholder="prenom.nom@gmail.com" oninput="upd()"></div>
-    <div class="fg"><label class="fl">Téléphone</label><input class="fi" id="tel" placeholder="+223 XX XX XX XX" oninput="upd()"></div>
-  </div>
-  <div class="frow">
-    <div class="fg"><label class="fl">Ville</label><input class="fi" id="ville" placeholder="Bamako, Mali" oninput="upd()"></div>
-    <div class="fg"><label class="fl">LinkedIn / Portfolio</label><input class="fi" id="linkedin" placeholder="linkedin.com/in/votrenom" oninput="upd()"></div>
-  </div>
-  <div class="frow full"><div class="fg"><label class="fl">Résumé professionnel (3-4 lignes)</label>
-  <textarea class="fta" id="resume" placeholder="Ex: Diplômé en informatique avec 2 ans d'expérience en développement web. Maîtrise React.js, Node.js et SQL. Passionné par la création de solutions innovantes pour le marché africain..." oninput="upd()"></textarea></div></div>
+<div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">👤</div>Informations personnelles</div>
+<div class="frow">
+<div class="fg"><label class="fl">Prénom</label><input class="fi" id="prenom" placeholder="Ex: Fatoumata" oninput="upd()"></div>
+<div class="fg"><label class="fl">Nom</label><input class="fi" id="nom" placeholder="Ex: Coulibaly" oninput="upd()"></div>
+</div>
+<div class="frow full"><div class="fg"><label class="fl">Titre / Poste visé</label>
+<input class="fi" id="poste" placeholder="Ex: Développeur Web Full Stack | Designer UI/UX | Data Analyste..." oninput="upd()">
+<span class="fh">Titre précis correspondant exactement au poste visé</span></div></div>
+<div class="frow">
+<div class="fg"><label class="fl">Email professionnel</label><input class="fi" id="email" placeholder="prenom.nom@gmail.com" oninput="upd()"></div>
+<div class="fg"><label class="fl">Téléphone</label><input class="fi" id="tel" placeholder="+223 XX XX XX XX" oninput="upd()"></div>
+</div>
+<div class="frow">
+<div class="fg"><label class="fl">Ville</label><input class="fi" id="ville" placeholder="Bamako, Mali" oninput="upd()"></div>
+<div class="fg"><label class="fl">LinkedIn / Portfolio</label><input class="fi" id="linkedin" placeholder="linkedin.com/in/votrenom" oninput="upd()"></div>
+</div>
+<div class="frow full"><div class="fg"><label class="fl">Résumé professionnel (3-4 lignes)</label>
+<textarea class="fta" id="resume" placeholder="Ex: Diplômé en informatique avec 2 ans d'expérience en développement web. Maîtrise React.js, Node.js et SQL. Passionné par la création de solutions innovantes pour le marché africain..." oninput="upd()"></textarea></div></div>
 </div>
 </div>
-
-<!-- TAB 1 -->
 <div class="tp" id="t1">
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">💼</div>Expériences professionnelles</div>
-  <div class="alert info">💡 Commencez par la plus récente. Quantifiez vos résultats avec des chiffres.</div>
-  <div id="expList" style="margin-top:10px"></div>
-  <button class="btn-add" onclick="addExp()">+ Ajouter une expérience</button>
+<div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">💼</div>Expériences professionnelles</div>
+<div class="alert info">💡 Commencez par la plus récente. Quantifiez vos résultats avec des chiffres.</div>
+<div id="expList" style="margin-top:10px"></div>
+<button class="btn-add" onclick="addExp()">+ Ajouter une expérience</button>
 </div>
 </div>
-
-<!-- TAB 2 -->
 <div class="tp" id="t2">
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#DBEAFE;color:#185FA5">🎓</div>Formation académique</div>
-  <div id="formList"></div>
-  <button class="btn-add" onclick="addForm()">+ Ajouter une formation</button>
+<div class="ctitle"><div class="cicon" style="background:#DBEAFE;color:#185FA5">🎓</div>Formation académique</div>
+<div class="alert info">💡 Remplissez au moins le champ "Diplôme" ou "École" pour que la formation apparaisse sur votre CV.</div>
+<div id="formList"></div>
+<button class="btn-add" onclick="addForm()">+ Ajouter une formation</button>
 </div>
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#EEEDFE;color:#534AB7">🏆</div>Certifications</div>
-  <div id="certList"></div>
-  <button class="btn-add" onclick="addCert()">+ Ajouter une certification</button>
+<div class="ctitle"><div class="cicon" style="background:#EEEDFE;color:#534AB7">🏆</div>Certifications</div>
+<div id="certList"></div>
+<button class="btn-add" onclick="addCert()">+ Ajouter une certification</button>
 </div>
 </div>
-
-<!-- TAB 3 -->
 <div class="tp" id="t3">
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">⚡</div>Compétences techniques</div>
-  <div id="skillList"></div>
-  <button class="btn-add" onclick="addSkill()">+ Ajouter une compétence</button>
+<div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">⚡</div>Compétences techniques</div>
+<div id="skillList"></div>
+<button class="btn-add" onclick="addSkill()">+ Ajouter une compétence</button>
 </div>
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#FEF3C7;color:#BA7517">🌍</div>Langues</div>
-  <div id="langList"></div>
-  <button class="btn-add" onclick="addLang()">+ Ajouter une langue</button>
+<div class="ctitle"><div class="cicon" style="background:#FEF3C7;color:#BA7517">🌍</div>Langues</div>
+<div id="langList"></div>
+<button class="btn-add" onclick="addLang()">+ Ajouter une langue</button>
 </div>
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#FCE4EC;color:#C2185B">🎯</div>Centres d'intérêt</div>
-  <textarea class="fta" id="interests" placeholder="Ex: Développement open-source, Entrepreneuriat, Basketball, Musique malienne..." oninput="upd()" style="min-height:55px"></textarea>
+<div class="ctitle"><div class="cicon" style="background:#FCE4EC;color:#C2185B">🎯</div>Centres d'intérêt</div>
+<textarea class="fta" id="interests" placeholder="Ex: Développement open-source, Entrepreneuriat, Basketball, Musique malienne..." oninput="upd()" style="min-height:55px"></textarea>
 </div>
 </div>
-
-<!-- TAB 4 -->
 <div class="tp" id="t4">
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#DBEAFE;color:#185FA5">✉️</div>Informations pour la lettre de motivation</div>
-  <div class="frow">
-    <div class="fg"><label class="fl">Nom de l'entreprise</label><input class="fi" id="entreprise" placeholder="Ex: Orange Mali, Coris Bank..." oninput="upd()"></div>
-    <div class="fg"><label class="fl">Poste exact visé</label><input class="fi" id="posteVise" placeholder="Ex: Développeur Web Junior" oninput="upd()"></div>
-  </div>
-  <div class="frow">
-    <div class="fg"><label class="fl">Nom du recruteur (si connu)</label><input class="fi" id="recruteur" placeholder="Ex: M. Traoré, Mme Diallo..." oninput="upd()"></div>
-    <div class="fg"><label class="fl">Source de l'offre</label>
-    <select class="fi" id="sourceOffre" onchange="upd()">
-      <option value="LinkedIn">LinkedIn</option>
-      <option value="Facebook">Facebook</option>
-      <option value="le site web de votre entreprise">Site de l'entreprise</option>
-      <option value="une recommandation de mon réseau">Recommandation</option>
-      <option value="un salon emploi">Salon emploi</option>
-      <option value="ma propre initiative">Candidature spontanée</option>
-    </select></div>
-  </div>
-  <div class="frow full"><div class="fg"><label class="fl">Pourquoi cette entreprise ?</label>
-  <textarea class="fta" id="motivEntreprise" placeholder="Ex: Orange Mali est un leader de l'inclusion numérique au Mali que j'admire pour son impact social..." oninput="upd()"></textarea></div></div>
-  <div class="frow full"><div class="fg"><label class="fl">Votre valeur ajoutée pour ce poste</label>
-  <textarea class="fta" id="valeurAjoutee" placeholder="Ex: Ma maîtrise de React.js combinée à ma connaissance du marché malien me permettrait de créer des solutions adaptées..." oninput="upd()"></textarea></div></div>
+<div class="ctitle"><div class="cicon" style="background:#DBEAFE;color:#185FA5">✉️</div>Informations pour la lettre de motivation</div>
+<div class="frow">
+<div class="fg"><label class="fl">Nom de l'entreprise</label><input class="fi" id="entreprise" placeholder="Ex: Orange Mali, Coris Bank..." oninput="upd()"></div>
+<div class="fg"><label class="fl">Poste exact visé</label><input class="fi" id="posteVise" placeholder="Ex: Développeur Web Junior" oninput="upd()"></div>
+</div>
+<div class="frow">
+<div class="fg"><label class="fl">Nom du recruteur (si connu)</label><input class="fi" id="recruteur" placeholder="Ex: M. Traoré, Mme Diallo..." oninput="upd()"></div>
+<div class="fg"><label class="fl">Source de l'offre</label>
+<select class="fi" id="sourceOffre" onchange="upd()">
+<option value="LinkedIn">LinkedIn</option>
+<option value="Facebook">Facebook</option>
+<option value="le site web de votre entreprise">Site de l'entreprise</option>
+<option value="une recommandation de mon réseau">Recommandation</option>
+<option value="un salon emploi">Salon emploi</option>
+<option value="ma propre initiative">Candidature spontanée</option>
+</select></div>
+</div>
+<div class="frow full"><div class="fg"><label class="fl">Pourquoi cette entreprise ?</label>
+<textarea class="fta" id="motivEntreprise" placeholder="Ex: Orange Mali est un leader de l'inclusion numérique au Mali que j'admire pour son impact social..." oninput="upd()"></textarea></div></div>
+<div class="frow full"><div class="fg"><label class="fl">Votre valeur ajoutée pour ce poste</label>
+<textarea class="fta" id="valeurAjoutee" placeholder="Ex: Ma maîtrise de React.js combinée à ma connaissance du marché malien me permettrait de créer des solutions adaptées..." oninput="upd()"></textarea></div></div>
 </div>
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">👁️</div>Aperçu Lettre de Motivation</div>
-  <div class="preview-wrap"><div class="preview-inner"><div id="lmPreview" class="lm-wrap"></div></div></div>
+<div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">👁️</div>Aperçu Lettre de Motivation</div>
+<div class="preview-wrap"><div class="preview-inner"><div id="lmPreview" class="lm-wrap"></div></div></div>
 </div>
 </div>
-
-<!-- TAB 5 -->
 <div class="tp" id="t5">
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#FCE4EC;color:#C2185B">🎨</div>Design du CV</div>
-  <div class="fl" style="margin-bottom:8px">Couleur principale :</div>
-  <div class="color-grid">
-    <div class="col-opt sel" style="background:#10B981" onclick="setCol('#10B981')"></div>
-    <div class="col-opt" style="background:#534AB7" onclick="setCol('#534AB7')"></div>
-    <div class="col-opt" style="background:#1877F2" onclick="setCol('#1877F2')"></div>
-    <div class="col-opt" style="background:#E1306C" onclick="setCol('#E1306C')"></div>
-    <div class="col-opt" style="background:#F59E0B" onclick="setCol('#F59E0B')"></div>
-    <div class="col-opt" style="background:#0D0B2E" onclick="setCol('#0D0B2E')"></div>
-    <div class="col-opt" style="background:#EF4444" onclick="setCol('#EF4444')"></div>
-    <div class="col-opt" style="background:#8B5CF6" onclick="setCol('#8B5CF6')"></div>
-  </div>
-  <div class="fl" style="margin:10px 0 8px">Template :</div>
-  <div class="tmpl-grid">
-    <div class="tmpl-card sel" id="tm-moderne" onclick="setTmpl('moderne')"><div class="tmpl-icon">📋</div><div class="tmpl-name">Moderne</div></div>
-    <div class="tmpl-card" id="tm-classique" onclick="setTmpl('classique')"><div class="tmpl-icon">📄</div><div class="tmpl-name">Classique</div></div>
-    <div class="tmpl-card" id="tm-minimaliste" onclick="setTmpl('minimaliste')"><div class="tmpl-icon">⬜</div><div class="tmpl-name">Minimaliste</div></div>
-    <div class="tmpl-card" id="tm-creatif" onclick="setTmpl('creatif')"><div class="tmpl-icon">🎨</div><div class="tmpl-name">Créatif</div></div>
-  </div>
+<div class="ctitle"><div class="cicon" style="background:#FCE4EC;color:#C2185B">🎨</div>Design du CV</div>
+<div class="fl" style="margin-bottom:8px">Couleur principale :</div>
+<div class="color-grid">
+<div class="col-opt sel" style="background:#10B981" onclick="setCol('#10B981')"></div>
+<div class="col-opt" style="background:#534AB7" onclick="setCol('#534AB7')"></div>
+<div class="col-opt" style="background:#1877F2" onclick="setCol('#1877F2')"></div>
+<div class="col-opt" style="background:#E1306C" onclick="setCol('#E1306C')"></div>
+<div class="col-opt" style="background:#F59E0B" onclick="setCol('#F59E0B')"></div>
+<div class="col-opt" style="background:#0D0B2E" onclick="setCol('#0D0B2E')"></div>
+<div class="col-opt" style="background:#EF4444" onclick="setCol('#EF4444')"></div>
+<div class="col-opt" style="background:#8B5CF6" onclick="setCol('#8B5CF6')"></div>
+</div>
+<div class="fl" style="margin:10px 0 8px">Template :</div>
+<div class="tmpl-grid">
+<div class="tmpl-card sel" id="tm-moderne" onclick="setTmpl('moderne')"><div class="tmpl-icon">📋</div><div class="tmpl-name">Moderne</div></div>
+<div class="tmpl-card" id="tm-classique" onclick="setTmpl('classique')"><div class="tmpl-icon">📄</div><div class="tmpl-name">Classique</div></div>
+<div class="tmpl-card" id="tm-minimaliste" onclick="setTmpl('minimaliste')"><div class="tmpl-icon">⬜</div><div class="tmpl-name">Minimaliste</div></div>
+<div class="tmpl-card" id="tm-creatif" onclick="setTmpl('creatif')"><div class="tmpl-icon">🎨</div><div class="tmpl-name">Créatif</div></div>
+</div>
 </div>
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">👁️</div>Aperçu CV en temps réel</div>
-  <div class="preview-wrap"><div class="preview-inner" id="cvPreview"></div></div>
+<div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">👁️</div>Aperçu CV en temps réel</div>
+<div class="preview-wrap"><div class="preview-inner" id="cvPreview"></div></div>
 </div>
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">📤</div>Exporter vos documents</div>
-  <div class="export-btns">
-    <button class="btn-export" style="background:#534AB7;color:#fff" onclick="exportDoc('cv')">
-      <span style="font-size:22px">📄</span>CV seulement<span style="font-size:10px;font-weight:400">→ PDF</span>
-    </button>
-    <button class="btn-export" style="background:#1877F2;color:#fff" onclick="exportDoc('lm')">
-      <span style="font-size:22px">✉️</span>Lettre seule<span style="font-size:10px;font-weight:400">→ PDF</span>
-    </button>
-    <button class="btn-export" style="background:#10B981;color:#fff" onclick="exportDoc('combined')">
-      <span style="font-size:22px">📦</span>CV + Lettre<span style="font-size:10px;font-weight:400">Combiné PDF</span>
-    </button>
-  </div>
-  <div class="alert info">💡 Cliquez sur un bouton → nouvelle fenêtre s'ouvre → <b>Ctrl+P</b> (ou Cmd+P sur Mac) → choisissez <b>"Enregistrer en PDF"</b> → Enregistrer.</div>
+<div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">📤</div>Exporter vos documents</div>
+<div class="export-btns">
+<button class="btn-export" style="background:#534AB7;color:#fff" onclick="exportDoc('cv')">
+<span style="font-size:22px">📄</span>CV seulement<span style="font-size:10px;font-weight:400">→ PDF</span>
+</button>
+<button class="btn-export" style="background:#1877F2;color:#fff" onclick="exportDoc('lm')">
+<span style="font-size:22px">✉️</span>Lettre seule<span style="font-size:10px;font-weight:400">→ PDF</span>
+</button>
+<button class="btn-export" style="background:#10B981;color:#fff" onclick="exportDoc('combined')">
+<span style="font-size:22px">📦</span>CV + Lettre<span style="font-size:10px;font-weight:400">Combiné PDF</span>
+</button>
+</div>
+<div class="alert info">💡 Cliquez sur un bouton → nouvelle fenêtre s'ouvre → <b>Ctrl+P</b> (ou Cmd+P sur Mac) → choisissez <b>"Enregistrer en PDF"</b> → Enregistrer.</div>
 </div>
 </div>
-
-<!-- TAB 6 -->
 <div class="tp" id="t6">
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">📊</div>Score de qualité de votre CV</div>
-  <div id="scoreBox" style="text-align:center;padding:14px;border-radius:12px;margin-bottom:12px;background:linear-gradient(135deg,#f0fdf4,#d1fae5);border:1px solid #10B981"></div>
-  <div id="criteriaList"></div>
+<div class="ctitle"><div class="cicon" style="background:#D1FAE5;color:#0F6E56">📊</div>Score de qualité de votre CV</div>
+<div id="scoreBox" style="text-align:center;padding:14px;border-radius:12px;margin-bottom:12px;background:linear-gradient(135deg,#f0fdf4,#d1fae5);border:1px solid #10B981"></div>
+<div id="criteriaList"></div>
 </div>
 <div class="card">
-  <div class="ctitle"><div class="cicon" style="background:#FEF3C7;color:#BA7517">💡</div>Conseils pour améliorer votre CV</div>
-  <div id="conseilsCV"></div>
+<div class="ctitle"><div class="cicon" style="background:#FEF3C7;color:#BA7517">💡</div>Conseils pour améliorer votre CV</div>
+<div id="conseilsCV"></div>
 </div>
 </div>
-
 <script>
 let color='#10B981', tmpl='moderne';
 let exps=[], forms=[], certs=[], skills=[], langs=[];
-
 function gs(id,d=''){const e=document.getElementById(id);return e?e.value||d:d;}
 function st(i){document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));document.querySelectorAll('.tp').forEach((c,j)=>c.classList.toggle('active',i===j));upd();}
-
 function setCol(c){
-  color=c;
-  document.querySelectorAll('.col-opt').forEach(el=>{
-    const bg=el.style.background||el.style.backgroundColor;
-    el.classList.toggle('sel',bg===c);
-  });
-  upd();
+color=c;
+document.querySelectorAll('.col-opt').forEach(el=>{
+const bg=el.style.background||el.style.backgroundColor;
+el.classList.toggle('sel',bg===c);
+});
+upd();
 }
 function setTmpl(t){
-  tmpl=t;
-  document.querySelectorAll('.tmpl-card').forEach(el=>el.classList.remove('sel'));
-  document.getElementById('tm-'+t)?.classList.add('sel');
-  upd();
+tmpl=t;
+document.querySelectorAll('.tmpl-card').forEach(el=>el.classList.remove('sel'));
+document.getElementById('tm-'+t)?.classList.add('sel');
+upd();
 }
-
 function addExp(){exps.push({poste:'',entreprise:'',periode:'',ville:'',desc:''});renderExps();}
 function delExp(i){exps.splice(i,1);renderExps();upd();}
 function renderExps(){
-  const el=document.getElementById('expList');if(!el)return;
-  el.innerHTML=exps.map((e,i)=>`<div class="exp-item">
-    <div class="exp-header"><div class="exp-title-lbl">Expérience ${i+1}</div><button class="btn-del" onclick="delExp(${i})">✕ Supprimer</button></div>
-    <div class="frow"><div class="fg"><label class="fl">Poste</label><input class="fi" placeholder="Ex: Développeur Web" value="${e.poste}" oninput="exps[${i}].poste=this.value;upd()"></div>
-    <div class="fg"><label class="fl">Entreprise</label><input class="fi" placeholder="Ex: Orange Mali" value="${e.entreprise}" oninput="exps[${i}].entreprise=this.value;upd()"></div></div>
-    <div class="frow"><div class="fg"><label class="fl">Période</label><input class="fi" placeholder="Jan 2023 - Déc 2023" value="${e.periode}" oninput="exps[${i}].periode=this.value;upd()"></div>
-    <div class="fg"><label class="fl">Ville</label><input class="fi" placeholder="Bamako" value="${e.ville}" oninput="exps[${i}].ville=this.value;upd()"></div></div>
-    <div class="fg"><label class="fl">Description (résultats quantifiés)</label>
-    <textarea class="fta" placeholder="• Développé 3 sites web (+30% visibilité clients)&#10;• Formé 5 collègues à React.js" oninput="exps[${i}].desc=this.value;upd()" style="min-height:65px">${e.desc}</textarea></div>
-  </div>`).join('');
+const el=document.getElementById('expList');if(!el)return;
+el.innerHTML=exps.map((e,i)=>`<div class="exp-item">
+<div class="exp-header"><div class="exp-title-lbl">Expérience ${i+1}</div><button class="btn-del" onclick="delExp(${i})">✕ Supprimer</button></div>
+<div class="frow"><div class="fg"><label class="fl">Poste</label><input class="fi" placeholder="Ex: Développeur Web" value="${e.poste}" oninput="exps[${i}].poste=this.value;upd()"></div>
+<div class="fg"><label class="fl">Entreprise</label><input class="fi" placeholder="Ex: Orange Mali" value="${e.entreprise}" oninput="exps[${i}].entreprise=this.value;upd()"></div></div>
+<div class="frow"><div class="fg"><label class="fl">Période</label><input class="fi" placeholder="Jan 2023 - Déc 2023" value="${e.periode}" oninput="exps[${i}].periode=this.value;upd()"></div>
+<div class="fg"><label class="fl">Ville</label><input class="fi" placeholder="Bamako" value="${e.ville}" oninput="exps[${i}].ville=this.value;upd()"></div></div>
+<div class="fg"><label class="fl">Description (résultats quantifiés)</label>
+<textarea class="fta" placeholder="• Développé 3 sites web (+30% visibilité clients)&#10;• Formé 5 collègues à React.js" oninput="exps[${i}].desc=this.value;upd()" style="min-height:65px">${e.desc}</textarea></div>
+</div>`).join('');
 }
-
 function addForm(){forms.push({diplome:'',ecole:'',annee:'',mention:''});renderForms();}
 function delForm(i){forms.splice(i,1);renderForms();upd();}
 function renderForms(){
-  const el=document.getElementById('formList');if(!el)return;
-  el.innerHTML=forms.map((f,i)=>`<div class="exp-item">
-    <div class="exp-header"><div class="exp-title-lbl">Formation ${i+1}</div><button class="btn-del" onclick="delForm(${i})">✕</button></div>
-    <div class="frow"><div class="fg"><label class="fl">Diplôme</label><input class="fi" placeholder="Ex: Licence Informatique" value="${f.diplome}" oninput="forms[${i}].diplome=this.value;upd()"></div>
-    <div class="fg"><label class="fl">École</label><input class="fi" placeholder="Ex: USTTB, ESP..." value="${f.ecole}" oninput="forms[${i}].ecole=this.value;upd()"></div></div>
-    <div class="frow"><div class="fg"><label class="fl">Année</label><input class="fi" placeholder="2023" value="${f.annee}" oninput="forms[${i}].annee=this.value;upd()"></div>
-    <div class="fg"><label class="fl">Mention</label><input class="fi" placeholder="Mention Bien..." value="${f.mention}" oninput="forms[${i}].mention=this.value;upd()"></div></div>
-  </div>`).join('');
+const el=document.getElementById('formList');if(!el)return;
+el.innerHTML=forms.map((f,i)=>`<div class="exp-item">
+<div class="exp-header"><div class="exp-title-lbl">Formation ${i+1}</div><button class="btn-del" onclick="delForm(${i})">✕</button></div>
+<div class="frow"><div class="fg"><label class="fl">Diplôme</label><input class="fi" placeholder="Ex: Licence Informatique" value="${f.diplome}" oninput="forms[${i}].diplome=this.value;upd()"></div>
+<div class="fg"><label class="fl">École</label><input class="fi" placeholder="Ex: USTTB, ESP..." value="${f.ecole}" oninput="forms[${i}].ecole=this.value;upd()"></div></div>
+<div class="frow"><div class="fg"><label class="fl">Année</label><input class="fi" placeholder="2023" value="${f.annee}" oninput="forms[${i}].annee=this.value;upd()"></div>
+<div class="fg"><label class="fl">Mention</label><input class="fi" placeholder="Mention Bien..." value="${f.mention}" oninput="forms[${i}].mention=this.value;upd()"></div></div>
+</div>`).join('');
 }
-
 function addCert(){certs.push({nom:'',organisme:'',annee:''});renderCerts();}
 function delCert(i){certs.splice(i,1);renderCerts();upd();}
 function renderCerts(){
-  const el=document.getElementById('certList');if(!el)return;
-  el.innerHTML=certs.map((c,i)=>`<div class="exp-item">
-    <div class="exp-header"><div class="exp-title-lbl">Certification ${i+1}</div><button class="btn-del" onclick="delCert(${i})">✕</button></div>
-    <div class="frow"><div class="fg"><label class="fl">Certification</label><input class="fi" placeholder="Google Analytics, Facebook Blueprint..." value="${c.nom}" oninput="certs[${i}].nom=this.value;upd()"></div>
-    <div class="fg"><label class="fl">Organisme</label><input class="fi" placeholder="Google, Meta, Stageia..." value="${c.organisme}" oninput="certs[${i}].organisme=this.value;upd()"></div></div>
-    <div class="fg"><label class="fl">Année</label><input class="fi" style="max-width:120px" placeholder="2024" value="${c.annee}" oninput="certs[${i}].annee=this.value;upd()"></div>
-  </div>`).join('');
+const el=document.getElementById('certList');if(!el)return;
+el.innerHTML=certs.map((c,i)=>`<div class="exp-item">
+<div class="exp-header"><div class="exp-title-lbl">Certification ${i+1}</div><button class="btn-del" onclick="delCert(${i})">✕</button></div>
+<div class="frow"><div class="fg"><label class="fl">Certification</label><input class="fi" placeholder="Google Analytics, Facebook Blueprint..." value="${c.nom}" oninput="certs[${i}].nom=this.value;upd()"></div>
+<div class="fg"><label class="fl">Organisme</label><input class="fi" placeholder="Google, Meta, Stageia..." value="${c.organisme}" oninput="certs[${i}].organisme=this.value;upd()"></div></div>
+<div class="fg"><label class="fl">Année</label><input class="fi" style="max-width:120px" placeholder="2024" value="${c.annee}" oninput="certs[${i}].annee=this.value;upd()"></div>
+</div>`).join('');
 }
-
 function addSkill(){skills.push({nom:'',niveau:75});renderSkills();}
 function delSkill(i){skills.splice(i,1);renderSkills();upd();}
 function renderSkills(){
-  const el=document.getElementById('skillList');if(!el)return;
-  el.innerHTML=skills.map((s,i)=>`<div class="exp-item" style="padding:9px 12px;margin-bottom:6px">
-    <div style="display:grid;grid-template-columns:1fr 140px auto;gap:8px;align-items:center">
-      <input class="fi" placeholder="Ex: React.js, Canva, Python..." value="${s.nom}" oninput="skills[${i}].nom=this.value;upd()">
-      <select class="fi" onchange="skills[${i}].niveau=parseInt(this.value);upd()">
-        <option value="35" ${s.niveau===35?'selected':''}>Débutant</option>
-        <option value="60" ${s.niveau===60?'selected':''}>Intermédiaire</option>
-        <option value="80" ${s.niveau===80?'selected':''}>Avancé</option>
-        <option value="95" ${s.niveau===95?'selected':''}>Expert</option>
-      </select>
-      <button class="btn-del" onclick="delSkill(${i})">✕</button>
-    </div>
-  </div>`).join('');
+const el=document.getElementById('skillList');if(!el)return;
+el.innerHTML=skills.map((s,i)=>`<div class="exp-item" style="padding:9px 12px;margin-bottom:6px">
+<div style="display:grid;grid-template-columns:1fr 140px auto;gap:8px;align-items:center">
+<input class="fi" placeholder="Ex: React.js, Canva, Python..." value="${s.nom}" oninput="skills[${i}].nom=this.value;upd()">
+<select class="fi" onchange="skills[${i}].niveau=parseInt(this.value);upd()">
+<option value="35" ${s.niveau===35?'selected':''}>Débutant</option>
+<option value="60" ${s.niveau===60?'selected':''}>Intermédiaire</option>
+<option value="80" ${s.niveau===80?'selected':''}>Avancé</option>
+<option value="95" ${s.niveau===95?'selected':''}>Expert</option>
+</select>
+<button class="btn-del" onclick="delSkill(${i})">✕</button>
+</div>
+</div>`).join('');
 }
-
 function addLang(){langs.push({langue:'',niveau:'Courant'});renderLangs();}
 function delLang(i){langs.splice(i,1);renderLangs();upd();}
 function renderLangs(){
-  const el=document.getElementById('langList');if(!el)return;
-  el.innerHTML=langs.map((l,i)=>`<div class="exp-item" style="padding:9px 12px;margin-bottom:6px">
-    <div style="display:grid;grid-template-columns:1fr 160px auto;gap:8px;align-items:center">
-      <input class="fi" placeholder="Français, Bambara, Anglais..." value="${l.langue}" oninput="langs[${i}].langue=this.value;upd()">
-      <select class="fi" onchange="langs[${i}].niveau=this.value;upd()">
-        <option ${l.niveau==='Notions'?'selected':''}>Notions</option>
-        <option ${l.niveau==='Scolaire'?'selected':''}>Scolaire</option>
-        <option ${l.niveau==='Courant'?'selected':''}>Courant</option>
-        <option ${l.niveau==='Bilingue'?'selected':''}>Bilingue</option>
-        <option ${l.niveau==='Langue maternelle'?'selected':''}>Langue maternelle</option>
-      </select>
-      <button class="btn-del" onclick="delLang(${i})">✕</button>
-    </div>
-  </div>`).join('');
+const el=document.getElementById('langList');if(!el)return;
+el.innerHTML=langs.map((l,i)=>`<div class="exp-item" style="padding:9px 12px;margin-bottom:6px">
+<div style="display:grid;grid-template-columns:1fr 160px auto;gap:8px;align-items:center">
+<input class="fi" placeholder="Français, Bambara, Anglais..." value="${l.langue}" oninput="langs[${i}].langue=this.value;upd()">
+<select class="fi" onchange="langs[${i}].niveau=this.value;upd()">
+<option ${l.niveau==='Notions'?'selected':''}>Notions</option>
+<option ${l.niveau==='Scolaire'?'selected':''}>Scolaire</option>
+<option ${l.niveau==='Courant'?'selected':''}>Courant</option>
+<option ${l.niveau==='Bilingue'?'selected':''}>Bilingue</option>
+<option ${l.niveau==='Langue maternelle'?'selected':''}>Langue maternelle</option>
+</select>
+<button class="btn-del" onclick="delLang(${i})">✕</button>
+</div>
+</div>`).join('');
 }
-
-// ===== GÉNÉRATION CV HTML =====
 function getCVHTML(){
-  const prenom=gs('prenom'),nom=gs('nom'),poste=gs('poste');
-  const email=gs('email'),tel=gs('tel'),ville=gs('ville'),linkedin=gs('linkedin');
-  const resume=gs('resume'),interests=gs('interests');
-  const fullName=(prenom+' '+nom).trim()||'Votre Nom';
-  const initiales=((prenom[0]||'')+(nom[0]||'')).toUpperCase()||'?';
-
-  const contHead=`${email?`<span>📧 ${email}</span>`:''}${tel?` &nbsp;📱 ${tel}`:''}${ville?` &nbsp;📍 ${ville}`:''}${linkedin?` &nbsp;🔗 ${linkedin}`:''}`;
-
-  const sideSkills=skills.filter(s=>s.nom).map(s=>`
-    <div class="cv-skill"><div class="cv-skill-name">${s.nom}</div>
-    <div class="cv-skill-track"><div class="cv-skill-fill" style="width:${s.niveau}%;background:${color}"></div></div></div>`).join('');
-  const sideLangs=langs.filter(l=>l.langue).map(l=>`
-    <div style="font-size:10px;margin-bottom:5px"><b>${l.langue}</b><br><span style="color:#888;font-size:9px">${l.niveau}</span></div>`).join('');
-  const mainExps=exps.filter(e=>e.poste).map(e=>`
-    <div class="cv-exp">
-      <div class="cv-exp-title">${e.poste}</div>
-      <div class="cv-exp-org" style="color:${color}">${e.entreprise||''} ${e.periode?'· '+e.periode:''} ${e.ville?'· '+e.ville:''}</div>
-      ${e.desc?`<div class="cv-exp-desc">${e.desc}</div>`:''}</div>`).join('');
-  const mainForms=forms.filter(f=>f.diplome).map(f=>`
-    <div class="cv-exp">
-      <div class="cv-exp-title">${f.diplome} ${f.mention?'— '+f.mention:''}</div>
-      <div class="cv-exp-org" style="color:${color}">${f.ecole||''} ${f.annee?'· '+f.annee:''}</div></div>`).join('');
-  const mainCerts=certs.filter(c=>c.nom).map(c=>`
-    <div style="font-size:10px;margin-bottom:5px"><b>${c.nom}</b> — ${c.organisme||''} ${c.annee?'('+c.annee+')':''}</div>`).join('');
-
-  if(tmpl==='moderne'){return`
-    <div class="cv-mod-header" style="background:${color}">
-      <div class="cv-mod-avatar" style="background:rgba(255,255,255,.2)">${initiales}</div>
-      <div><div class="cv-mod-name">${fullName}</div>
-      <div class="cv-mod-poste">${poste||'Titre professionnel'}</div>
-      <div class="cv-mod-contacts">${contHead}</div></div>
-    </div>
-    <div class="cv-body">
-      <div class="cv-sidebar" style="background:${color}10;border-right:1px solid ${color}30">
-        ${sideSkills?`<div class="cv-sec" style="color:${color};border-color:${color}">COMPÉTENCES</div>${sideSkills}<br>`:''}
-        ${sideLangs?`<div class="cv-sec" style="color:${color};border-color:${color}">LANGUES</div>${sideLangs}<br>`:''}
-        ${interests?`<div class="cv-sec" style="color:${color};border-color:${color}">INTÉRÊTS</div><div style="font-size:10px;color:#555;line-height:1.5">${interests}</div>`:''}
-      </div>
-      <div class="cv-main">
-        ${resume?`<div class="cv-sec" style="color:${color};border-color:${color}">PROFIL</div><div style="font-size:11px;color:#444;line-height:1.7;margin-bottom:12px">${resume}</div>`:''}
-        ${mainExps?`<div class="cv-sec" style="color:${color};border-color:${color}">EXPÉRIENCES</div>${mainExps}`:''}
-        ${mainForms?`<div class="cv-sec" style="color:${color};border-color:${color}">FORMATION</div>${mainForms}`:''}
-        ${mainCerts?`<div class="cv-sec" style="color:${color};border-color:${color}">CERTIFICATIONS</div>${mainCerts}`:''}
-      </div>
-    </div>`;}
-
-  if(tmpl==='classique'){return`
-    <div style="padding:32px;font-family:Georgia,serif">
-      <div style="text-align:center;border-bottom:3px solid ${color};padding-bottom:14px;margin-bottom:18px">
-        <div style="font-size:26px;font-weight:700;color:#111;letter-spacing:2px">${fullName}</div>
-        <div style="font-size:13px;color:${color};margin:5px 0;font-style:italic">${poste||''}</div>
-        <div style="font-size:10px;color:#666">${contHead}</div>
-      </div>
-      ${resume?`<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Profil Professionnel</div><div style="font-size:11px;color:#444;line-height:1.8;font-style:italic">${resume}</div></div>`:''}
-      ${mainExps?`<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid ${color};margin-bottom:10px;padding-bottom:3px">Expériences Professionnelles</div>${mainExps}</div>`:''}
-      ${mainForms?`<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid ${color};margin-bottom:10px;padding-bottom:3px">Formation</div>${mainForms}</div>`:''}
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-        ${sideSkills?`<div><div style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid ${color};margin-bottom:10px;padding-bottom:3px">Compétences</div>${skills.filter(s=>s.nom).map(s=>`<div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:10px"><span>${s.nom}</span><span style="color:${color}">${s.niveau}%</span></div><div style="height:4px;background:#eee;border-radius:2px;overflow:hidden"><div style="width:${s.niveau}%;height:100%;background:${color}"></div></div></div>`).join('')}</div>`:''}
-        <div>${sideLangs?`<div style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid ${color};margin-bottom:10px;padding-bottom:3px">Langues</div>${langs.filter(l=>l.langue).map(l=>`<div style="font-size:10px;margin-bottom:5px;display:flex;justify-content:space-between"><span>${l.langue}</span><span style="color:#888">${l.niveau}</span></div>`).join('')}<br>`:''}${interests?`<div style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid ${color};margin-bottom:8px;padding-bottom:3px">Intérêts</div><div style="font-size:10px;color:#555;line-height:1.6">${interests}</div>`:''}
-        </div>
-      </div>
-    </div>`;}
-
-  if(tmpl==='minimaliste'){return`
-    <div style="padding:32px;font-family:Arial,sans-serif">
-      <div style="margin-bottom:20px">
-        <div style="font-size:24px;font-weight:700;color:#111;margin-bottom:3px">${fullName}</div>
-        <div style="font-size:12px;color:${color};font-weight:500;margin-bottom:6px">${poste||''}</div>
-        <div style="font-size:10px;color:#777">${contHead}</div>
-      </div>
-      <hr style="border:none;border-top:1px solid #eee;margin-bottom:18px">
-      ${resume?`<div style="margin-bottom:18px"><div style="font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">À PROPOS</div><div style="font-size:11px;color:#444;line-height:1.8">${resume}</div></div>`:''}
-      ${mainExps?`<div style="margin-bottom:18px"><div style="font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">EXPÉRIENCES</div>${exps.filter(e=>e.poste).map(e=>`<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><span style="font-size:12px;font-weight:600">${e.poste}</span> <span style="font-size:10px;color:${color}">${e.entreprise||''}</span></div><span style="font-size:9px;color:#999">${e.periode||''}</span></div>${e.desc?`<div style="font-size:10px;color:#555;line-height:1.7;margin-top:3px;white-space:pre-line">${e.desc}</div>`:''}</div>`).join('')}</div>`:''}
-      ${mainForms?`<div style="margin-bottom:18px"><div style="font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">FORMATION</div>${forms.filter(f=>f.diplome).map(f=>`<div style="margin-bottom:7px;display:flex;justify-content:space-between"><div><span style="font-size:11px;font-weight:600">${f.diplome}</span> <span style="font-size:10px;color:#666">${f.ecole||''}</span></div><span style="font-size:9px;color:#999">${f.annee||''}</span></div>`).join('')}</div>`:''}
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-        ${skills.filter(s=>s.nom).length?`<div><div style="font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">COMPÉTENCES</div>${skills.filter(s=>s.nom).map(s=>`<div style="font-size:10px;color:#444;padding:2px 0;border-bottom:1px solid #f5f5f5">· ${s.nom} <span style="color:${color}">(${s.niveau}%)</span></div>`).join('')}</div>`:''}
-        ${langs.filter(l=>l.langue).length?`<div><div style="font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">LANGUES</div>${langs.filter(l=>l.langue).map(l=>`<div style="font-size:10px;color:#444;padding:2px 0;border-bottom:1px solid #f5f5f5">${l.langue} — <span style="color:#888">${l.niveau}</span></div>`).join('')}</div>`:''}
-        ${certs.filter(c=>c.nom).length?`<div><div style="font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">CERTIFICATIONS</div>${certs.filter(c=>c.nom).map(c=>`<div style="font-size:10px;color:#444;padding:2px 0;border-bottom:1px solid #f5f5f5">${c.nom} ${c.annee?'('+c.annee+')':''}</div>`).join('')}</div>`:''}
-      </div>
-    </div>`;}
-
-  // CRÉATIF
-  return`
-    <div style="font-family:Arial,sans-serif">
-      <div style="background:${color};padding:24px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
-        <div>
-          <div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-1px">${fullName}</div>
-          <div style="font-size:12px;color:rgba(255,255,255,.85);background:rgba(255,255,255,.15);display:inline-block;padding:3px 10px;border-radius:20px;margin-top:5px">${poste||'Titre professionnel'}</div>
-        </div>
-        <div style="text-align:right;font-size:10px;color:rgba(255,255,255,.8);line-height:1.8">
-          ${email?`<div>📧 ${email}</div>`:''}${tel?`<div>📱 ${tel}</div>`:''}${ville?`<div>📍 ${ville}</div>`:''}${linkedin?`<div>🔗 ${linkedin}</div>`:''}
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:200px 1fr">
-        <div style="background:#1a1a2e;padding:20px;color:#fff">
-          ${skills.filter(s=>s.nom).length?`<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:${color};margin-bottom:8px">COMPÉTENCES</div>${skills.filter(s=>s.nom).map(s=>`<div style="margin-bottom:9px"><div style="font-size:10px;color:#fff;margin-bottom:3px;display:flex;justify-content:space-between"><span>${s.nom}</span><span style="color:${color}">${s.niveau}%</span></div><div style="height:3px;background:#333;border-radius:2px;overflow:hidden"><div style="width:${s.niveau}%;height:100%;background:${color}"></div></div></div>`).join('')}<br>`:''}
-          ${langs.filter(l=>l.langue).length?`<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:${color};margin-bottom:8px">LANGUES</div>${langs.filter(l=>l.langue).map(l=>`<div style="font-size:10px;margin-bottom:6px;display:flex;justify-content:space-between"><span style="color:#fff">${l.langue}</span><span style="color:#888">${l.niveau}</span></div>`).join('')}<br>`:''}
-          ${certs.filter(c=>c.nom).length?`<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:${color};margin-bottom:8px">CERTIFICATIONS</div>${certs.filter(c=>c.nom).map(c=>`<div style="font-size:10px;color:#ccc;margin-bottom:4px">${c.nom} ${c.annee?'('+c.annee+')':''}</div>`).join('')}`:''}
-        </div>
-        <div style="padding:20px;background:#fff">
-          ${resume?`<div style="margin-bottom:16px;padding:10px;background:${color}10;border-radius:8px;border-left:4px solid ${color}"><div style="font-size:10px;color:#555;line-height:1.7">${resume}</div></div>`:''}
-          ${mainExps?`<div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#333;background:${color}20;padding:5px 8px;border-radius:6px;margin-bottom:10px">EXPÉRIENCES</div>${exps.filter(e=>e.poste).map(e=>`<div style="margin-bottom:12px;padding-left:10px;border-left:3px solid ${color}"><div style="font-size:12px;font-weight:700;color:#111">${e.poste}</div><div style="font-size:10px;color:${color};margin:2px 0">${e.entreprise||''} ${e.periode?'· '+e.periode:''}</div>${e.desc?`<div style="font-size:10px;color:#555;line-height:1.6;white-space:pre-line">${e.desc}</div>`:''}</div>`).join('')}</div>`:''}
-          ${mainForms?`<div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#333;background:${color}20;padding:5px 8px;border-radius:6px;margin-bottom:10px">FORMATION</div>${forms.filter(f=>f.diplome).map(f=>`<div style="margin-bottom:8px;padding-left:10px;border-left:3px solid ${color}"><div style="font-size:11px;font-weight:600">${f.diplome} ${f.mention?'— '+f.mention:''}</div><div style="font-size:10px;color:${color}">${f.ecole||''} ${f.annee?'· '+f.annee:''}</div></div>`).join('')}</div>`:''}
-          ${interests?`<div style="margin-top:12px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#333;background:${color}20;padding:5px 8px;border-radius:6px;margin-bottom:6px">INTÉRÊTS</div><div style="font-size:10px;color:#555;line-height:1.6">${interests}</div>`:''}
-        </div>
-      </div>
-    </div>`;
+const prenom=gs('prenom'),nom=gs('nom'),poste=gs('poste');
+const email=gs('email'),tel=gs('tel'),ville=gs('ville'),linkedin=gs('linkedin');
+const resume=gs('resume'),interests=gs('interests');
+const fullName=(prenom+' '+nom).trim()||'Votre Nom';
+const initiales=((prenom[0]||'')+(nom[0]||'')).toUpperCase()||'?';
+const contHead=`${email?`<span>📧 ${email}</span>`:''}${tel?` &nbsp;📱 ${tel}`:''}${ville?` &nbsp;📍 ${ville}`:''}${linkedin?` &nbsp;🔗 ${linkedin}`:''}`;
+const sideSkills=skills.filter(s=>s.nom).map(s=>`
+<div class="cv-skill"><div class="cv-skill-name">${s.nom}</div>
+<div class="cv-skill-track"><div class="cv-skill-fill" style="width:${s.niveau}%;background:${color}"></div></div></div>`).join('');
+const sideLangs=langs.filter(l=>l.langue).map(l=>`
+<div style="font-size:10px;margin-bottom:5px"><b>${l.langue}</b><br><span style="color:#888;font-size:9px">${l.niveau}</span></div>`).join('');
+const mainExps=exps.filter(e=>e.poste).map(e=>`
+<div class="cv-exp">
+<div class="cv-exp-title">${e.poste}</div>
+<div class="cv-exp-org" style="color:${color}">${e.entreprise||''} ${e.periode?'· '+e.periode:''} ${e.ville?'· '+e.ville:''}</div>
+${e.desc?`<div class="cv-exp-desc">${e.desc}</div>`:''}</div>`).join('');
+const mainForms=forms.filter(f=>f.diplome||f.ecole).map(f=>`
+<div class="cv-exp">
+<div class="cv-exp-title">${f.diplome||'Formation'} ${f.mention?'— '+f.mention:''}</div>
+<div class="cv-exp-org" style="color:${color}">${f.ecole||''} ${f.annee?'· '+f.annee:''}</div></div>`).join('');
+const mainCerts=certs.filter(c=>c.nom).map(c=>`
+<div style="font-size:10px;margin-bottom:5px"><b>${c.nom}</b> — ${c.organisme||''} ${c.annee?'('+c.annee+')':''}</div>`).join('');
+if(tmpl==='moderne'){return`
+<div class="cv-mod-header" style="background:${color}">
+<div class="cv-mod-avatar" style="background:rgba(255,255,255,.2)">${initiales}</div>
+<div><div class="cv-mod-name">${fullName}</div>
+<div class="cv-mod-poste">${poste||'Titre professionnel'}</div>
+<div class="cv-mod-contacts">${contHead}</div></div>
+</div>
+<div class="cv-body">
+<div class="cv-sidebar" style="background:${color}10;border-right:1px solid ${color}30">
+${sideSkills?`<div class="cv-sec" style="color:${color};border-color:${color}">COMPÉTENCES</div>${sideSkills}<br>`:''}
+${sideLangs?`<div class="cv-sec" style="color:${color};border-color:${color}">LANGUES</div>${sideLangs}<br>`:''}
+${interests?`<div class="cv-sec" style="color:${color};border-color:${color}">INTÉRÊTS</div><div style="font-size:10px;color:#555;line-height:1.5">${interests}</div>`:''}
+</div>
+<div class="cv-main">
+${resume?`<div class="cv-sec" style="color:${color};border-color:${color}">PROFIL</div><div style="font-size:11px;color:#444;line-height:1.7;margin-bottom:12px">${resume}</div>`:''}
+${mainExps?`<div class="cv-sec" style="color:${color};border-color:${color}">EXPÉRIENCES</div>${mainExps}`:''}
+${mainForms?`<div class="cv-sec" style="color:${color};border-color:${color}">FORMATION</div>${mainForms}`:''}
+${mainCerts?`<div class="cv-sec" style="color:${color};border-color:${color}">CERTIFICATIONS</div>${mainCerts}`:''}
+</div>
+</div>`;}
+if(tmpl==='classique'){return`
+<div style="padding:32px;font-family:Georgia,serif">
+<div style="text-align:center;border-bottom:3px solid ${color};padding-bottom:14px;margin-bottom:18px">
+<div style="font-size:26px;font-weight:700;color:#111;letter-spacing:2px">${fullName}</div>
+<div style="font-size:13px;color:${color};margin:5px 0;font-style:italic">${poste||''}</div>
+<div style="font-size:10px;color:#666">${contHead}</div>
+</div>
+${resume?`<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Profil Professionnel</div><div style="font-size:11px;color:#444;line-height:1.8;font-style:italic">${resume}</div></div>`:''}
+${mainExps?`<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid ${color};margin-bottom:10px;padding-bottom:3px">Expériences Professionnelles</div>${mainExps}</div>`:''}
+${mainForms?`<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid ${color};margin-bottom:10px;padding-bottom:3px">Formation</div>${mainForms}</div>`:''}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+${sideSkills?`<div><div style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid ${color};margin-bottom:10px;padding-bottom:3px">Compétences</div>${skills.filter(s=>s.nom).map(s=>`<div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:10px"><span>${s.nom}</span><span style="color:${color}">${s.niveau}%</span></div><div style="height:4px;background:#eee;border-radius:2px;overflow:hidden"><div style="width:${s.niveau}%;height:100%;background:${color}"></div></div></div>`).join('')}</div>`:''}
+<div>${sideLangs?`<div style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid ${color};margin-bottom:10px;padding-bottom:3px">Langues</div>${langs.filter(l=>l.langue).map(l=>`<div style="font-size:10px;margin-bottom:5px;display:flex;justify-content:space-between"><span>${l.langue}</span><span style="color:#888">${l.niveau}</span></div>`).join('')}<br>`:''}${interests?`<div style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid ${color};margin-bottom:8px;padding-bottom:3px">Intérêts</div><div style="font-size:10px;color:#555;line-height:1.6">${interests}</div>`:''}
+</div>
+</div>
+</div>`;}
+if(tmpl==='minimaliste'){return`
+<div style="padding:32px;font-family:Arial,sans-serif">
+<div style="margin-bottom:20px">
+<div style="font-size:24px;font-weight:700;color:#111;margin-bottom:3px">${fullName}</div>
+<div style="font-size:12px;color:${color};font-weight:500;margin-bottom:6px">${poste||''}</div>
+<div style="font-size:10px;color:#777">${contHead}</div>
+</div>
+<hr style="border:none;border-top:1px solid #eee;margin-bottom:18px">
+${resume?`<div style="margin-bottom:18px"><div style="font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">À PROPOS</div><div style="font-size:11px;color:#444;line-height:1.8">${resume}</div></div>`:''}
+${mainExps?`<div style="margin-bottom:18px"><div style="font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">EXPÉRIENCES</div>${exps.filter(e=>e.poste).map(e=>`<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><span style="font-size:12px;font-weight:600">${e.poste}</span> <span style="font-size:10px;color:${color}">${e.entreprise||''}</span></div><span style="font-size:9px;color:#999">${e.periode||''}</span></div>${e.desc?`<div style="font-size:10px;color:#555;line-height:1.7;margin-top:3px;white-space:pre-line">${e.desc}</div>`:''}</div>`).join('')}</div>`:''}
+${mainForms?`<div style="margin-bottom:18px"><div style="font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">FORMATION</div>${forms.filter(f=>f.diplome||f.ecole).map(f=>`<div style="margin-bottom:7px;display:flex;justify-content:space-between"><div><span style="font-size:11px;font-weight:600">${f.diplome||'Formation'}</span> <span style="font-size:10px;color:#666">${f.ecole||''}</span></div><span style="font-size:9px;color:#999">${f.annee||''}</span></div>`).join('')}</div>`:''}
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+${skills.filter(s=>s.nom).length?`<div><div style="font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">COMPÉTENCES</div>${skills.filter(s=>s.nom).map(s=>`<div style="font-size:10px;color:#444;padding:2px 0;border-bottom:1px solid #f5f5f5">· ${s.nom} <span style="color:${color}">(${s.niveau}%)</span></div>`).join('')}</div>`:''}
+${langs.filter(l=>l.langue).length?`<div><div style="font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">LANGUES</div>${langs.filter(l=>l.langue).map(l=>`<div style="font-size:10px;color:#444;padding:2px 0;border-bottom:1px solid #f5f5f5">${l.langue} — <span style="color:#888">${l.niveau}</span></div>`).join('')}</div>`:''}
+${certs.filter(c=>c.nom).length?`<div><div style="font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">CERTIFICATIONS</div>${certs.filter(c=>c.nom).map(c=>`<div style="font-size:10px;color:#444;padding:2px 0;border-bottom:1px solid #f5f5f5">${c.nom} ${c.annee?'('+c.annee+')':''}</div>`).join('')}</div>`:''}
+</div>
+</div>`;}
+return`
+<div style="font-family:Arial,sans-serif">
+<div style="background:${color};padding:24px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+<div>
+<div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-1px">${fullName}</div>
+<div style="font-size:12px;color:rgba(255,255,255,.85);background:rgba(255,255,255,.15);display:inline-block;padding:3px 10px;border-radius:20px;margin-top:5px">${poste||'Titre professionnel'}</div>
+</div>
+<div style="text-align:right;font-size:10px;color:rgba(255,255,255,.8);line-height:1.8">
+${email?`<div>📧 ${email}</div>`:''}${tel?`<div>📱 ${tel}</div>`:''}${ville?`<div>📍 ${ville}</div>`:''}${linkedin?`<div>🔗 ${linkedin}</div>`:''}
+</div>
+</div>
+<div style="display:grid;grid-template-columns:200px 1fr">
+<div style="background:#1a1a2e;padding:20px;color:#fff">
+${skills.filter(s=>s.nom).length?`<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:${color};margin-bottom:8px">COMPÉTENCES</div>${skills.filter(s=>s.nom).map(s=>`<div style="margin-bottom:9px"><div style="font-size:10px;color:#fff;margin-bottom:3px;display:flex;justify-content:space-between"><span>${s.nom}</span><span style="color:${color}">${s.niveau}%</span></div><div style="height:3px;background:#333;border-radius:2px;overflow:hidden"><div style="width:${s.niveau}%;height:100%;background:${color}"></div></div></div>`).join('')}<br>`:''}
+${langs.filter(l=>l.langue).length?`<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:${color};margin-bottom:8px">LANGUES</div>${langs.filter(l=>l.langue).map(l=>`<div style="font-size:10px;margin-bottom:6px;display:flex;justify-content:space-between"><span style="color:#fff">${l.langue}</span><span style="color:#888">${l.niveau}</span></div>`).join('')}<br>`:''}
+${certs.filter(c=>c.nom).length?`<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:${color};margin-bottom:8px">CERTIFICATIONS</div>${certs.filter(c=>c.nom).map(c=>`<div style="font-size:10px;color:#ccc;margin-bottom:4px">${c.nom} ${c.annee?'('+c.annee+')':''}</div>`).join('')}`:''}
+</div>
+<div style="padding:20px;background:#fff">
+${resume?`<div style="margin-bottom:16px;padding:10px;background:${color}10;border-radius:8px;border-left:4px solid ${color}"><div style="font-size:10px;color:#555;line-height:1.7">${resume}</div></div>`:''}
+${mainExps?`<div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#333;background:${color}20;padding:5px 8px;border-radius:6px;margin-bottom:10px">EXPÉRIENCES</div>${exps.filter(e=>e.poste).map(e=>`<div style="margin-bottom:12px;padding-left:10px;border-left:3px solid ${color}"><div style="font-size:12px;font-weight:700;color:#111">${e.poste}</div><div style="font-size:10px;color:${color};margin:2px 0">${e.entreprise||''} ${e.periode?'· '+e.periode:''}</div>${e.desc?`<div style="font-size:10px;color:#555;line-height:1.6;white-space:pre-line">${e.desc}</div>`:''}</div>`).join('')}</div>`:''}
+${mainForms?`<div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#333;background:${color}20;padding:5px 8px;border-radius:6px;margin-bottom:10px">FORMATION</div>${forms.filter(f=>f.diplome||f.ecole).map(f=>`<div style="margin-bottom:8px;padding-left:10px;border-left:3px solid ${color}"><div style="font-size:11px;font-weight:600">${f.diplome||'Formation'} ${f.mention?'— '+f.mention:''}</div><div style="font-size:10px;color:${color}">${f.ecole||''} ${f.annee?'· '+f.annee:''}</div></div>`).join('')}</div>`:''}
+${interests?`<div style="margin-top:12px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#333;background:${color}20;padding:5px 8px;border-radius:6px;margin-bottom:6px">INTÉRÊTS</div><div style="font-size:10px;color:#555;line-height:1.6">${interests}</div>`:''}
+</div>
+</div>
+</div>`;
 }
-
-// ===== GÉNÉRATION LM =====
 function getLMHTML(){
-  const prenom=gs('prenom'),nom=gs('nom');
-  const fullName=(prenom+' '+nom).trim()||'Votre Nom';
-  const ent=gs('entreprise','[Nom de l\'entreprise]');
-  const pv=gs('posteVise',gs('poste','[Poste visé]'));
-  const rec=gs('recruteur','');
-  const src=gs('sourceOffre','LinkedIn');
-  const motiv=gs('motivEntreprise','Votre entreprise représente une opportunité unique d\'appliquer mes compétences.');
-  const va=gs('valeurAjoutee','Mon profil correspond parfaitement aux exigences de ce poste.');
-  const date=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
-  const firstExp=exps.find(e=>e.poste);
-  const sal=rec?('Monsieur/Madame '+rec+','):'Madame, Monsieur,';
-  return`<div class="lm-top">
-    <div class="lm-from"><b style="font-size:14px">${fullName}</b><br>${gs('ville','Bamako, Mali')}<br>${gs('tel','')}<br>${gs('email','')}</div>
-    <div class="lm-to">${ent}<br>Bamako, Mali<br><br>Bamako, le ${date}</div>
-  </div>
-  ${rec?`<div style="font-size:12px;margin-bottom:14px">À l'attention de ${rec}</div>`:''}
-  <div class="lm-objet" style="border-color:${color}">Objet : Candidature au poste de ${pv}</div>
-  <div class="lm-para">${sal}</div>
-  <div class="lm-para">C'est avec un vif intérêt que je vous soumets ma candidature pour le poste de <strong>${pv}</strong> au sein de <strong>${ent}</strong>, dont j'ai pris connaissance via ${src}.</div>
-  <div class="lm-para">${motiv}</div>
-  <div class="lm-para">${firstExp?`Fort(e) de mon expérience en tant que <strong>${firstExp.poste}</strong> chez <strong>${firstExp.entreprise||''}</strong>, j'ai développé des compétences solides qui me permettront de contribuer efficacement à vos équipes. `:''}${va}</div>
-  ${skills.filter(s=>s.nom).length?`<div class="lm-para">Mes compétences en ${skills.filter(s=>s.nom).slice(0,3).map(s=>s.nom).join(', ')} constituent des atouts majeurs pour répondre aux exigences de ce poste.</div>`:''}
-  <div class="lm-para">Je reste à votre entière disposition pour tout entretien à votre convenance et vous prie d'agréer, ${sal.replace(',','')} l'expression de mes salutations distinguées.</div>
-  <div class="lm-sign" style="border-color:${color}">${fullName}<br><span style="font-size:11px;color:#666;font-weight:400">${gs('email','')} · ${gs('tel','')}</span></div>`;
+const prenom=gs('prenom'),nom=gs('nom');
+const fullName=(prenom+' '+nom).trim()||'Votre Nom';
+const ent=gs('entreprise','[Nom de l\'entreprise]');
+const pv=gs('posteVise',gs('poste','[Poste visé]'));
+const rec=gs('recruteur','');
+const src=gs('sourceOffre','LinkedIn');
+const motiv=gs('motivEntreprise','Votre entreprise représente une opportunité unique d\'appliquer mes compétences.');
+const va=gs('valeurAjoutee','Mon profil correspond parfaitement aux exigences de ce poste.');
+const date=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+const firstExp=exps.find(e=>e.poste);
+const sal=rec?('Monsieur/Madame '+rec+','):'Madame, Monsieur,';
+return`<div class="lm-top">
+<div class="lm-from"><b style="font-size:14px">${fullName}</b><br>${gs('ville','Bamako, Mali')}<br>${gs('tel','')}<br>${gs('email','')}</div>
+<div class="lm-to">${ent}<br>Bamako, Mali<br><br>Bamako, le ${date}</div>
+</div>
+${rec?`<div style="font-size:12px;margin-bottom:14px">À l'attention de ${rec}</div>`:''}
+<div class="lm-objet" style="border-color:${color}">Objet : Candidature au poste de ${pv}</div>
+<div class="lm-para">${sal}</div>
+<div class="lm-para">C'est avec un vif intérêt que je vous soumets ma candidature pour le poste de <strong>${pv}</strong> au sein de <strong>${ent}</strong>, dont j'ai pris connaissance via ${src}.</div>
+<div class="lm-para">${motiv}</div>
+<div class="lm-para">${firstExp?`Fort(e) de mon expérience en tant que <strong>${firstExp.poste}</strong> chez <strong>${firstExp.entreprise||''}</strong>, j'ai développé des compétences solides qui me permettront de contribuer efficacement à vos équipes. `:''}${va}</div>
+${skills.filter(s=>s.nom).length?`<div class="lm-para">Mes compétences en ${skills.filter(s=>s.nom).slice(0,3).map(s=>s.nom).join(', ')} constituent des atouts majeurs pour répondre aux exigences de ce poste.</div>`:''}
+<div class="lm-para">Je reste à votre entière disposition pour tout entretien à votre convenance et vous prie d'agréer, ${sal.replace(',','')} l'expression de mes salutations distinguées.</div>
+<div class="lm-sign" style="border-color:${color}">${fullName}<br><span style="font-size:11px;color:#666;font-weight:400">${gs('email','')} · ${gs('tel','')}</span></div>`;
 }
-
-// ===== EXPORT PDF =====
 function exportDoc(type){
-  const cvH=getCVHTML();
-  const lmH=`<div class="lm-wrap">${getLMHTML()}</div>`;
-  let html='';
-  if(type==='cv') html=cvH;
-  else if(type==='lm') html=lmH;
-  else html=cvH+'<div style="page-break-before:always"></div>'+lmH;
-  const w=window.open('','_blank');
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Stageia — ${type==='cv'?'CV':type==='lm'?'Lettre de Motivation':'CV + Lettre'}</title>
-  <style>*{margin:0;padding:0;box-sizing:border-box}body{background:#fff;font-family:Arial,sans-serif}
-  .lm-wrap{padding:48px;font-size:13px;line-height:1.9;color:#333}
-  .lm-top{display:flex;justify-content:space-between;margin-bottom:30px;flex-wrap:wrap;gap:12px}
-  .lm-from{font-size:12px;line-height:1.7}.lm-to{text-align:right;font-size:12px;line-height:1.7;color:#555}
-  .lm-objet{font-weight:700;font-size:14px;border-left:4px solid;padding-left:10px;margin-bottom:20px}
-  .lm-para{margin-bottom:14px}.lm-sign{margin-top:24px;font-weight:600;border-left:4px solid;padding-left:10px}
-  @media print{@page{margin:1cm;size:A4}}</style>
-  </head><body>${html}</body></html>`);
-  w.document.close();
-  setTimeout(()=>w.print(),600);
+const cvH=getCVHTML();
+const lmH=`<div class="lm-wrap">${getLMHTML()}</div>`;
+let html='';
+if(type==='cv') html=cvH;
+else if(type==='lm') html=lmH;
+else html=cvH+'<div style="page-break-before:always"></div>'+lmH;
+const w=window.open('','_blank');
+w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Stageia — ${type==='cv'?'CV':type==='lm'?'Lettre de Motivation':'CV + Lettre'}</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#fff;font-family:Arial,sans-serif}
+.lm-wrap{padding:48px;font-size:13px;line-height:1.9;color:#333}
+.lm-top{display:flex;justify-content:space-between;margin-bottom:30px;flex-wrap:wrap;gap:12px}
+.lm-from{font-size:12px;line-height:1.7}.lm-to{text-align:right;font-size:12px;line-height:1.7;color:#555}
+.lm-objet{font-weight:700;font-size:14px;border-left:4px solid;padding-left:10px;margin-bottom:20px}
+.lm-para{margin-bottom:14px}.lm-sign{margin-top:24px;font-weight:600;border-left:4px solid;padding-left:10px}
+@media print{@page{margin:1cm;size:A4}}</style>
+</head><body>${html}</body></html>`);
+w.document.close();
+setTimeout(()=>w.print(),600);
 }
-
-// ===== SCORE =====
 function calcScore(){
-  let sc=0,cr=[];
-  const prenom=gs('prenom'),nom=gs('nom'),poste=gs('poste'),email=gs('email'),tel=gs('tel'),resume=gs('resume');
-  if(prenom&&nom){sc+=10;cr.push({ok:'ok',t:'✅ Nom et prénom renseignés (+10)'});}
-  else cr.push({ok:'bad',t:'❌ Nom et prénom manquants — Obligatoire'});
-  if(poste.length>10){sc+=10;cr.push({ok:'ok',t:'✅ Titre professionnel précis (+10)'});}
-  else cr.push({ok:'bad',t:'❌ Titre professionnel absent ou trop vague'});
-  if(email.includes('@')){sc+=8;cr.push({ok:'ok',t:'✅ Email professionnel présent (+8)'});}
-  else cr.push({ok:'warn',t:'⚠️ Email manquant'});
-  if(tel.length>8){sc+=5;cr.push({ok:'ok',t:'✅ Téléphone présent (+5)'});}
-  else cr.push({ok:'warn',t:'⚠️ Téléphone manquant'});
-  if(resume.length>80){sc+=12;cr.push({ok:'ok',t:'✅ Résumé professionnel présent (+12)'});}
-  else cr.push({ok:'bad',t:'❌ Résumé professionnel absent — Très important !'});
-  if(exps.some(e=>e.poste)){sc+=20;cr.push({ok:'ok',t:'✅ Expériences professionnelles ajoutées (+20)'});}
-  else cr.push({ok:'warn',t:'⚠️ Aucune expérience — Ajoutez stages, bénévolat, projets'});
-  if(exps.some(e=>e.desc&&/\d+/.test(e.desc))){sc+=10;cr.push({ok:'ok',t:'✅ Résultats quantifiés avec des chiffres (+10)'});}
-  else cr.push({ok:'warn',t:'⚠️ Ajoutez des chiffres dans vos descriptions (+0)'});
-  if(forms.some(f=>f.diplome)){sc+=10;cr.push({ok:'ok',t:'✅ Formation académique renseignée (+10)'});}
-  else cr.push({ok:'warn',t:'⚠️ Formation manquante'});
-  if(skills.filter(s=>s.nom).length>=3){sc+=10;cr.push({ok:'ok',t:'✅ Compétences listées (+10)'});}
-  else cr.push({ok:'warn',t:'⚠️ Listez au moins 3 compétences clés'});
-  if(langs.some(l=>l.langue)){sc+=5;cr.push({ok:'ok',t:'✅ Langues renseignées (+5)'});}
-  else cr.push({ok:'warn',t:'⚠️ Langues non renseignées'});
-  return{score:Math.min(100,sc),cr};
+let sc=0,cr=[];
+const prenom=gs('prenom'),nom=gs('nom'),poste=gs('poste'),email=gs('email'),tel=gs('tel'),resume=gs('resume');
+if(prenom&&nom){sc+=10;cr.push({ok:'ok',t:'✅ Nom et prénom renseignés (+10)'});}
+else cr.push({ok:'bad',t:'❌ Nom et prénom manquants — Obligatoire'});
+if(poste.length>10){sc+=10;cr.push({ok:'ok',t:'✅ Titre professionnel précis (+10)'});}
+else cr.push({ok:'bad',t:'❌ Titre professionnel absent ou trop vague'});
+if(email.includes('@')){sc+=8;cr.push({ok:'ok',t:'✅ Email professionnel présent (+8)'});}
+else cr.push({ok:'warn',t:'⚠️ Email manquant'});
+if(tel.length>8){sc+=5;cr.push({ok:'ok',t:'✅ Téléphone présent (+5)'});}
+else cr.push({ok:'warn',t:'⚠️ Téléphone manquant'});
+if(resume.length>80){sc+=12;cr.push({ok:'ok',t:'✅ Résumé professionnel présent (+12)'});}
+else cr.push({ok:'bad',t:'❌ Résumé professionnel absent — Très important !'});
+if(exps.some(e=>e.poste)){sc+=20;cr.push({ok:'ok',t:'✅ Expériences professionnelles ajoutées (+20)'});}
+else cr.push({ok:'warn',t:'⚠️ Aucune expérience — Ajoutez stages, bénévolat, projets'});
+if(exps.some(e=>e.desc&&/\d+/.test(e.desc))){sc+=10;cr.push({ok:'ok',t:'✅ Résultats quantifiés avec des chiffres (+10)'});}
+else cr.push({ok:'warn',t:'⚠️ Ajoutez des chiffres dans vos descriptions (+0)'});
+if(forms.some(f=>f.diplome||f.ecole)){sc+=10;cr.push({ok:'ok',t:'✅ Formation académique renseignée (+10)'});}
+else cr.push({ok:'warn',t:'⚠️ Formation manquante'});
+if(skills.filter(s=>s.nom).length>=3){sc+=10;cr.push({ok:'ok',t:'✅ Compétences listées (+10)'});}
+else cr.push({ok:'warn',t:'⚠️ Listez au moins 3 compétences clés'});
+if(langs.some(l=>l.langue)){sc+=5;cr.push({ok:'ok',t:'✅ Langues renseignées (+5)'});}
+else cr.push({ok:'warn',t:'⚠️ Langues non renseignées'});
+return{score:Math.min(100,sc),cr};
 }
-
 function upd(){
-  // Score
-  const{score,cr}=calcScore();
-  const sb=document.getElementById('scoreBox');
-  if(sb){
-    const c=score>=80?'#10B981':score>=60?'#534AB7':score>=40?'#F59E0B':'#EF4444';
-    const l=score>=80?'Excellent CV !':score>=60?'Bon CV':score>=40?'CV à améliorer':'CV incomplet';
-    sb.innerHTML=`<div class="score-val" style="color:${c}">${score}/100</div><div style="font-size:12px;color:#666;margin-top:3px">${l}</div><div class="score-bar"><div class="score-fill" style="width:${score}%;background:${c}"></div></div>`;
-  }
-  const cl=document.getElementById('criteriaList');
-  if(cl) cl.innerHTML=cr.map(c=>`<div class="crit-item ${c.ok}">${c.t}</div>`).join('');
-  const cc=document.getElementById('conseilsCV');
-  if(cc){
-    const cons=[];
-    if(!gs('resume')) cons.push('📝 Ajoutez un résumé professionnel de 3-4 lignes — c\'est la première chose que lit le recruteur.');
-    if(!exps.some(e=>e.poste)) cons.push('💼 Ajoutez des expériences même courtes : stages, bénévolat, projets personnels.');
-    if(!exps.some(e=>e.desc&&/\d+/.test(e.desc))) cons.push('📊 Quantifiez vos résultats : "50 clients gérés", "+25% de ventes", "5 collègues formés".');
-    if(skills.filter(s=>s.nom).length<3) cons.push('⚡ Listez vos compétences techniques précisément — les ATS cherchent des mots-clés exacts.');
-    if(!gs('linkedin')) cons.push('🔗 Ajoutez votre LinkedIn ou portfolio — 85% des recruteurs vérifient les profils en ligne.');
-    cons.push('📏 Limitez votre CV à 1 page (< 5 ans) ou 2 pages maximum.');
-    cons.push('🎨 Adaptez le titre de votre CV pour chaque offre — c\'est la clé pour passer les filtres ATS.');
-    cc.innerHTML=cons.map(c=>`<div class="conseil"><span>💡</span><span>${c}</span></div>`).join('');
-  }
-  // Aperçu CV (direct dans le DOM)
-  const cvPrev=document.getElementById('cvPreview');
-  if(cvPrev) cvPrev.innerHTML=getCVHTML();
-  // Aperçu LM (direct dans le DOM)
-  const lmPrev=document.getElementById('lmPreview');
-  if(lmPrev) lmPrev.innerHTML=getLMHTML();
+const{score,cr}=calcScore();
+const sb=document.getElementById('scoreBox');
+if(sb){
+const c=score>=80?'#10B981':score>=60?'#534AB7':score>=40?'#F59E0B':'#EF4444';
+const l=score>=80?'Excellent CV !':score>=60?'Bon CV':score>=40?'CV à améliorer':'CV incomplet';
+sb.innerHTML=`<div class="score-val" style="color:${c}">${score}/100</div><div style="font-size:12px;color:#666;margin-top:3px">${l}</div><div class="score-bar"><div class="score-fill" style="width:${score}%;background:${c}"></div></div>`;
 }
-
-// Init
+const cl=document.getElementById('criteriaList');
+if(cl) cl.innerHTML=cr.map(c=>`<div class="crit-item ${c.ok}">${c.t}</div>`).join('');
+const cc=document.getElementById('conseilsCV');
+if(cc){
+const cons=[];
+if(!gs('resume')) cons.push('📝 Ajoutez un résumé professionnel de 3-4 lignes — c\'est la première chose que lit le recruteur.');
+if(!exps.some(e=>e.poste)) cons.push('💼 Ajoutez des expériences même courtes : stages, bénévolat, projets personnels.');
+if(!exps.some(e=>e.desc&&/\d+/.test(e.desc))) cons.push('📊 Quantifiez vos résultats : "50 clients gérés", "+25% de ventes", "5 collègues formés".');
+if(skills.filter(s=>s.nom).length<3) cons.push('⚡ Listez vos compétences techniques précisément — les ATS cherchent des mots-clés exacts.');
+if(!gs('linkedin')) cons.push('🔗 Ajoutez votre LinkedIn ou portfolio — 85% des recruteurs vérifient les profils en ligne.');
+cons.push('📏 Limitez votre CV à 1 page (< 5 ans) ou 2 pages maximum.');
+cons.push('🎨 Adaptez le titre de votre CV pour chaque offre — c\'est la clé pour passer les filtres ATS.');
+cc.innerHTML=cons.map(c=>`<div class="conseil"><span>💡</span><span>${c}</span></div>`).join('');
+}
+const cvPrev=document.getElementById('cvPreview');
+if(cvPrev) cvPrev.innerHTML=getCVHTML();
+const lmPrev=document.getElementById('lmPreview');
+if(lmPrev) lmPrev.innerHTML=getLMHTML();
+}
 exps=[{poste:'',entreprise:'',periode:'',ville:'',desc:''}];
 forms=[{diplome:'',ecole:'',annee:'',mention:''}];
 langs=[{langue:'Français',niveau:'Courant'},{langue:'Bambara',niveau:'Langue maternelle'}];
