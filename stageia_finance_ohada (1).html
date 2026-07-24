@@ -65,6 +65,7 @@ input:focus,select:focus{outline:none;border-color:#1D4ED8}
 .btn-red{background:#EF4444;color:#fff}
 .btn-green{background:#10B981;color:#fff}
 .btn-orange{background:#F59E0B;color:#fff}
+.btn-purple{background:#8B5CF6;color:#fff}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
 th{background:#1E3A8A;color:#fff;padding:8px;text-align:left;font-weight:600}
@@ -77,605 +78,599 @@ tr:nth-child(even) td{background:#f8f8f8}
 <body>
 <h1>🏦 Comptabilité OHADA — Stageia
 <small>Plan comptable SYSCOHADA · Journaux · Écritures · Grand livre · TVA · Exercices · Quiz</small></h1>
-
 <div class="tabs">
-  <button class="tab on" onclick="show(0)">📚 Leçons</button>
-  <button class="tab" onclick="show(1)">📖 Plan Comptable</button>
-  <button class="tab" onclick="show(2)">✍️ Journal</button>
-  <button class="tab" onclick="show(3)">💰 TVA Mali</button>
-  <button class="tab" onclick="show(4)">✏️ Exercices</button>
-  <button class="tab" onclick="show(5)">🎯 Quiz</button>
+<button class="tab on" onclick="show(0)">📚 Leçons</button>
+<button class="tab" onclick="show(1)">📖 Plan Comptable</button>
+<button class="tab" onclick="show(2)">✍️ Journal</button>
+<button class="tab" onclick="show(3)">💰 TVA Mali</button>
+<button class="tab" onclick="show(4)">✏️ Exercices</button>
+<button class="tab" onclick="show(5)">🎯 Quiz</button>
 </div>
-
 <!-- PANE 0: LEÇONS -->
 <div class="pane on" id="p0">
-  <div class="section-title">🌍 Qu'est-ce que l'OHADA ?</div>
-  <div class="box">⚖️ <b>OHADA</b> = Organisation pour l'Harmonisation en Afrique du Droit des Affaires<br>
-  Créée en 1993 à Port-Louis (Maurice). Regroupe 17 pays africains dont le Mali.<br><br>
-  <b>But :</b> Harmoniser le droit des affaires pour faciliter les investissements en Afrique.<br>
-  <b>En comptabilité :</b> Le <b>SYSCOHADA</b> (Système Comptable OHADA) s'applique à toutes les entreprises des États membres.</div>
-
-  <div class="section-title">📖 Les principes comptables fondamentaux</div>
-  <div class="box">1️⃣ <b>Principe de la partie double :</b> Toute opération affecte au moins 2 comptes. Ce qui est débité = ce qui est crédité.<br>
-  <b>Formule :</b> Total Débits = Total Crédits (toujours !)</div>
-  <div class="box">2️⃣ <b>Principe de prudence :</b> Ne jamais anticiper un bénéfice, toujours prévoir les pertes possibles.</div>
-  <div class="box">3️⃣ <b>Principe de continuité :</b> On suppose que l'entreprise va continuer son activité indéfiniment.</div>
-  <div class="box">4️⃣ <b>Principe d'indépendance des exercices :</b> Chaque exercice (année) est indépendant. On rattache les produits et charges à leur période.</div>
-  <div class="box">5️⃣ <b>Principe du coût historique :</b> Les actifs sont enregistrés à leur coût d'acquisition initial.</div>
-
-  <div class="section-title">🔢 Le plan comptable SYSCOHADA — 8 classes</div>
-  <table>
-    <thead><tr><th>Classe</th><th>Intitulé</th><th>Exemples de comptes</th><th>Nature</th></tr></thead>
-    <tbody>
-      <tr><td><b>Classe 1</b></td><td>Comptes de ressources durables</td><td>101 Capital, 16 Emprunts</td><td>Passif long terme</td></tr>
-      <tr><td><b>Classe 2</b></td><td>Comptes d'actif immobilisé</td><td>21 Terrains, 24 Matériel</td><td>Actif long terme</td></tr>
-      <tr><td><b>Classe 3</b></td><td>Comptes de stocks</td><td>31 Marchandises, 32 MP</td><td>Actif circulant</td></tr>
-      <tr><td><b>Classe 4</b></td><td>Comptes de tiers</td><td>41 Clients, 40 Fourn., 44 État</td><td>Créances/Dettes CT</td></tr>
-      <tr><td><b>Classe 5</b></td><td>Comptes de trésorerie</td><td>521 Banque, 57 Caisse</td><td>Liquidités</td></tr>
-      <tr><td><b>Classe 6</b></td><td>Comptes de charges</td><td>60 Achats, 66 Charges perso.</td><td>Compte résultat</td></tr>
-      <tr><td><b>Classe 7</b></td><td>Comptes de produits</td><td>70 Ventes, 75 Autres produits</td><td>Compte résultat</td></tr>
-      <tr><td><b>Classe 8</b></td><td>Comptes spéciaux</td><td>80 Engagements hors bilan</td><td>Informations</td></tr>
-    </tbody>
-  </table>
-
-  <div class="section-title">📝 Comment passer une écriture comptable ?</div>
-  <div class="box">📌 <b>Méthode en 5 étapes :</b><br>
-  1. <b>Identifier</b> l'opération (achat, vente, paiement...)<br>
-  2. <b>Déterminer</b> les comptes affectés (minimum 2)<br>
-  3. <b>Appliquer</b> la règle Débit/Crédit selon la nature du compte<br>
-  4. <b>Vérifier</b> que Débit = Crédit<br>
-  5. <b>Enregistrer</b> dans le journal avec date et libellé</div>
-
-  <div class="section-title">⬅️➡️ Règle Débit / Crédit</div>
-  <table>
-    <thead><tr><th>Type de compte</th><th>Augmentation → DÉBIT</th><th>Diminution → CRÉDIT</th></tr></thead>
-    <tbody>
-      <tr><td><b>Actif (Cl.2,3,4,5)</b></td><td>✅ Débiter</td><td>Créditer</td></tr>
-      <tr><td><b>Passif (Cl.1)</b></td><td>Créditer</td><td>✅ Débiter</td></tr>
-      <tr><td><b>Charges (Cl.6)</b></td><td>✅ Débiter</td><td>Créditer</td></tr>
-      <tr><td><b>Produits (Cl.7)</b></td><td>Créditer</td><td>✅ Débiter</td></tr>
-    </tbody>
-  </table>
-  <div class="box ok" style="margin-top:8px">💡 <b>Moyen mnémotechnique :</b> Les comptes d'ACTIF et de CHARGES augmentent au DÉBIT. Les comptes de PASSIF et de PRODUITS augmentent au CRÉDIT.</div>
+<div class="section-title">🌍 Qu'est-ce que l'OHADA ?</div>
+<div class="box">⚖️ <b>OHADA</b> = Organisation pour l'Harmonisation en Afrique du Droit des Affaires<br>
+Créée en 1993 à Port-Louis (Maurice). Regroupe 17 pays africains dont le Mali.<br><br>
+<b>But :</b> Harmoniser le droit des affaires pour faciliter les investissements en Afrique.<br>
+<b>En comptabilité :</b> Le <b>SYSCOHADA</b> (Système Comptable OHADA) s'applique à toutes les entreprises des États membres.</div>
+<div class="section-title">📖 Les principes comptables fondamentaux</div>
+<div class="box">1️⃣ <b>Principe de la partie double :</b> Toute opération affecte au moins 2 comptes. Ce qui est débité = ce qui est crédité.<br>
+<b>Formule :</b> Total Débits = Total Crédits (toujours !)</div>
+<div class="box">2️⃣ <b>Principe de prudence :</b> Ne jamais anticiper un bénéfice, toujours prévoir les pertes possibles.</div>
+<div class="box">3️⃣ <b>Principe de continuité :</b> On suppose que l'entreprise va continuer son activité indéfiniment.</div>
+<div class="box">4️⃣ <b>Principe d'indépendance des exercices :</b> Chaque exercice (année) est indépendant. On rattache les produits et charges à leur période.</div>
+<div class="box">5️⃣ <b>Principe du coût historique :</b> Les actifs sont enregistrés à leur coût d'acquisition initial.</div>
+<div class="section-title">🔢 Le plan comptable SYSCOHADA — 8 classes</div>
+<table>
+<thead><tr><th>Classe</th><th>Intitulé</th><th>Exemples de comptes</th><th>Nature</th></tr></thead>
+<tbody>
+<tr><td><b>Classe 1</b></td><td>Comptes de ressources durables</td><td>101 Capital, 16 Emprunts</td><td>Passif long terme</td></tr>
+<tr><td><b>Classe 2</b></td><td>Comptes d'actif immobilisé</td><td>21 Terrains, 24 Matériel</td><td>Actif long terme</td></tr>
+<tr><td><b>Classe 3</b></td><td>Comptes de stocks</td><td>31 Marchandises, 32 MP</td><td>Actif circulant</td></tr>
+<tr><td><b>Classe 4</b></td><td>Comptes de tiers</td><td>41 Clients, 40 Fourn., 44 État</td><td>Créances/Dettes CT</td></tr>
+<tr><td><b>Classe 5</b></td><td>Comptes de trésorerie</td><td>521 Banque, 57 Caisse</td><td>Liquidités</td></tr>
+<tr><td><b>Classe 6</b></td><td>Comptes de charges</td><td>60 Achats, 66 Charges perso.</td><td>Compte résultat</td></tr>
+<tr><td><b>Classe 7</b></td><td>Comptes de produits</td><td>70 Ventes, 75 Autres produits</td><td>Compte résultat</td></tr>
+<tr><td><b>Classe 8</b></td><td>Comptes spéciaux</td><td>80 Engagements hors bilan</td><td>Informations</td></tr>
+</tbody>
+</table>
+<div class="section-title">📝 Comment passer une écriture comptable ?</div>
+<div class="box">📌 <b>Méthode en 5 étapes :</b><br>
+1. <b>Identifier</b> l'opération (achat, vente, paiement...)<br>
+2. <b>Déterminer</b> les comptes affectés (minimum 2)<br>
+3. <b>Appliquer</b> la règle Débit/Crédit selon la nature du compte<br>
+4. <b>Vérifier</b> que Débit = Crédit<br>
+5. <b>Enregistrer</b> dans le journal avec date et libellé</div>
+<div class="section-title">⬅️➡️ Règle Débit / Crédit</div>
+<table>
+<thead><tr><th>Type de compte</th><th>Augmentation → DÉBIT</th><th>Diminution → CRÉDIT</th></tr></thead>
+<tbody>
+<tr><td><b>Actif (Cl.2,3,4,5)</b></td><td>✅ Débiter</td><td>Créditer</td></tr>
+<tr><td><b>Passif (Cl.1)</b></td><td>Créditer</td><td>✅ Débiter</td></tr>
+<tr><td><b>Charges (Cl.6)</b></td><td>✅ Débiter</td><td>Créditer</td></tr>
+<tr><td><b>Produits (Cl.7)</b></td><td>Créditer</td><td>✅ Débiter</td></tr>
+</tbody>
+</table>
+<div class="box ok" style="margin-top:8px">💡 <b>Moyen mnémotechnique :</b> Les comptes d'ACTIF et de CHARGES augmentent au DÉBIT. Les comptes de PASSIF et de PRODUITS augmentent au CRÉDIT.</div>
 </div>
-
 <!-- PANE 1: PLAN COMPTABLE -->
 <div class="pane" id="p1">
-  <div class="box" style="margin-bottom:12px">📖 <span>Cliquez sur une classe pour voir les comptes détaillés. Utilisez ces comptes dans votre journal comptable.</span></div>
-  <div class="plan-grid" id="planGrid"></div>
-  <div id="planDetail"></div>
+<div class="box" style="margin-bottom:12px">📖 <span>Cliquez sur une classe pour voir les comptes détaillés. Utilisez ces comptes dans votre journal comptable.</span></div>
+<div class="plan-grid" id="planGrid"></div>
+<div id="planDetail"></div>
 </div>
-
 <!-- PANE 2: JOURNAL COMPTABLE -->
 <div class="pane" id="p2">
-  <div class="box" style="margin-bottom:12px">✍️ <span>Enregistrez vos écritures comptables. Chaque ligne doit avoir un compte, un libellé et un montant au débit OU au crédit. Total Débit doit toujours égaler Total Crédit.</span></div>
-  <div class="row">
-    <div><label>Société</label><input id="jSoc" placeholder="MALI TECH SARL"></div>
-    <div><label>Date de l'écriture</label><input type="date" id="jDate"></div>
-  </div>
-  <div style="overflow-x:auto">
-  <table class="journal-table">
-    <thead><tr>
-      <th style="width:80px">N° Compte</th>
-      <th>Libellé de l'écriture</th>
-      <th style="width:110px">Débit (FCFA)</th>
-      <th style="width:110px">Crédit (FCFA)</th>
-      <th style="width:40px"></th>
-    </tr></thead>
-    <tbody id="journalBody"></tbody>
-    <tfoot>
-      <tr style="background:#EFF6FF">
-        <td colspan="2" style="font-weight:700;color:#1D4ED8;padding:8px">TOTAUX</td>
-        <td style="font-weight:700;color:#1D4ED8;padding:8px;text-align:right" id="totalDebit">0</td>
-        <td style="font-weight:700;color:#059669;padding:8px;text-align:right" id="totalCredit">0</td>
-        <td></td>
-      </tr>
-    </tfoot>
-  </table>
-  </div>
-  <div id="balanceMsg"></div>
-  <div class="btn-row">
-    <button class="btn btn-blue" onclick="addLigne()">+ Ajouter une ligne</button>
-    <button class="btn btn-orange" onclick="loadExemple()">📋 Exemple : Achat marchandises</button>
-    <button class="btn btn-green" onclick="loadExemple2()">📋 Exemple : Vente client</button>
-    <button class="btn btn-red" onclick="resetJournal()">🗑️ Effacer</button>
-  </div>
-  <div id="grandLivre"></div>
+<div class="box" style="margin-bottom:12px">✍️ <span>Chaque écriture a sa propre société et sa propre date. Ajoutez autant d'écritures que nécessaire sans perdre les précédentes. Total Débit doit toujours égaler Total Crédit pour chaque écriture.</span></div>
+<div id="ecrituresContainer"></div>
+<div class="btn-row">
+<button class="btn btn-blue" onclick="addEcriture()">+ Nouvelle écriture</button>
+<button class="btn btn-orange" onclick="loadExemple()">📋 Exemple : Achat marchandises</button>
+<button class="btn btn-green" onclick="loadExemple2()">📋 Exemple : Vente client</button>
+<button class="btn btn-purple" onclick="exportJournalPDF()">📄 Télécharger en PDF</button>
+<button class="btn btn-red" onclick="resetJournal()">🗑️ Tout effacer</button>
 </div>
-
+<div id="grandLivre"></div>
+</div>
 <!-- PANE 3: TVA -->
 <div class="pane" id="p3">
-  <div class="section-title">💰 La TVA au Mali</div>
-  <div class="box" style="margin-bottom:12px">🏛️ <b>TVA</b> = Taxe sur la Valeur Ajoutée. Au Mali, le taux normal est de <b>18%</b>. Certains produits (alimentation de base, santé) sont exonérés ou à taux réduit.</div>
-
-  <div class="section-title">🧮 Simulateur TVA</div>
-  <div class="row r3">
-    <div><label>Montant Hors Taxe (HT) (FCFA)</label><input type="number" id="tva_ht" value="1000000" oninput="calcTVA()"></div>
-    <div><label>Taux TVA (%)</label>
-    <select id="tva_taux" onchange="calcTVA()">
-      <option value="18">18% — Taux normal Mali</option>
-      <option value="0">0% — Exonéré (ali. base, santé, éduc.)</option>
-    </select></div>
-    <div><label>Type d'opération</label>
-    <select id="tva_type" onchange="calcTVA()">
-      <option value="vente">Vente (TVA collectée)</option>
-      <option value="achat">Achat (TVA déductible)</option>
-    </select></div>
-  </div>
-  <div id="tvaResult"></div>
-
-  <div class="section-title" style="margin-top:16px">📊 Déclaration TVA mensuelle</div>
-  <div class="box info">💡 Principe : TVA à payer = TVA collectée (sur ventes) − TVA déductible (sur achats)</div>
-  <div class="row">
-    <div><label>Total ventes HT du mois (FCFA)</label><input type="number" id="tvaDeclVentes" value="2000000" oninput="calcDecl()"></div>
-    <div><label>Total achats HT du mois (FCFA)</label><input type="number" id="tvaDeclAchats" value="800000" oninput="calcDecl()"></div>
-  </div>
-  <div id="tvaDecl"></div>
-
-  <div class="section-title" style="margin-top:16px">📋 Écritures TVA dans le journal</div>
-  <div class="box purple">📌 <b>Comptes TVA SYSCOHADA :</b><br>
-  • <b>4431</b> — TVA collectée (sur ventes) → au CRÉDIT<br>
-  • <b>4452</b> — TVA déductible (sur achats) → au DÉBIT<br>
-  • <b>4441</b> — État, TVA due → solde à payer</div>
-
-  <div class="section-title" style="margin-top:12px">📅 Calendrier fiscal Mali</div>
-  <table>
-    <thead><tr><th>Déclaration</th><th>Fréquence</th><th>Délai</th><th>Organisme</th></tr></thead>
-    <tbody>
-      <tr><td>TVA</td><td>Mensuelle</td><td>20 du mois suivant</td><td>DGID</td></tr>
-      <tr><td>Impôt sur sociétés (IS)</td><td>Annuelle</td><td>30 avril N+1</td><td>DGID</td></tr>
-      <tr><td>Patente</td><td>Annuelle</td><td>31 mars</td><td>DGID</td></tr>
-      <tr><td>CNSS employeur</td><td>Mensuelle</td><td>15 du mois suivant</td><td>CNSS</td></tr>
-      <tr><td>INPS</td><td>Mensuelle</td><td>15 du mois suivant</td><td>INPS</td></tr>
-      <tr><td>États financiers annuels</td><td>Annuelle</td><td>30 avril N+1</td><td>Tribunal Commerce</td></tr>
-    </tbody>
-  </table>
+<div class="section-title">💰 La TVA au Mali</div>
+<div class="box" style="margin-bottom:12px">🏛️ <b>TVA</b> = Taxe sur la Valeur Ajoutée. Au Mali, le taux normal est de <b>18%</b>. Certains produits (alimentation de base, santé) sont exonérés ou à taux réduit.</div>
+<div class="section-title">🧮 Simulateur TVA</div>
+<div class="row r3">
+<div><label>Montant Hors Taxe (HT) (FCFA)</label><input type="number" id="tva_ht" value="1000000" oninput="calcTVA()"></div>
+<div><label>Taux TVA (%)</label>
+<select id="tva_taux" onchange="calcTVA()">
+<option value="18">18% — Taux normal Mali</option>
+<option value="0">0% — Exonéré (ali. base, santé, éduc.)</option>
+</select></div>
+<div><label>Type d'opération</label>
+<select id="tva_type" onchange="calcTVA()">
+<option value="vente">Vente (TVA collectée)</option>
+<option value="achat">Achat (TVA déductible)</option>
+</select></div>
 </div>
-
+<div id="tvaResult"></div>
+<div class="section-title" style="margin-top:16px">📊 Déclaration TVA mensuelle</div>
+<div class="box info">💡 Principe : TVA à payer = TVA collectée (sur ventes) − TVA déductible (sur achats)</div>
+<div class="row">
+<div><label>Total ventes HT du mois (FCFA)</label><input type="number" id="tvaDeclVentes" value="2000000" oninput="calcDecl()"></div>
+<div><label>Total achats HT du mois (FCFA)</label><input type="number" id="tvaDeclAchats" value="800000" oninput="calcDecl()"></div>
+</div>
+<div id="tvaDecl"></div>
+<div class="section-title" style="margin-top:16px">📋 Écritures TVA dans le journal</div>
+<div class="box purple">📌 <b>Comptes TVA SYSCOHADA :</b><br>
+• <b>4431</b> — TVA collectée (sur ventes) → au CRÉDIT<br>
+• <b>4452</b> — TVA déductible (sur achats) → au DÉBIT<br>
+• <b>4441</b> — État, TVA due → solde à payer</div>
+<div class="section-title" style="margin-top:12px">📅 Calendrier fiscal Mali</div>
+<table>
+<thead><tr><th>Déclaration</th><th>Fréquence</th><th>Délai</th><th>Organisme</th></tr></thead>
+<tbody>
+<tr><td>TVA</td><td>Mensuelle</td><td>20 du mois suivant</td><td>DGID</td></tr>
+<tr><td>Impôt sur sociétés (IS)</td><td>Annuelle</td><td>30 avril N+1</td><td>DGID</td></tr>
+<tr><td>Patente</td><td>Annuelle</td><td>31 mars</td><td>DGID</td></tr>
+<tr><td>CNSS employeur</td><td>Mensuelle</td><td>15 du mois suivant</td><td>CNSS</td></tr>
+<tr><td>INPS</td><td>Mensuelle</td><td>15 du mois suivant</td><td>INPS</td></tr>
+<tr><td>États financiers annuels</td><td>Annuelle</td><td>30 avril N+1</td><td>Tribunal Commerce</td></tr>
+</tbody>
+</table>
+</div>
 <!-- PANE 4: EXERCICES -->
 <div class="pane" id="p4">
-  <div class="section-title">✏️ Exercice 1 — Identifier les comptes</div>
-  <div class="box info" style="margin-bottom:10px">📝 Pour chaque opération, indiquez le numéro de classe du compte à débiter et à créditer.</div>
-  <table>
-    <thead><tr><th>Opération</th><th>Compte débité (classe ?)</th><th>Compte crédité (classe ?)</th><th>Résultat</th></tr></thead>
-    <tbody id="ex1Table"></tbody>
-  </table>
-  <div class="btn-row">
-    <button class="btn btn-blue" onclick="checkEx1()">✅ Vérifier mes réponses</button>
-    <button class="btn btn-red" onclick="resetEx1()">🔄 Recommencer</button>
-  </div>
-  <div id="ex1Res"></div>
-
-  <div class="section-title" style="margin-top:16px">✏️ Exercice 2 — Passer les écritures</div>
-  <div class="box info" style="margin-bottom:10px">📝 <b>Opération :</b> Le 15/01/2025, MALI TECH SARL achète des marchandises pour 500 000 FCFA HT (TVA 18%) à crédit auprès du fournisseur DIALLO & Fils.<br>
-  Passez l'écriture comptable complète (3 lignes : Compte 601, Compte 4452, Compte 401).</div>
-  <div style="overflow-x:auto">
-  <table class="journal-table">
-    <thead><tr><th>N° Compte</th><th>Libellé</th><th>Débit (FCFA)</th><th>Crédit (FCFA)</th></tr></thead>
-    <tbody>
-      <tr>
-        <td><input type="text" id="ex2_c1" placeholder="?" style="width:80px"></td>
-        <td><input type="text" id="ex2_l1" placeholder="Libellé ligne 1"></td>
-        <td><input type="number" id="ex2_d1" placeholder="0" oninput="checkEx2()"></td>
-        <td><input type="number" id="ex2_cr1" placeholder="0" oninput="checkEx2()"></td>
-      </tr>
-      <tr>
-        <td><input type="text" id="ex2_c2" placeholder="?" style="width:80px"></td>
-        <td><input type="text" id="ex2_l2" placeholder="Libellé ligne 2"></td>
-        <td><input type="number" id="ex2_d2" placeholder="0" oninput="checkEx2()"></td>
-        <td><input type="number" id="ex2_cr2" placeholder="0" oninput="checkEx2()"></td>
-      </tr>
-      <tr>
-        <td><input type="text" id="ex2_c3" placeholder="?" style="width:80px"></td>
-        <td><input type="text" id="ex2_l3" placeholder="Libellé ligne 3"></td>
-        <td><input type="number" id="ex2_d3" placeholder="0" oninput="checkEx2()"></td>
-        <td><input type="number" id="ex2_cr3" placeholder="0" oninput="checkEx2()"></td>
-      </tr>
-    </tbody>
-  </table>
-  </div>
-  <div id="ex2Res"></div>
-
-  <div class="section-title" style="margin-top:16px">✏️ Exercice 3 — TVA à payer</div>
-  <div class="box info" style="margin-bottom:10px">📝 En mars 2025, BOUTIQUE AMINATA a réalisé 3 500 000 FCFA HT de ventes et 1 200 000 FCFA HT d'achats. TVA = 18%. Calculez la TVA à reverser à la DGID.</div>
-  <div class="row r3">
-    <div><label>TVA collectée (sur ventes) (FCFA)</label><input type="number" id="ex3_coll" placeholder="Ventes × 18%" oninput="checkEx3()"></div>
-    <div><label>TVA déductible (sur achats) (FCFA)</label><input type="number" id="ex3_ded" placeholder="Achats × 18%" oninput="checkEx3()"></div>
-    <div><label>TVA nette à payer (FCFA)</label><input type="number" id="ex3_net" placeholder="Collectée − Déductible" oninput="checkEx3()"></div>
-  </div>
-  <div id="ex3Res"></div>
+<div class="section-title">✏️ Exercice 1 — Identifier les comptes</div>
+<div class="box info" style="margin-bottom:10px">📝 Pour chaque opération, indiquez le numéro de classe du compte à débiter et à créditer.</div>
+<table>
+<thead><tr><th>Opération</th><th>Compte débité (classe ?)</th><th>Compte crédité (classe ?)</th><th>Résultat</th></tr></thead>
+<tbody id="ex1Table"></tbody>
+</table>
+<div class="btn-row">
+<button class="btn btn-blue" onclick="checkEx1()">✅ Vérifier mes réponses</button>
+<button class="btn btn-red" onclick="resetEx1()">🔄 Recommencer</button>
 </div>
-
+<div id="ex1Res"></div>
+<div class="section-title" style="margin-top:16px">✏️ Exercice 2 — Passer les écritures</div>
+<div class="box info" style="margin-bottom:10px">📝 <b>Opération :</b> Le 15/01/2025, MALI TECH SARL achète des marchandises pour 500 000 FCFA HT (TVA 18%) à crédit auprès du fournisseur DIALLO & Fils.<br>
+Passez l'écriture comptable complète (3 lignes : Compte 601, Compte 4452, Compte 401).</div>
+<div style="overflow-x:auto">
+<table class="journal-table">
+<thead><tr><th>N° Compte</th><th>Libellé</th><th>Débit (FCFA)</th><th>Crédit (FCFA)</th></tr></thead>
+<tbody>
+<tr>
+<td><input type="text" id="ex2_c1" placeholder="?" style="width:80px"></td>
+<td><input type="text" id="ex2_l1" placeholder="Libellé ligne 1"></td>
+<td><input type="number" id="ex2_d1" placeholder="0" oninput="checkEx2()"></td>
+<td><input type="number" id="ex2_cr1" placeholder="0" oninput="checkEx2()"></td>
+</tr>
+<tr>
+<td><input type="text" id="ex2_c2" placeholder="?" style="width:80px"></td>
+<td><input type="text" id="ex2_l2" placeholder="Libellé ligne 2"></td>
+<td><input type="number" id="ex2_d2" placeholder="0" oninput="checkEx2()"></td>
+<td><input type="number" id="ex2_cr2" placeholder="0" oninput="checkEx2()"></td>
+</tr>
+<tr>
+<td><input type="text" id="ex2_c3" placeholder="?" style="width:80px"></td>
+<td><input type="text" id="ex2_l3" placeholder="Libellé ligne 3"></td>
+<td><input type="number" id="ex2_d3" placeholder="0" oninput="checkEx2()"></td>
+<td><input type="number" id="ex2_cr3" placeholder="0" oninput="checkEx2()"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="ex2Res"></div>
+<div class="section-title" style="margin-top:16px">✏️ Exercice 3 — TVA à payer</div>
+<div class="box info" style="margin-bottom:10px">📝 En mars 2025, BOUTIQUE AMINATA a réalisé 3 500 000 FCFA HT de ventes et 1 200 000 FCFA HT d'achats. TVA = 18%. Calculez la TVA à reverser à la DGID.</div>
+<div class="row r3">
+<div><label>TVA collectée (sur ventes) (FCFA)</label><input type="number" id="ex3_coll" placeholder="Ventes × 18%" oninput="checkEx3()"></div>
+<div><label>TVA déductible (sur achats) (FCFA)</label><input type="number" id="ex3_ded" placeholder="Achats × 18%" oninput="checkEx3()"></div>
+<div><label>TVA nette à payer (FCFA)</label><input type="number" id="ex3_net" placeholder="Collectée − Déductible" oninput="checkEx3()"></div>
+</div>
+<div id="ex3Res"></div>
+</div>
 <!-- PANE 5: QUIZ -->
 <div class="pane" id="p5">
-  <div id="quizArea"></div>
+<div id="quizArea"></div>
 </div>
-
 <script>
 var planSel=null;
-var journalLignes=[];
+var ecritures=[];
 var qStep=0,qScore=0,qAnswers=[];
-
 var PLAN_CLASSES=[
-  {cl:'1',titre:'Ressources Durables',color:'#1E3A8A',comptes:[
-    {num:'101',nom:'Capital social'},
-    {num:'111',nom:'Réserves légales'},
-    {num:'113',nom:'Réserves statutaires'},
-    {num:'120',nom:'Report à nouveau (solde créditeur)'},
-    {num:'130',nom:'Résultat net de l\'exercice'},
-    {num:'16',nom:'Emprunts et dettes assimilées'},
-    {num:'18',nom:'Dettes de financement'},
-  ]},
-  {cl:'2',titre:'Actif Immobilisé',color:'#1D4ED8',comptes:[
-    {num:'21',nom:'Terrains'},
-    {num:'22',nom:'Bâtiments'},
-    {num:'24',nom:'Matériel et outillage'},
-    {num:'241',nom:'Matériel de bureau et informatique'},
-    {num:'25',nom:'Matériel de transport'},
-    {num:'26',nom:'Immobilisations financières'},
-    {num:'28',nom:'Amortissements (comptes soustractifs)'},
-  ]},
-  {cl:'3',titre:'Stocks',color:'#0891B2',comptes:[
-    {num:'31',nom:'Marchandises'},
-    {num:'32',nom:'Matières premières et fournitures'},
-    {num:'33',nom:'Autres approvisionnements'},
-    {num:'35',nom:'Produits finis'},
-    {num:'36',nom:'Produits en cours'},
-    {num:'37',nom:'Emballages commerciaux'},
-  ]},
-  {cl:'4',titre:'Comptes de Tiers',color:'#059669',comptes:[
-    {num:'401',nom:'Fournisseurs'},
-    {num:'408',nom:'Fournisseurs — Factures non parvenues'},
-    {num:'411',nom:'Clients'},
-    {num:'418',nom:'Clients — Produits non encore facturés'},
-    {num:'421',nom:'Personnel — Rémunérations dues'},
-    {num:'431',nom:'Organismes sociaux (CNSS)'},
-    {num:'4431',nom:'État — TVA collectée'},
-    {num:'4452',nom:'État — TVA déductible'},
-    {num:'4453',nom:'État — TVA à décaisser'},
-    {num:'444',nom:'État — Impôts sur les bénéfices'},
-    {num:'46',nom:'Débiteurs divers'},
-    {num:'47',nom:'Créditeurs divers'},
-  ]},
-  {cl:'5',titre:'Trésorerie',color:'#7C3AED',comptes:[
-    {num:'521',nom:'Banque — Compte courant'},
-    {num:'531',nom:'Chèques à encaisser'},
-    {num:'57',nom:'Caisse'},
-    {num:'58',nom:'Virements internes'},
-  ]},
-  {cl:'6',titre:'Charges',color:'#DC2626',comptes:[
-    {num:'601',nom:'Achats de marchandises'},
-    {num:'602',nom:'Achats de matières premières'},
-    {num:'604',nom:'Achats d\'études et services'},
-    {num:'614',nom:'Charges locatives'},
-    {num:'616',nom:'Primes d\'assurances'},
-    {num:'624',nom:'Transports de biens et produits'},
-    {num:'625',nom:'Déplacements, missions'},
-    {num:'627',nom:'Publicité, publications'},
-    {num:'631',nom:'Frais bancaires'},
-    {num:'661',nom:'Rémunérations directes versées'},
-    {num:'664',nom:'Charges sociales (CNSS, INPS)'},
-    {num:'681',nom:'Dotations aux amortissements'},
-  ]},
-  {cl:'7',titre:'Produits',color:'#059669',comptes:[
-    {num:'701',nom:'Ventes de marchandises'},
-    {num:'702',nom:'Ventes de produits finis'},
-    {num:'706',nom:'Prestations de services'},
-    {num:'731',nom:'Variations des stocks de produits finis'},
-    {num:'771',nom:'Intérêts de prêts'},
-    {num:'775',nom:'Produits sur cessions d\'immobilisations'},
-  ]},
-  {cl:'8',titre:'Comptes Spéciaux',color:'#92400E',comptes:[
-    {num:'80',nom:'Engagements donnés'},
-    {num:'81',nom:'Engagements reçus'},
-    {num:'88',nom:'Résultat en instance d\'affectation'},
-  ]},
+{cl:'1',titre:'Ressources Durables',color:'#1E3A8A',comptes:[
+{num:'101',nom:'Capital social'},
+{num:'111',nom:'Réserves légales'},
+{num:'113',nom:'Réserves statutaires'},
+{num:'120',nom:'Report à nouveau (solde créditeur)'},
+{num:'130',nom:'Résultat net de l\'exercice'},
+{num:'16',nom:'Emprunts et dettes assimilées'},
+{num:'18',nom:'Dettes de financement'},
+]},
+{cl:'2',titre:'Actif Immobilisé',color:'#1D4ED8',comptes:[
+{num:'21',nom:'Terrains'},
+{num:'22',nom:'Bâtiments'},
+{num:'24',nom:'Matériel et outillage'},
+{num:'241',nom:'Matériel de bureau et informatique'},
+{num:'25',nom:'Matériel de transport'},
+{num:'26',nom:'Immobilisations financières'},
+{num:'28',nom:'Amortissements (comptes soustractifs)'},
+]},
+{cl:'3',titre:'Stocks',color:'#0891B2',comptes:[
+{num:'31',nom:'Marchandises'},
+{num:'32',nom:'Matières premières et fournitures'},
+{num:'33',nom:'Autres approvisionnements'},
+{num:'35',nom:'Produits finis'},
+{num:'36',nom:'Produits en cours'},
+{num:'37',nom:'Emballages commerciaux'},
+]},
+{cl:'4',titre:'Comptes de Tiers',color:'#059669',comptes:[
+{num:'401',nom:'Fournisseurs'},
+{num:'408',nom:'Fournisseurs — Factures non parvenues'},
+{num:'411',nom:'Clients'},
+{num:'418',nom:'Clients — Produits non encore facturés'},
+{num:'421',nom:'Personnel — Rémunérations dues'},
+{num:'431',nom:'Organismes sociaux (CNSS)'},
+{num:'4431',nom:'État — TVA collectée'},
+{num:'4452',nom:'État — TVA déductible'},
+{num:'4453',nom:'État — TVA à décaisser'},
+{num:'444',nom:'État — Impôts sur les bénéfices'},
+{num:'46',nom:'Débiteurs divers'},
+{num:'47',nom:'Créditeurs divers'},
+]},
+{cl:'5',titre:'Trésorerie',color:'#7C3AED',comptes:[
+{num:'521',nom:'Banque — Compte courant'},
+{num:'531',nom:'Chèques à encaisser'},
+{num:'57',nom:'Caisse'},
+{num:'58',nom:'Virements internes'},
+]},
+{cl:'6',titre:'Charges',color:'#DC2626',comptes:[
+{num:'601',nom:'Achats de marchandises'},
+{num:'602',nom:'Achats de matières premières'},
+{num:'604',nom:'Achats d\'études et services'},
+{num:'614',nom:'Charges locatives'},
+{num:'616',nom:'Primes d\'assurances'},
+{num:'624',nom:'Transports de biens et produits'},
+{num:'625',nom:'Déplacements, missions'},
+{num:'627',nom:'Publicité, publications'},
+{num:'631',nom:'Frais bancaires'},
+{num:'661',nom:'Rémunérations directes versées'},
+{num:'664',nom:'Charges sociales (CNSS, INPS)'},
+{num:'681',nom:'Dotations aux amortissements'},
+]},
+{cl:'7',titre:'Produits',color:'#059669',comptes:[
+{num:'701',nom:'Ventes de marchandises'},
+{num:'702',nom:'Ventes de produits finis'},
+{num:'706',nom:'Prestations de services'},
+{num:'731',nom:'Variations des stocks de produits finis'},
+{num:'771',nom:'Intérêts de prêts'},
+{num:'775',nom:'Produits sur cessions d\'immobilisations'},
+]},
+{cl:'8',titre:'Comptes Spéciaux',color:'#92400E',comptes:[
+{num:'80',nom:'Engagements donnés'},
+{num:'81',nom:'Engagements reçus'},
+{num:'88',nom:'Résultat en instance d\'affectation'},
+]},
 ];
-
 var EX1_OPS=[
-  {op:"Vente de marchandises à un client (comptant)",deb:"5",cred:"7"},
-  {op:"Achat de marchandises à un fournisseur (crédit)",deb:"6",cred:"4"},
-  {op:"Paiement du loyer par banque",deb:"6",cred:"5"},
-  {op:"Encaissement d'un client (règlement de créance)",deb:"5",cred:"4"},
-  {op:"Apport en capital des associés",deb:"5",cred:"1"},
-  {op:"Achat d'un ordinateur (immobilisation)",deb:"2",cred:"5"},
+{op:"Vente de marchandises à un client (comptant)",deb:"5",cred:"7"},
+{op:"Achat de marchandises à un fournisseur (crédit)",deb:"6",cred:"4"},
+{op:"Paiement du loyer par banque",deb:"6",cred:"5"},
+{op:"Encaissement d'un client (règlement de créance)",deb:"5",cred:"4"},
+{op:"Apport en capital des associés",deb:"5",cred:"1"},
+{op:"Achat d'un ordinateur (immobilisation)",deb:"2",cred:"5"},
 ];
-
 var QUESTIONS=[
-  {q:"Quel est le principe de la partie double en comptabilité OHADA ?",tip:"La règle fondamentale de toute écriture comptable.",
-   opts:["On n'enregistre que les dépenses en double","Pour toute écriture, le total des débits est toujours égal au total des crédits","On doit tenir 2 journaux différents","Les comptes de bilan doublent chaque année"],
-   correct:1,fb:"✅ La partie double signifie que chaque opération affecte au moins 2 comptes avec toujours Débit = Crédit. C'est la règle absolue de la comptabilité SYSCOHADA.",pts:10},
-  {q:"Dans le plan comptable SYSCOHADA, à quelle classe appartient le compte 'Clients' ?",tip:"Les clients vous doivent de l'argent — c'est une créance.",
-   opts:["Classe 1 — Ressources durables","Classe 3 — Stocks","Classe 4 — Comptes de tiers","Classe 6 — Charges"],
-   correct:2,fb:"✅ Compte 411 Clients = Classe 4 (Comptes de tiers). Les tiers = toutes les relations extérieures (clients, fournisseurs, État, personnel). La classe 4 est au bilan côté actif pour les créances.",pts:10},
-  {q:"Une entreprise achète des marchandises à crédit pour 300 000 FCFA. Quelle est l'écriture correcte ?",tip:"Achat = charge (Classe 6). Crédit fournisseur = dette (Classe 4).",
-   opts:["Débit 601 300 000 / Crédit 521 300 000","Débit 401 300 000 / Crédit 601 300 000","Débit 601 300 000 / Crédit 401 300 000","Débit 521 300 000 / Crédit 401 300 000"],
-   correct:2,fb:"✅ Achat marchandises à crédit : Débit 601 (Achats) = augmentation d'une charge / Crédit 401 (Fournisseurs) = augmentation d'une dette. La TVA s'ajouterait : Débit 4452 TVA déductible.",pts:15},
-  {q:"Quel est le taux de TVA normal au Mali ?",tip:"Taux appliqué sur la plupart des ventes de biens et services.",
-   opts:["15%","18%","20%","10%"],
-   correct:1,fb:"✅ Le taux normal de TVA au Mali est de 18%. Certains produits essentiels (alimentation de base, médicaments, éducation) bénéficient d'exemptions. La TVA collectée sur ventes − TVA déductible sur achats = TVA à reverser à la DGID.",pts:10},
-  {q:"Comment calcule-t-on la TVA à reverser à l'État ?",tip:"TVA nette = différence entre ce qu'on collecte et ce qu'on a payé.",
-   opts:["TVA collectée sur ventes seulement","TVA déductible sur achats seulement","TVA collectée (ventes) − TVA déductible (achats)","TVA collectée (ventes) + TVA déductible (achats)"],
-   correct:2,fb:"✅ TVA à payer = TVA collectée − TVA déductible. Si vous avez collecté 360 000 FCFA et payé 144 000 FCFA en achats, vous reversez 216 000 FCFA. Si TVA déductible > collectée = crédit TVA reporté.",pts:15},
-  {q:"Qu'est-ce qu'un amortissement en comptabilité OHADA ?",tip:"Lié aux immobilisations (matériel, bâtiments...).",
-   opts:["Le remboursement d'un emprunt bancaire","La réduction progressive de la valeur d'un actif immobilisé due à l'usure ou l'obsolescence","La dévaluation de la monnaie","La réduction du capital social"],
-   correct:1,fb:"✅ L'amortissement = constatation comptable de la perte de valeur d'un actif. Exemple : un ordinateur acheté 600 000 FCFA s'amortit sur 3 ans = 200 000 FCFA/an. Compte 681 (Charges) / Compte 28 (Amortissements).",pts:15},
-  {q:"Quel document comptable résume TOUTES les opérations d'une entreprise par ordre chronologique ?",tip:"C'est le premier document enregistré avant le grand livre.",
-   opts:["Le bilan","La balance","Le journal comptable","Le compte de résultat"],
-   correct:2,fb:"✅ Le journal comptable est le livre de première entrée où toutes les opérations sont enregistrées chronologiquement avec leur écriture débit/crédit. Du journal, on reporte dans le grand livre (par compte), puis on établit la balance pour vérifier l'équilibre.",pts:15},
-  {q:"Une entreprise a une TVA collectée de 450 000 FCFA et une TVA déductible de 180 000 FCFA. Que doit-elle payer ?",tip:"TVA à payer = collectée − déductible",
-   opts:["630 000 FCFA","270 000 FCFA","450 000 FCFA","180 000 FCFA"],
-   correct:1,fb:"✅ TVA à payer = 450 000 − 180 000 = 270 000 FCFA à reverser à la DGID avant le 20 du mois suivant. Écriture : Débit 4431 (TVA collectée) 450 000 / Crédit 4452 (TVA déductible) 180 000 / Crédit 4453 (TVA due) 270 000.",pts:10},
+{q:"Quel est le principe de la partie double en comptabilité OHADA ?",tip:"La règle fondamentale de toute écriture comptable.",
+opts:["On n'enregistre que les dépenses en double","Pour toute écriture, le total des débits est toujours égal au total des crédits","On doit tenir 2 journaux différents","Les comptes de bilan doublent chaque année"],
+correct:1,fb:"✅ La partie double signifie que chaque opération affecte au moins 2 comptes avec toujours Débit = Crédit. C'est la règle absolue de la comptabilité SYSCOHADA.",pts:10},
+{q:"Dans le plan comptable SYSCOHADA, à quelle classe appartient le compte 'Clients' ?",tip:"Les clients vous doivent de l'argent — c'est une créance.",
+opts:["Classe 1 — Ressources durables","Classe 3 — Stocks","Classe 4 — Comptes de tiers","Classe 6 — Charges"],
+correct:2,fb:"✅ Compte 411 Clients = Classe 4 (Comptes de tiers). Les tiers = toutes les relations extérieures (clients, fournisseurs, État, personnel). La classe 4 est au bilan côté actif pour les créances.",pts:10},
+{q:"Une entreprise achète des marchandises à crédit pour 300 000 FCFA. Quelle est l'écriture correcte ?",tip:"Achat = charge (Classe 6). Crédit fournisseur = dette (Classe 4).",
+opts:["Débit 601 300 000 / Crédit 521 300 000","Débit 401 300 000 / Crédit 601 300 000","Débit 601 300 000 / Crédit 401 300 000","Débit 521 300 000 / Crédit 401 300 000"],
+correct:2,fb:"✅ Achat marchandises à crédit : Débit 601 (Achats) = augmentation d'une charge / Crédit 401 (Fournisseurs) = augmentation d'une dette. La TVA s'ajouterait : Débit 4452 TVA déductible.",pts:15},
+{q:"Quel est le taux de TVA normal au Mali ?",tip:"Taux appliqué sur la plupart des ventes de biens et services.",
+opts:["15%","18%","20%","10%"],
+correct:1,fb:"✅ Le taux normal de TVA au Mali est de 18%. Certains produits essentiels (alimentation de base, médicaments, éducation) bénéficient d'exemptions. La TVA collectée sur ventes − TVA déductible sur achats = TVA à reverser à la DGID.",pts:10},
+{q:"Comment calcule-t-on la TVA à reverser à l'État ?",tip:"TVA nette = différence entre ce qu'on collecte et ce qu'on a payé.",
+opts:["TVA collectée sur ventes seulement","TVA déductible sur achats seulement","TVA collectée (ventes) − TVA déductible (achats)","TVA collectée (ventes) + TVA déductible (achats)"],
+correct:2,fb:"✅ TVA à payer = TVA collectée − TVA déductible. Si vous avez collecté 360 000 FCFA et payé 144 000 FCFA en achats, vous reversez 216 000 FCFA. Si TVA déductible > collectée = crédit TVA reporté.",pts:15},
+{q:"Qu'est-ce qu'un amortissement en comptabilité OHADA ?",tip:"Lié aux immobilisations (matériel, bâtiments...).",
+opts:["Le remboursement d'un emprunt bancaire","La réduction progressive de la valeur d'un actif immobilisé due à l'usure ou l'obsolescence","La dévaluation de la monnaie","La réduction du capital social"],
+correct:1,fb:"✅ L'amortissement = constatation comptable de la perte de valeur d'un actif. Exemple : un ordinateur acheté 600 000 FCFA s'amortit sur 3 ans = 200 000 FCFA/an. Compte 681 (Charges) / Compte 28 (Amortissements).",pts:15},
+{q:"Quel document comptable résume TOUTES les opérations d'une entreprise par ordre chronologique ?",tip:"C'est le premier document enregistré avant le grand livre.",
+opts:["Le bilan","La balance","Le journal comptable","Le compte de résultat"],
+correct:2,fb:"✅ Le journal comptable est le livre de première entrée où toutes les opérations sont enregistrées chronologiquement avec leur écriture débit/crédit. Du journal, on reporte dans le grand livre (par compte), puis on établit la balance pour vérifier l'équilibre.",pts:15},
+{q:"Une entreprise a une TVA collectée de 450 000 FCFA et une TVA déductible de 180 000 FCFA. Que doit-elle payer ?",tip:"TVA à payer = collectée − déductible",
+opts:["630 000 FCFA","270 000 FCFA","450 000 FCFA","180 000 FCFA"],
+correct:1,fb:"✅ TVA à payer = 450 000 − 180 000 = 270 000 FCFA à reverser à la DGID avant le 20 du mois suivant. Écriture : Débit 4431 (TVA collectée) 450 000 / Crédit 4452 (TVA déductible) 180 000 / Crédit 4453 (TVA due) 270 000.",pts:10},
 ];
-
 function show(i){
-  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
-  document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
-  if(i===1) renderPlan();
-  if(i===2) renderJournal();
-  if(i===3) calcTVA();
-  if(i===4) renderEx1();
-  if(i===5) renderQuiz();
+document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+if(i===1) renderPlan();
+if(i===2) renderJournal();
+if(i===3) calcTVA();
+if(i===4) renderEx1();
+if(i===5) renderQuiz();
 }
-
 function gn(id,d){return parseFloat(document.getElementById(id)?.value)||d||0;}
 function fm(n){return Math.round(n).toLocaleString('fr-FR');}
-
 // PLAN COMPTABLE
 function renderPlan(){
-  var pg=document.getElementById('planGrid');
-  if(!pg) return;
-  pg.innerHTML=PLAN_CLASSES.map(function(c){
-    return '<div class="plan-card'+(planSel===c.cl?' sel':'')+'" onclick="selPlan(\''+c.cl+'\')">'+
-      '<div class="plan-header" style="background:'+c.color+'">Classe '+c.cl+' — '+c.titre+'</div>'+
-      '<div class="plan-body">'+c.comptes.slice(0,3).map(function(cp){return cp.num+' '+cp.nom;}).join('<br>')+(c.comptes.length>3?'<br><span style="color:#888">+'+( c.comptes.length-3)+' autres...</span>':'')+'</div>'+
-      '</div>';
-  }).join('');
-  renderPlanDetail();
+var pg=document.getElementById('planGrid');
+if(!pg) return;
+pg.innerHTML=PLAN_CLASSES.map(function(c){
+return '<div class="plan-card'+(planSel===c.cl?' sel':'')+'" onclick="selPlan(\''+c.cl+'\')">'+
+'<div class="plan-header" style="background:'+c.color+'">Classe '+c.cl+' — '+c.titre+'</div>'+
+'<div class="plan-body">'+c.comptes.slice(0,3).map(function(cp){return cp.num+' '+cp.nom;}).join('<br>')+(c.comptes.length>3?'<br><span style="color:#888">+'+( c.comptes.length-3)+' autres...</span>':'')+'</div>'+
+'</div>';
+}).join('');
+renderPlanDetail();
 }
-
 function selPlan(cl){planSel=cl;renderPlan();}
-
 function renderPlanDetail(){
-  var el=document.getElementById('planDetail');
-  if(!el) return;
-  if(!planSel){el.innerHTML='<div class="box" style="margin-top:10px">👆 Cliquez sur une classe pour voir tous les comptes détaillés.</div>';return;}
-  var c=PLAN_CLASSES.find(function(x){return x.cl===planSel;});
-  if(!c) return;
-  el.innerHTML='<div style="margin-top:14px;border:2px solid '+c.color+';border-radius:12px;overflow:hidden">'+
-    '<div style="background:'+c.color+';padding:12px 16px;color:#fff;font-size:14px;font-weight:700">Classe '+c.cl+' — '+c.titre+'</div>'+
-    '<div style="padding:14px"><table><thead><tr><th>N° Compte</th><th>Intitulé</th><th>Débit (augmentation)</th></tr></thead><tbody>'+
-    c.comptes.map(function(cp){
-      var deb=parseInt(c.cl)===6||parseInt(c.cl)===2||parseInt(c.cl)===3||parseInt(c.cl)===4||parseInt(c.cl)===5?'✅ Actif/Charge':'➡️ Passif/Produit';
-      return '<tr><td style="font-weight:600;color:'+c.color+'">'+cp.num+'</td><td>'+cp.nom+'</td><td style="font-size:11px">'+deb+'</td></tr>';
-    }).join('')+'</tbody></table></div></div>';
+var el=document.getElementById('planDetail');
+if(!el) return;
+if(!planSel){el.innerHTML='<div class="box" style="margin-top:10px">👆 Cliquez sur une classe pour voir tous les comptes détaillés.</div>';return;}
+var c=PLAN_CLASSES.find(function(x){return x.cl===planSel;});
+if(!c) return;
+el.innerHTML='<div style="margin-top:14px;border:2px solid '+c.color+';border-radius:12px;overflow:hidden">'+
+'<div style="background:'+c.color+';padding:12px 16px;color:#fff;font-size:14px;font-weight:700">Classe '+c.cl+' — '+c.titre+'</div>'+
+'<div style="padding:14px"><table><thead><tr><th>N° Compte</th><th>Intitulé</th><th>Débit (augmentation)</th></tr></thead><tbody>'+
+c.comptes.map(function(cp){
+var deb=parseInt(c.cl)===6||parseInt(c.cl)===2||parseInt(c.cl)===3||parseInt(c.cl)===4||parseInt(c.cl)===5?'✅ Actif/Charge':'➡️ Passif/Produit';
+return '<tr><td style="font-weight:600;color:'+c.color+'">'+cp.num+'</td><td>'+cp.nom+'</td><td style="font-size:11px">'+deb+'</td></tr>';
+}).join('')+'</tbody></table></div></div>';
 }
-
-// JOURNAL
+// JOURNAL — écritures multiples indépendantes
+function addEcriture(){
+ecritures.push({societe:'',date:'',lignes:[{compte:'',libelle:'',debit:0,credit:0},{compte:'',libelle:'',debit:0,credit:0}]});
+renderJournal();
+}
+function delEcriture(ei){
+ecritures.splice(ei,1);
+renderJournal();
+}
+function addLigneEcr(ei){
+ecritures[ei].lignes.push({compte:'',libelle:'',debit:0,credit:0});
+renderJournal();
+}
+function delLigneEcr(ei,li){
+ecritures[ei].lignes.splice(li,1);
+renderJournal();
+}
 function renderJournal(){
-  var body=document.getElementById('journalBody');
-  if(!body) return;
-  body.innerHTML=journalLignes.map(function(l,i){
-    return '<tr>'+
-      '<td><input type="text" value="'+l.compte+'" placeholder="Ex: 601" oninput="journalLignes['+i+'].compte=this.value;calcJournal()" style="width:80px"></td>'+
-      '<td><input type="text" value="'+l.libelle+'" placeholder="Libellé de l\'opération" oninput="journalLignes['+i+'].libelle=this.value"></td>'+
-      '<td><input type="number" value="'+(l.debit||'')+'" placeholder="0" oninput="journalLignes['+i+'].debit=parseFloat(this.value)||0;calcJournal()" style="text-align:right"></td>'+
-      '<td><input type="number" value="'+(l.credit||'')+'" placeholder="0" oninput="journalLignes['+i+'].credit=parseFloat(this.value)||0;calcJournal()" style="text-align:right"></td>'+
-      '<td><button onclick="delLigne('+i+')" style="border:none;background:none;color:#EF4444;cursor:pointer;font-size:14px">✕</button></td>'+
-      '</tr>';
-  }).join('');
-  calcJournal();
+var cont=document.getElementById('ecrituresContainer');
+if(!cont) return;
+cont.innerHTML=ecritures.map(function(ecr,ei){
+var totD=ecr.lignes.reduce(function(s,l){return s+l.debit;},0);
+var totC=ecr.lignes.reduce(function(s,l){return s+l.credit;},0);
+var balHtml;
+if(totD===0&&totC===0) balHtml='';
+else if(Math.abs(totD-totC)<1) balHtml='<div class="balance-ok">✅ Écriture équilibrée — Débit ('+fm(totD)+') = Crédit ('+fm(totC)+')</div>';
+else balHtml='<div class="balance-err">❌ Déséquilibre — Débit ('+fm(totD)+') ≠ Crédit ('+fm(totC)+') — Écart : '+fm(Math.abs(totD-totC))+' FCFA</div>';
+return '<div style="border:2px solid #DBEAFE;border-radius:10px;padding:12px;margin-bottom:16px;background:#FAFBFF">'+
+'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'+
+'<div style="font-size:12px;font-weight:700;color:#1D4ED8">📄 Écriture '+(ei+1)+'</div>'+
+'<button onclick="delEcriture('+ei+')" style="border:none;background:none;color:#EF4444;cursor:pointer;font-size:12px">🗑️ Supprimer cette écriture</button>'+
+'</div>'+
+'<div class="row">'+
+'<div><label>Société</label><input value="'+(ecr.societe||'')+'" placeholder="MALI TECH SARL" oninput="ecritures['+ei+'].societe=this.value"></div>'+
+'<div><label>Date de l\'écriture</label><input type="date" value="'+(ecr.date||'')+'" oninput="ecritures['+ei+'].date=this.value"></div>'+
+'</div>'+
+'<div style="overflow-x:auto"><table class="journal-table"><thead><tr>'+
+'<th style="width:80px">N° Compte</th><th>Libellé de l\'écriture</th><th style="width:110px">Débit (FCFA)</th><th style="width:110px">Crédit (FCFA)</th><th style="width:40px"></th>'+
+'</tr></thead><tbody>'+
+ecr.lignes.map(function(l,li){
+return '<tr>'+
+'<td><input type="text" value="'+l.compte+'" placeholder="Ex: 601" oninput="ecritures['+ei+'].lignes['+li+'].compte=this.value;calcJournal()" style="width:80px"></td>'+
+'<td><input type="text" value="'+l.libelle+'" placeholder="Libellé de l\'opération" oninput="ecritures['+ei+'].lignes['+li+'].libelle=this.value"></td>'+
+'<td><input type="number" value="'+(l.debit||'')+'" placeholder="0" oninput="ecritures['+ei+'].lignes['+li+'].debit=parseFloat(this.value)||0;calcJournal()" style="text-align:right"></td>'+
+'<td><input type="number" value="'+(l.credit||'')+'" placeholder="0" oninput="ecritures['+ei+'].lignes['+li+'].credit=parseFloat(this.value)||0;calcJournal()" style="text-align:right"></td>'+
+'<td><button onclick="delLigneEcr('+ei+','+li+')" style="border:none;background:none;color:#EF4444;cursor:pointer;font-size:14px">✕</button></td>'+
+'</tr>';
+}).join('')+
+'</tbody><tfoot><tr style="background:#EFF6FF">'+
+'<td colspan="2" style="font-weight:700;color:#1D4ED8;padding:8px">TOTAUX</td>'+
+'<td style="font-weight:700;color:#1D4ED8;padding:8px;text-align:right">'+fm(totD)+'</td>'+
+'<td style="font-weight:700;color:#059669;padding:8px;text-align:right">'+fm(totC)+'</td><td></td>'+
+'</tr></tfoot></table></div>'+
+balHtml+
+'<button class="btn btn-blue" style="margin-top:8px" onclick="addLigneEcr('+ei+')">+ Ajouter une ligne à cette écriture</button>'+
+'</div>';
+}).join('');
+calcJournal();
 }
-
-function addLigne(){journalLignes.push({compte:'',libelle:'',debit:0,credit:0});renderJournal();}
-function delLigne(i){journalLignes.splice(i,1);renderJournal();}
-
 function calcJournal(){
-  var totD=journalLignes.reduce(function(s,l){return s+l.debit;},0);
-  var totC=journalLignes.reduce(function(s,l){return s+l.credit;},0);
-  var td=document.getElementById('totalDebit');
-  var tc=document.getElementById('totalCredit');
-  var bm=document.getElementById('balanceMsg');
-  if(td) td.textContent=fm(totD);
-  if(tc) tc.textContent=fm(totC);
-  if(bm){
-    if(totD===0&&totC===0) bm.innerHTML='';
-    else if(Math.abs(totD-totC)<1) bm.innerHTML='<div class="balance-ok">✅ Écriture équilibrée — Débit ('+fm(totD)+') = Crédit ('+fm(totC)+')</div>';
-    else bm.innerHTML='<div class="balance-err">❌ Déséquilibre — Débit ('+fm(totD)+') ≠ Crédit ('+fm(totC)+') — Écart : '+fm(Math.abs(totD-totC))+' FCFA</div>';
-  }
-  // Grand livre simplifié
-  var comptes={};
-  journalLignes.forEach(function(l){
-    if(!l.compte) return;
-    if(!comptes[l.compte]) comptes[l.compte]={compte:l.compte,debit:0,credit:0};
-    comptes[l.compte].debit+=l.debit;
-    comptes[l.compte].credit+=l.credit;
-  });
-  var gl=document.getElementById('grandLivre');
-  if(gl&&Object.keys(comptes).length>0){
-    gl.innerHTML='<div class="section-title">📒 Grand Livre (synthèse par compte)</div>'+
-      '<table><thead><tr><th>N° Compte</th><th>Total Débit</th><th>Total Crédit</th><th>Solde</th></tr></thead><tbody>'+
-      Object.values(comptes).map(function(c){
-        var sol=c.debit-c.credit;
-        return '<tr><td><b>'+c.compte+'</b></td>'+
-          '<td class="debit">'+fm(c.debit)+'</td>'+
-          '<td class="credit">'+fm(c.credit)+'</td>'+
-          '<td style="font-weight:700;color:'+(sol>=0?'#1D4ED8':'#059669')+'">'+
-          (sol>=0?'D '+fm(sol):'C '+fm(Math.abs(sol)))+'</td></tr>';
-      }).join('')+'</tbody></table>';
-  } else if(gl) gl.innerHTML='';
+var comptes={};
+ecritures.forEach(function(ecr){
+ecr.lignes.forEach(function(l){
+if(!l.compte) return;
+if(!comptes[l.compte]) comptes[l.compte]={compte:l.compte,debit:0,credit:0};
+comptes[l.compte].debit+=l.debit;
+comptes[l.compte].credit+=l.credit;
+});
+});
+var gl=document.getElementById('grandLivre');
+if(gl&&Object.keys(comptes).length>0){
+gl.innerHTML='<div class="section-title">📒 Grand Livre (synthèse par compte — toutes écritures confondues)</div>'+
+'<table><thead><tr><th>N° Compte</th><th>Total Débit</th><th>Total Crédit</th><th>Solde</th></tr></thead><tbody>'+
+Object.values(comptes).map(function(c){
+var sol=c.debit-c.credit;
+return '<tr><td><b>'+c.compte+'</b></td>'+
+'<td class="debit">'+fm(c.debit)+'</td>'+
+'<td class="credit">'+fm(c.credit)+'</td>'+
+'<td style="font-weight:700;color:'+(sol>=0?'#1D4ED8':'#059669')+'">'+
+(sol>=0?'D '+fm(sol):'C '+fm(Math.abs(sol)))+'</td></tr>';
+}).join('')+'</tbody></table>';
+} else if(gl) gl.innerHTML='';
 }
-
 function loadExemple(){
-  journalLignes=[
-    {compte:'601',libelle:'Achats de marchandises',debit:500000,credit:0},
-    {compte:'4452',libelle:'TVA déductible 18%',debit:90000,credit:0},
-    {compte:'401',libelle:'Fournisseurs — DIALLO & Fils',debit:0,credit:590000},
-  ];
-  renderJournal();
+ecritures.push({societe:'MALI TECH SARL',date:'',lignes:[
+{compte:'601',libelle:'Achats de marchandises',debit:500000,credit:0},
+{compte:'4452',libelle:'TVA déductible 18%',debit:90000,credit:0},
+{compte:'401',libelle:'Fournisseurs — DIALLO & Fils',debit:0,credit:590000},
+]});
+renderJournal();
 }
-
 function loadExemple2(){
-  journalLignes=[
-    {compte:'411',libelle:'Clients — TRAORE & Co',debit:590000,credit:0},
-    {compte:'701',libelle:'Ventes de marchandises',debit:0,credit:500000},
-    {compte:'4431',libelle:'TVA collectée 18%',debit:0,credit:90000},
-  ];
-  renderJournal();
+ecritures.push({societe:'MALI TECH SARL',date:'',lignes:[
+{compte:'411',libelle:'Clients — TRAORE & Co',debit:590000,credit:0},
+{compte:'701',libelle:'Ventes de marchandises',debit:0,credit:500000},
+{compte:'4431',libelle:'TVA collectée 18%',debit:0,credit:90000},
+]});
+renderJournal();
 }
-
-function resetJournal(){journalLignes=[];renderJournal();}
-
+function resetJournal(){ecritures=[];renderJournal();}
+function exportJournalPDF(){
+var html='<h2 style="font-family:Arial;color:#0D0B2E;margin-bottom:16px">📘 Journal Comptable — Stageia</h2>';
+if(ecritures.length===0) html+='<p style="font-family:Arial;color:#888">Aucune écriture enregistrée.</p>';
+ecritures.forEach(function(ecr,ei){
+var totD=ecr.lignes.reduce(function(s,l){return s+l.debit;},0);
+var totC=ecr.lignes.reduce(function(s,l){return s+l.credit;},0);
+html+='<div style="margin-bottom:24px;font-family:Arial">'+
+'<div style="font-weight:700;font-size:13px;margin-bottom:6px">Écriture '+(ei+1)+' — '+(ecr.societe||'(société non renseignée)')+' '+(ecr.date?('· '+ecr.date):'')+'</div>'+
+'<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#1E3A8A;color:#fff">'+
+'<th style="padding:6px;text-align:left">N° Compte</th><th style="padding:6px;text-align:left">Libellé</th><th style="padding:6px;text-align:right">Débit</th><th style="padding:6px;text-align:right">Crédit</th></tr></thead><tbody>'+
+ecr.lignes.map(function(l){
+return '<tr><td style="padding:6px;border-bottom:1px solid #eee">'+(l.compte||'')+'</td><td style="padding:6px;border-bottom:1px solid #eee">'+(l.libelle||'')+'</td><td style="padding:6px;border-bottom:1px solid #eee;text-align:right">'+(l.debit?fm(l.debit):'')+'</td><td style="padding:6px;border-bottom:1px solid #eee;text-align:right">'+(l.credit?fm(l.credit):'')+'</td></tr>';
+}).join('')+
+'<tr style="background:#EFF6FF;font-weight:700"><td colspan="2" style="padding:6px">TOTAUX</td><td style="padding:6px;text-align:right">'+fm(totD)+'</td><td style="padding:6px;text-align:right">'+fm(totC)+'</td></tr>'+
+'</tbody></table></div>';
+});
+var gl=document.getElementById('grandLivre');
+if(gl&&gl.innerHTML) html+='<div style="font-family:Arial;margin-top:20px">'+gl.innerHTML+'</div>';
+var w=window.open('','_blank');
+if(!w){
+alert('⚠️ Le téléchargement PDF a été bloqué par votre navigateur.\n\nAutorisez les pop-ups pour ce site (icône dans la barre d\'adresse, généralement à droite) puis cliquez à nouveau sur "Télécharger en PDF".');
+return;
+}
+w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Journal Comptable — Stageia</title>'+
+'<style>body{padding:32px;font-family:Arial}table{width:100%}th,td{font-size:12px}@media print{@page{margin:1cm;size:A4}}</style>'+
+'</head><body>'+html+'</body></html>');
+w.document.close();
+setTimeout(function(){w.print();},600);
+}
 // TVA
 function calcTVA(){
-  var ht=gn('tva_ht',1000000);
-  var taux=parseFloat(document.getElementById('tva_taux')?.value)||18;
-  var type=document.getElementById('tva_type')?.value||'vente';
-  var tva=Math.round(ht*taux/100);
-  var ttc=ht+tva;
-  var el=document.getElementById('tvaResult');
-  if(el) el.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px">'+
-    '<div style="background:#f5f5f5;border-radius:8px;padding:12px;text-align:center;border:1px solid #e0e0e0"><div style="font-size:11px;color:#666;margin-bottom:4px">Montant HT</div><div style="font-size:18px;font-weight:700;color:#1D4ED8">'+fm(ht)+' F</div></div>'+
-    '<div style="background:'+(type==='vente'?'#FEE2E2':'#D1FAE5')+';border-radius:8px;padding:12px;text-align:center">'+
-    '<div style="font-size:11px;color:#666;margin-bottom:4px">TVA '+taux+'% '+(type==='vente'?'collectée':'déductible')+'</div>'+
-    '<div style="font-size:18px;font-weight:700;color:'+(type==='vente'?'#991B1B':'#065F46')+'">'+fm(tva)+' F</div></div>'+
-    '<div style="background:#FFFBEB;border-radius:8px;padding:12px;text-align:center;border:2px solid #D97706">'+
-    '<div style="font-size:11px;color:#666;margin-bottom:4px">Montant TTC</div>'+
-    '<div style="font-size:18px;font-weight:700;color:#D97706">'+fm(ttc)+' F</div></div>'+
-    '</div>'+
-    '<div class="box" style="margin-top:10px">📌 <b>Écriture comptable ('+(type==='vente'?'Vente':'Achat')+') :</b><br>'+
-    (type==='vente'?
-    'Débit 411 (Clients) '+fm(ttc)+' / Crédit 701 (Ventes) '+fm(ht)+' / Crédit 4431 (TVA collectée) '+fm(tva):
-    'Débit 601 (Achats) '+fm(ht)+' / Débit 4452 (TVA déductible) '+fm(tva)+' / Crédit 401 (Fournisseurs) '+fm(ttc))+
-    '</div>';
+var ht=gn('tva_ht',1000000);
+var taux=parseFloat(document.getElementById('tva_taux')?.value)||18;
+var type=document.getElementById('tva_type')?.value||'vente';
+var tva=Math.round(ht*taux/100);
+var ttc=ht+tva;
+var el=document.getElementById('tvaResult');
+if(el) el.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px">'+
+'<div style="background:#f5f5f5;border-radius:8px;padding:12px;text-align:center;border:1px solid #e0e0e0"><div style="font-size:11px;color:#666;margin-bottom:4px">Montant HT</div><div style="font-size:18px;font-weight:700;color:#1D4ED8">'+fm(ht)+' F</div></div>'+
+'<div style="background:'+(type==='vente'?'#FEE2E2':'#D1FAE5')+';border-radius:8px;padding:12px;text-align:center">'+
+'<div style="font-size:11px;color:#666;margin-bottom:4px">TVA '+taux+'% '+(type==='vente'?'collectée':'déductible')+'</div>'+
+'<div style="font-size:18px;font-weight:700;color:'+(type==='vente'?'#991B1B':'#065F46')+'">'+fm(tva)+' F</div></div>'+
+'<div style="background:#FFFBEB;border-radius:8px;padding:12px;text-align:center;border:2px solid #D97706">'+
+'<div style="font-size:11px;color:#666;margin-bottom:4px">Montant TTC</div>'+
+'<div style="font-size:18px;font-weight:700;color:#D97706">'+fm(ttc)+' F</div></div>'+
+'</div>'+
+'<div class="box" style="margin-top:10px">📌 <b>Écriture comptable ('+(type==='vente'?'Vente':'Achat')+') :</b><br>'+
+(type==='vente'?
+'Débit 411 (Clients) '+fm(ttc)+' / Crédit 701 (Ventes) '+fm(ht)+' / Crédit 4431 (TVA collectée) '+fm(tva):
+'Débit 601 (Achats) '+fm(ht)+' / Débit 4452 (TVA déductible) '+fm(tva)+' / Crédit 401 (Fournisseurs) '+fm(ttc))+
+'</div>';
 }
-
 function calcDecl(){
-  var ventes=gn('tvaDeclVentes',2000000);
-  var achats=gn('tvaDeclAchats',800000);
-  var tvaColl=Math.round(ventes*0.18);
-  var tvaDed=Math.round(achats*0.18);
-  var tvaNet=tvaColl-tvaDed;
-  var el=document.getElementById('tvaDecl');
-  if(el) el.innerHTML='<div style="margin-top:10px"><table><thead><tr><th>Élément</th><th>Base HT (FCFA)</th><th>TVA 18% (FCFA)</th></tr></thead><tbody>'+
-    '<tr><td>Ventes (TVA collectée)</td><td>'+fm(ventes)+'</td><td class="credit">+'+fm(tvaColl)+'</td></tr>'+
-    '<tr><td>Achats (TVA déductible)</td><td>'+fm(achats)+'</td><td class="debit">-'+fm(tvaDed)+'</td></tr>'+
-    '<tr class="tot"><td><b>TVA NETTE À PAYER</b></td><td></td><td><b style="color:'+(tvaNet>0?'#991B1B':'#065F46')+'">'+fm(tvaNet)+' F</b></td></tr>'+
-    '</tbody></table>'+
-    '<div class="box '+(tvaNet>0?'warn':'ok')+'" style="margin-top:8px">'+
-    (tvaNet>0?'💳 Vous devez reverser <b>'+fm(tvaNet)+' FCFA</b> à la DGID avant le 20 du mois prochain.':
-    '✅ Crédit TVA de '+fm(Math.abs(tvaNet))+' FCFA à reporter sur la prochaine déclaration.')+
-    '</div></div>';
+var ventes=gn('tvaDeclVentes',2000000);
+var achats=gn('tvaDeclAchats',800000);
+var tvaColl=Math.round(ventes*0.18);
+var tvaDed=Math.round(achats*0.18);
+var tvaNet=tvaColl-tvaDed;
+var el=document.getElementById('tvaDecl');
+if(el) el.innerHTML='<div style="margin-top:10px"><table><thead><tr><th>Élément</th><th>Base HT (FCFA)</th><th>TVA 18% (FCFA)</th></tr></thead><tbody>'+
+'<tr><td>Ventes (TVA collectée)</td><td>'+fm(ventes)+'</td><td class="credit">+'+fm(tvaColl)+'</td></tr>'+
+'<tr><td>Achats (TVA déductible)</td><td>'+fm(achats)+'</td><td class="debit">-'+fm(tvaDed)+'</td></tr>'+
+'<tr class="tot"><td><b>TVA NETTE À PAYER</b></td><td></td><td><b style="color:'+(tvaNet>0?'#991B1B':'#065F46')+'">'+fm(tvaNet)+' F</b></td></tr>'+
+'</tbody></table>'+
+'<div class="box '+(tvaNet>0?'warn':'ok')+'" style="margin-top:8px">'+
+(tvaNet>0?'💳 Vous devez reverser <b>'+fm(tvaNet)+' FCFA</b> à la DGID avant le 20 du mois prochain.':
+'✅ Crédit TVA de '+fm(Math.abs(tvaNet))+' FCFA à reporter sur la prochaine déclaration.')+
+'</div></div>';
 }
-
 // EXERCICE 1
 function renderEx1(){
-  var tbody=document.getElementById('ex1Table');
-  if(!tbody) return;
-  tbody.innerHTML=EX1_OPS.map(function(op,i){
-    return '<tr>'+
-      '<td style="font-size:12px">'+op.op+'</td>'+
-      '<td><input type="text" id="ex1_deb_'+i+'" placeholder="Classe ?" style="width:80px;text-align:center"></td>'+
-      '<td><input type="text" id="ex1_cred_'+i+'" placeholder="Classe ?" style="width:80px;text-align:center"></td>'+
-      '<td id="ex1_res_'+i+'">—</td>'+
-      '</tr>';
-  }).join('');
+var tbody=document.getElementById('ex1Table');
+if(!tbody) return;
+tbody.innerHTML=EX1_OPS.map(function(op,i){
+return '<tr>'+
+'<td style="font-size:12px">'+op.op+'</td>'+
+'<td><input type="text" id="ex1_deb_'+i+'" placeholder="Classe ?" style="width:80px;text-align:center"></td>'+
+'<td><input type="text" id="ex1_cred_'+i+'" placeholder="Classe ?" style="width:80px;text-align:center"></td>'+
+'<td id="ex1_res_'+i+'">—</td>'+
+'</tr>';
+}).join('');
 }
-
 function checkEx1(){
-  var score=0;
-  EX1_OPS.forEach(function(op,i){
-    var deb=document.getElementById('ex1_deb_'+i)?.value?.trim();
-    var cred=document.getElementById('ex1_cred_'+i)?.value?.trim();
-    var debOk=deb===op.deb;
-    var credOk=cred===op.cred;
-    var el=document.getElementById('ex1_res_'+i);
-    if(el){
-      if(debOk&&credOk){el.innerHTML='<span style="color:#065F46;font-weight:700">✅ Correct</span>';score++;}
-      else el.innerHTML='<span style="color:#991B1B;font-size:10px">❌ Déb:'+op.deb+' Cré:'+op.cred+'</span>';
-    }
-  });
-  var el=document.getElementById('ex1Res');
-  if(el) el.innerHTML='<div class="box '+(score===EX1_OPS.length?'ok':'warn')+'" style="margin-top:10px">Score : <b>'+score+'/'+EX1_OPS.length+'</b> '+(score===EX1_OPS.length?'🏆 Parfait !':'— Relisez la règle Débit/Crédit.')+'</div>';
+var score=0;
+EX1_OPS.forEach(function(op,i){
+var deb=document.getElementById('ex1_deb_'+i)?.value?.trim();
+var cred=document.getElementById('ex1_cred_'+i)?.value?.trim();
+var debOk=deb===op.deb;
+var credOk=cred===op.cred;
+var el=document.getElementById('ex1_res_'+i);
+if(el){
+if(debOk&&credOk){el.innerHTML='<span style="color:#065F46;font-weight:700">✅ Correct</span>';score++;}
+else el.innerHTML='<span style="color:#991B1B;font-size:10px">❌ Déb:'+op.deb+' Cré:'+op.cred+'</span>';
 }
-
+});
+var el=document.getElementById('ex1Res');
+if(el) el.innerHTML='<div class="box '+(score===EX1_OPS.length?'ok':'warn')+'" style="margin-top:10px">Score : <b>'+score+'/'+EX1_OPS.length+'</b> '+(score===EX1_OPS.length?'🏆 Parfait !':'— Relisez la règle Débit/Crédit.')+'</div>';
+}
 function resetEx1(){EX1_OPS.forEach(function(op,i){var d=document.getElementById('ex1_deb_'+i);var c=document.getElementById('ex1_cred_'+i);var r=document.getElementById('ex1_res_'+i);if(d)d.value='';if(c)c.value='';if(r)r.textContent='—';});document.getElementById('ex1Res').innerHTML='';}
-
 function checkEx2(){
-  var c1=document.getElementById('ex2_c1')?.value?.trim();
-  var c2=document.getElementById('ex2_c2')?.value?.trim();
-  var c3=document.getElementById('ex2_c3')?.value?.trim();
-  var d1=parseFloat(document.getElementById('ex2_d1')?.value)||0;
-  var cr1=parseFloat(document.getElementById('ex2_cr1')?.value)||0;
-  var d2=parseFloat(document.getElementById('ex2_d2')?.value)||0;
-  var cr2=parseFloat(document.getElementById('ex2_cr2')?.value)||0;
-  var d3=parseFloat(document.getElementById('ex2_d3')?.value)||0;
-  var cr3=parseFloat(document.getElementById('ex2_cr3')?.value)||0;
-  // Solution: 601 débit 500000, 4452 débit 90000, 401 crédit 590000
-  var totD=d1+d2+d3,totC=cr1+cr2+cr3;
-  var ok601=c1==='601'&&Math.abs(d1-500000)<1;
-  var ok4452=c2==='4452'&&Math.abs(d2-90000)<1;
-  var ok401=c3==='401'&&Math.abs(cr3-590000)<1;
-  var el=document.getElementById('ex2Res');
-  if(el) el.innerHTML='<div class="box '+(ok601&&ok4452&&ok401&&Math.abs(totD-totC)<1?'ok':'warn')+'" style="margin-top:8px">'+
-    (ok601?'✅ Ligne 1 correcte (601 / 500 000 F au débit)':'❌ Ligne 1 : Compte 601 Achats marchandises au DÉBIT pour 500 000 FCFA')+'<br>'+
-    (ok4452?'✅ Ligne 2 correcte (4452 / 90 000 F au débit)':'❌ Ligne 2 : Compte 4452 TVA déductible au DÉBIT pour 90 000 FCFA (500 000 × 18%)')+'<br>'+
-    (ok401?'✅ Ligne 3 correcte (401 / 590 000 F au crédit)':'❌ Ligne 3 : Compte 401 Fournisseurs au CRÉDIT pour 590 000 FCFA (500 000 + 90 000)')+'<br>'+
-    (Math.abs(totD-totC)<1?'✅ Écriture équilibrée !':'⚠️ Débit ≠ Crédit — vérifiez vos montants')+
-    '</div>';
+var c1=document.getElementById('ex2_c1')?.value?.trim();
+var c2=document.getElementById('ex2_c2')?.value?.trim();
+var c3=document.getElementById('ex2_c3')?.value?.trim();
+var d1=parseFloat(document.getElementById('ex2_d1')?.value)||0;
+var cr1=parseFloat(document.getElementById('ex2_cr1')?.value)||0;
+var d2=parseFloat(document.getElementById('ex2_d2')?.value)||0;
+var cr2=parseFloat(document.getElementById('ex2_cr2')?.value)||0;
+var d3=parseFloat(document.getElementById('ex2_d3')?.value)||0;
+var cr3=parseFloat(document.getElementById('ex2_cr3')?.value)||0;
+var totD=d1+d2+d3,totC=cr1+cr2+cr3;
+var ok601=c1==='601'&&Math.abs(d1-500000)<1;
+var ok4452=c2==='4452'&&Math.abs(d2-90000)<1;
+var ok401=c3==='401'&&Math.abs(cr3-590000)<1;
+var el=document.getElementById('ex2Res');
+if(el) el.innerHTML='<div class="box '+(ok601&&ok4452&&ok401&&Math.abs(totD-totC)<1?'ok':'warn')+'" style="margin-top:8px">'+
+(ok601?'✅ Ligne 1 correcte (601 / 500 000 F au débit)':'❌ Ligne 1 : Compte 601 Achats marchandises au DÉBIT pour 500 000 FCFA')+'<br>'+
+(ok4452?'✅ Ligne 2 correcte (4452 / 90 000 F au débit)':'❌ Ligne 2 : Compte 4452 TVA déductible au DÉBIT pour 90 000 FCFA (500 000 × 18%)')+'<br>'+
+(ok401?'✅ Ligne 3 correcte (401 / 590 000 F au crédit)':'❌ Ligne 3 : Compte 401 Fournisseurs au CRÉDIT pour 590 000 FCFA (500 000 + 90 000)')+'<br>'+
+(Math.abs(totD-totC)<1?'✅ Écriture équilibrée !':'⚠️ Débit ≠ Crédit — vérifiez vos montants')+
+'</div>';
 }
-
 function checkEx3(){
-  var coll=parseFloat(document.getElementById('ex3_coll')?.value)||0;
-  var ded=parseFloat(document.getElementById('ex3_ded')?.value)||0;
-  var net=parseFloat(document.getElementById('ex3_net')?.value)||0;
-  var collOk=Math.abs(coll-630000)<1;
-  var dedOk=Math.abs(ded-216000)<1;
-  var netOk=Math.abs(net-414000)<1;
-  var el=document.getElementById('ex3Res');
-  if(el) el.innerHTML='<div class="box '+(collOk&&dedOk&&netOk?'ok':'warn')+'" style="margin-top:8px">'+
-    (collOk?'✅ TVA collectée = 630 000 F ':'❌ TVA collectée = 3 500 000 × 18% = <b>630 000 FCFA</b><br>')+
-    (dedOk?'✅ TVA déductible = 216 000 F ':'❌ TVA déductible = 1 200 000 × 18% = <b>216 000 FCFA</b><br>')+
-    (netOk?'✅ TVA nette = 414 000 F — à payer avant le 20 avril !':'❌ TVA nette = 630 000 − 216 000 = <b>414 000 FCFA</b>')+
-    '</div>';
+var coll=parseFloat(document.getElementById('ex3_coll')?.value)||0;
+var ded=parseFloat(document.getElementById('ex3_ded')?.value)||0;
+var net=parseFloat(document.getElementById('ex3_net')?.value)||0;
+var collOk=Math.abs(coll-630000)<1;
+var dedOk=Math.abs(ded-216000)<1;
+var netOk=Math.abs(net-414000)<1;
+var el=document.getElementById('ex3Res');
+if(el) el.innerHTML='<div class="box '+(collOk&&dedOk&&netOk?'ok':'warn')+'" style="margin-top:8px">'+
+(collOk?'✅ TVA collectée = 630 000 F ':'❌ TVA collectée = 3 500 000 × 18% = <b>630 000 FCFA</b><br>')+
+(dedOk?'✅ TVA déductible = 216 000 F ':'❌ TVA déductible = 1 200 000 × 18% = <b>216 000 FCFA</b><br>')+
+(netOk?'✅ TVA nette = 414 000 F — à payer avant le 20 avril !':'❌ TVA nette = 630 000 − 216 000 = <b>414 000 FCFA</b>')+
+'</div>';
 }
-
 // QUIZ
 function renderQuiz(){
-  if(qStep>=QUESTIONS.length){showResult();return;}
-  var q=QUESTIONS[qStep];
-  var ans=qAnswers[qStep]!==undefined;
-  var html='<div style="text-align:center;margin-bottom:10px;font-size:12px;color:#666">Question '+(qStep+1)+'/'+QUESTIONS.length+' · Score : <b>'+qScore+' pts</b></div>'+
-    '<div class="quiz-q"><div class="q-num">Question '+(qStep+1)+' — '+q.pts+' points</div>'+
-    '<div class="q-text">'+q.q+'</div>'+
-    '<div class="q-tip">💡 '+q.tip+'</div>'+
-    q.opts.map(function(o,i){
-      var cls='opt';
-      if(ans) cls+=(i===q.correct?' good':(i===qAnswers[qStep]?' bad':' dis'));
-      return '<button class="'+cls+'" onclick="ansQ('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
-    }).join('')+
-    (ans?'<div class="fb show '+(qAnswers[qStep]===q.correct?'ok':'ko')+'">'+q.fb+'</div>':'')+
-    (ans?'<button class="btn btn-blue" style="margin-top:8px" onclick="nextQ()">'+( qStep<QUESTIONS.length-1?'Question suivante →':'Voir mon score →')+'</button>':'')+
-    '</div>';
-  document.getElementById('quizArea').innerHTML=html;
+if(qStep>=QUESTIONS.length){showResult();return;}
+var q=QUESTIONS[qStep];
+var ans=qAnswers[qStep]!==undefined;
+var html='<div style="text-align:center;margin-bottom:10px;font-size:12px;color:#666">Question '+(qStep+1)+'/'+QUESTIONS.length+' · Score : <b>'+qScore+' pts</b></div>'+
+'<div class="quiz-q"><div class="q-num">Question '+(qStep+1)+' — '+q.pts+' points</div>'+
+'<div class="q-text">'+q.q+'</div>'+
+'<div class="q-tip">💡 '+q.tip+'</div>'+
+q.opts.map(function(o,i){
+var cls='opt';
+if(ans) cls+=(i===q.correct?' good':(i===qAnswers[qStep]?' bad':' dis'));
+return '<button class="'+cls+'" onclick="ansQ('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+}).join('')+
+(ans?'<div class="fb show '+(qAnswers[qStep]===q.correct?'ok':'ko')+'">'+q.fb+'</div>':'')+
+(ans?'<button class="btn btn-blue" style="margin-top:8px" onclick="nextQ()">'+( qStep<QUESTIONS.length-1?'Question suivante →':'Voir mon score →')+'</button>':'')+
+'</div>';
+document.getElementById('quizArea').innerHTML=html;
 }
-
 function ansQ(i){if(qAnswers[qStep]!==undefined)return;qAnswers[qStep]=i;if(i===QUESTIONS[qStep].correct)qScore+=QUESTIONS[qStep].pts;renderQuiz();}
 function nextQ(){qStep++;renderQuiz();}
 function showResult(){
-  var max=QUESTIONS.reduce(function(s,q){return s+q.pts;},0);
-  var p=Math.round(qScore/max*100);
-  var msg=p>=80?'🏆 Expert OHADA !':p>=60?'👍 Bon niveau comptable !':'📚 Continuez à pratiquer !';
-  document.getElementById('quizArea').innerHTML=
-    '<div style="text-align:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-radius:12px;padding:20px;margin-bottom:14px;border:2px solid #1D4ED8">'+
-    '<div style="font-size:36px;font-weight:700;color:#1D4ED8">'+qScore+'/'+max+'</div>'+
-    '<div style="font-size:14px;font-weight:700;margin:6px 0">'+msg+'</div>'+
-    '<div style="font-size:12px;color:#666">Score : '+p+'%</div></div>'+
-    '<button onclick="qStep=0;qScore=0;qAnswers=[];renderQuiz()" class="btn btn-blue" style="width:100%;padding:12px">🔄 Recommencer le quiz</button>';
+var max=QUESTIONS.reduce(function(s,q){return s+q.pts;},0);
+var p=Math.round(qScore/max*100);
+var msg=p>=80?'🏆 Expert OHADA !':p>=60?'👍 Bon niveau comptable !':'📚 Continuez à pratiquer !';
+document.getElementById('quizArea').innerHTML=
+'<div style="text-align:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-radius:12px;padding:20px;margin-bottom:14px;border:2px solid #1D4ED8">'+
+'<div style="font-size:36px;font-weight:700;color:#1D4ED8">'+qScore+'/'+max+'</div>'+
+'<div style="font-size:14px;font-weight:700;margin:6px 0">'+msg+'</div>'+
+'<div style="font-size:12px;color:#666">Score : '+p+'%</div></div>'+
+'<button onclick="qStep=0;qScore=0;qAnswers=[];renderQuiz()" class="btn btn-blue" style="width:100%;padding:12px">🔄 Recommencer le quiz</button>';
 }
-
 // Init
-journalLignes=[{compte:'',libelle:'',debit:0,credit:0},{compte:'',libelle:'',debit:0,credit:0}];
+ecritures=[{societe:'',date:'',lignes:[{compte:'',libelle:'',debit:0,credit:0},{compte:'',libelle:'',debit:0,credit:0}]}];
 </script>
 </body>
 </html>
