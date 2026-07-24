@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Quiz Design & Marketing</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f5;color:#1a1a1a;padding:16px}
+.header{background:linear-gradient(135deg,#0D0B2E,#1a1060);border-radius:12px;padding:18px 22px;margin-bottom:16px;color:#fff;display:flex;align-items:center;gap:12px}
+.h-icon{width:44px;height:44px;background:rgba(225,48,108,.25);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.h-title{font-size:16px;font-weight:600}.h-sub{font-size:11px;color:#AFA9EC;margin-top:3px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat{background:#fff;border-radius:10px;padding:11px;text-align:center;border:1px solid #e0e0e0}
+.stat-val{font-size:22px;font-weight:600;color:#E1306C}
+.stat-lbl{font-size:10px;color:#666;margin-top:3px}
+.cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.cat-btn{padding:7px 14px;border:1px solid #ddd;border-radius:20px;background:#fff;color:#555;font-size:12px;cursor:pointer;font-family:Arial;transition:all .15s;display:flex;align-items:center;gap:6px}
+.cat-btn:hover{border-color:#E1306C;color:#E1306C}
+.cat-btn.active{background:#E1306C;color:#fff;border-color:#E1306C}
+.diff-row{display:flex;gap:8px;margin-bottom:16px}
+.diff-btn{padding:6px 14px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#555;font-size:12px;cursor:pointer;font-family:Arial}
+.diff-btn.active{border-color:#534AB7;background:#EEEDFE;color:#534AB7;font-weight:600}
+.start-card{background:#fff;border-radius:12px;padding:24px;text-align:center;border:1px solid #e0e0e0}
+.start-title{font-size:17px;font-weight:600;margin-bottom:8px}
+.start-sub{font-size:13px;color:#666;line-height:1.6;margin-bottom:20px}
+.btn-start{padding:12px 28px;background:#E1306C;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;font-family:Arial}
+.quiz-card{background:#fff;border-radius:12px;border:1px solid #e0e0e0;overflow:hidden}
+.quiz-top{background:linear-gradient(135deg,#0D0B2E,#1a1060);padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.qt-left{display:flex;align-items:center;gap:10px}
+.qt-cat{font-size:12px;font-weight:600;color:#fff}
+.qt-num{font-size:11px;color:#AFA9EC}
+.prog-wrap{display:flex;align-items:center;gap:8px}
+.prog-txt{font-size:12px;color:#AFA9EC}
+.prog-bar{width:90px;height:5px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:#E1306C;border-radius:3px;transition:width .3s}
+.timer{font-size:13px;font-weight:600;color:#fff;background:rgba(255,255,255,.1);padding:4px 10px;border-radius:6px;min-width:40px;text-align:center}
+.timer.warn{color:#EF9F27}
+.timer.danger{color:#EF4444;animation:blink .5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.q-body{padding:20px}
+.q-diff{display:inline-block;padding:2px 9px;border-radius:10px;font-size:10px;font-weight:600;margin-bottom:10px}
+.q-diff.easy{background:#D1FAE5;color:#065F46}
+.q-diff.medium{background:#FEF3C7;color:#92400E}
+.q-diff.hard{background:#FEE2E2;color:#991B1B}
+.q-cat-badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:10px;font-weight:500;margin-bottom:10px;margin-left:6px}
+.q-text{font-size:15px;font-weight:600;line-height:1.6;margin-bottom:8px;color:#0D0B2E}
+.q-img{width:100%;max-height:160px;object-fit:cover;border-radius:8px;margin-bottom:14px;display:none}
+.tip-box{background:#FFF8E1;border-left:3px solid #EF9F27;padding:8px 12px;border-radius:0 8px 8px 0;margin-bottom:14px;font-size:11px;color:#7a5000;line-height:1.5}
+.tip-lbl{font-size:10px;font-weight:600;color:#BA7517;margin-bottom:3px}
+.opts{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border:1px solid #ddd;border-radius:10px;cursor:pointer;transition:all .15s;background:#fff}
+.opt:hover{border-color:#E1306C;background:#FFF0F5}
+.opt-letter{width:24px;height:24px;border-radius:6px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#666;flex-shrink:0;transition:all .15s}
+.opt-text{font-size:13px;color:#1a1a1a;line-height:1.5;flex:1}
+.opt.correct{border-color:#10B981;background:#E1F5EE}
+.opt.correct .opt-letter{background:#10B981;color:#fff}
+.opt.wrong{border-color:#EF4444;background:#FEE2E2}
+.opt.wrong .opt-letter{background:#EF4444;color:#fff}
+.opt.dis{pointer-events:none;opacity:.55}
+.fb{border-radius:10px;padding:13px;margin-bottom:14px;display:none}
+.fb.show{display:block}
+.fb.good{background:#E1F5EE;border:1px solid #10B981}
+.fb.bad{background:#FEE2E2;border:1px solid #EF4444}
+.fb-title{font-size:13px;font-weight:600;margin-bottom:5px}
+.fb.good .fb-title{color:#065F46}
+.fb.bad .fb-title{color:#791F1F}
+.fb-text{font-size:12px;color:#444;line-height:1.6}
+.fb-ref{font-size:11px;color:#888;margin-top:7px;padding-top:7px;border-top:1px solid #e0e0e0}
+.xp-gain{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;background:#EEEDFE;color:#534AB7;margin-top:6px}
+.btn-next{width:100%;padding:11px;background:#E1306C;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;display:none;font-family:Arial}
+.btn-next.show{display:block}
+.bilan-card{background:#fff;border-radius:12px;border:1px solid #e0e0e0;padding:24px;text-align:center;display:none}
+.bilan-card.show{display:block}
+.score-ring{width:100px;height:100px;border-radius:50%;margin:0 auto 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:24px;font-weight:700;border:4px solid #E1306C}
+.score-ring.exc{border-color:#10B981;color:#10B981;background:#E1F5EE}
+.score-ring.bon{border-color:#534AB7;color:#534AB7;background:#EEEDFE}
+.score-ring.moy{border-color:#EF9F27;color:#BA7517;background:#FEF3C7}
+.score-ring.fai{border-color:#EF4444;color:#A32D2D;background:#FEE2E2}
+.bilan-title{font-size:18px;font-weight:700;margin-bottom:6px}
+.bilan-msg{font-size:13px;color:#666;line-height:1.6;margin-bottom:18px;max-width:360px;margin-left:auto;margin-right:auto}
+.bilan-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.bs{background:#f5f5f5;border-radius:8px;padding:10px}
+.bs-val{font-size:20px;font-weight:700;color:#E1306C;margin-bottom:3px}
+.bs-lbl{font-size:10px;color:#666}
+.badge-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px}
+.badge{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.badge.gold{background:#FEF3C7;color:#92400E;border:1px solid #EF9F27}
+.badge.silver{background:#f5f5f5;color:#555;border:1px solid #ccc}
+.badge.pink{background:#FCE4EC;color:#880E4F;border:1px solid #E1306C}
+.detail-list{text-align:left;margin-bottom:18px}
+.detail-item{font-size:12px;padding:7px 12px;border-radius:8px;margin-bottom:5px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.detail-item.ok{background:#E1F5EE;color:#065F46}
+.detail-item.ko{background:#FEE2E2;color:#791F1F}
+.bilan-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-retry{padding:9px 20px;border:1px solid #ddd;background:#fff;color:#1a1a1a;border-radius:8px;cursor:pointer;font-size:13px;font-family:Arial}
+.btn-other{padding:9px 20px;background:#E1306C;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-family:Arial;font-weight:600}
+.leaderboard{background:#fff;border-radius:12px;border:1px solid #e0e0e0;padding:16px;margin-top:16px}
+.lb-title{font-size:13px;font-weight:600;margin-bottom:12px;color:#0D0B2E}
+.lb-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f5}
+.lb-item:last-child{border-bottom:none}
+.lb-rank{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.lb-rank.r1{background:#FFD700;color:#7a5000}
+.lb-rank.r2{background:#C0C0C0;color:#555}
+.lb-rank.r3{background:#CD7F32;color:#fff}
+.lb-rank.rn{background:#f5f5f5;color:#666}
+.lb-name{font-size:13px;font-weight:500;flex:1}
+.lb-score{font-size:13px;font-weight:600;color:#E1306C}
+.lb-cat{font-size:10px;color:#666}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="h-icon">🎨</div>
+  <div><div class="h-title">Quiz Design & Marketing — Stageia</div>
+  <div class="h-sub">Testez vos connaissances · Progression par niveau · Badges · Classement</div></div>
+</div>
+
+<div class="stats-row">
+  <div class="stat"><div class="stat-val" id="st1">0</div><div class="stat-lbl">Quiz terminés</div></div>
+  <div class="stat"><div class="stat-val" id="st2">0</div><div class="stat-lbl">XP Total</div></div>
+  <div class="stat"><div class="stat-val" id="st3">0%</div><div class="stat-lbl">Meilleur score</div></div>
+  <div class="stat"><div class="stat-val" id="st4">0</div><div class="stat-lbl">Badges gagnés</div></div>
+</div>
+
+<div style="font-size:12px;color:#666;margin-bottom:8px;font-weight:500">Choisissez une catégorie :</div>
+<div class="cats" id="cats"></div>
+<div style="font-size:12px;color:#666;margin-bottom:8px;font-weight:500;margin-top:10px">Niveau de difficulté :</div>
+<div class="diff-row">
+  <button class="diff-btn active" onclick="setDiff('all')">Tous</button>
+  <button class="diff-btn" onclick="setDiff('easy')">⭐ Facile</button>
+  <button class="diff-btn" onclick="setDiff('medium')">⭐⭐ Intermédiaire</button>
+  <button class="diff-btn" onclick="setDiff('hard')">⭐⭐⭐ Avancé</button>
+</div>
+
+<div id="mainArea"></div>
+
+<div class="leaderboard" id="leaderboard">
+  <div class="lb-title">🏆 Classement — Meilleurs scores</div>
+  <div id="lbList"></div>
+</div>
+
+<script>
+const CATS=[
+  {id:'design',name:'Design Graphique',icon:'🎨',color:'#E1306C'},
+  {id:'marketing',name:'Marketing Digital',icon:'📣',color:'#534AB7'},
+  {id:'couleurs',name:'Théorie des Couleurs',icon:'🌈',color:'#EF9F27'},
+  {id:'typo',name:'Typographie',icon:'🔤',color:'#3B82F6'},
+  {id:'reseaux',name:'Réseaux Sociaux',icon:'📱',color:'#10B981'},
+  {id:'branding',name:'Branding & Identité',icon:'🏷️',color:'#8B5CF6'},
+];
+
+const QS={
+  design:[
+    {q:"Quel est le principe de design qui guide l'œil vers l'élément le plus important ?",diff:'easy',cat:'Design',tip:"Pensez à la structure visuelle d'une page — ce qui attire d'abord l'attention.",opts:["L'alignement","La hiérarchie visuelle","La proximité","Le contraste"],correct:1,expl:"La hiérarchie visuelle organise les éléments par ordre d'importance (taille, couleur, poids) pour guider naturellement le regard du lecteur.",conseil:"Utilisez la taille, le poids (gras) et la couleur pour créer 3 niveaux : Titre > Sous-titre > Corps de texte.",ref:"Principe des 6 lois du design graphique — Canons de mise en page.",xp:10},
+    {q:"Combien de polices maximum recommande-t-on d'utiliser dans un design professionnel ?",diff:'easy',cat:'Design',tip:"Trop de polices = chaos visuel. Pensez cohérence.",opts:["1 police","2 polices maximum","5 polices","Autant que voulu"],correct:1,expl:"2 polices maximum dans un design professionnel : 1 pour les titres (display ou serif) + 1 pour le corps de texte (sans-serif). Au-delà, le design paraît amateur et incohérent.",conseil:"Règle d'or : 1 police titre + 1 police corps. Variez les graisses (bold, regular, light) pour créer de la hiérarchie.",ref:"Règles typographiques professionnelles — Bringhurst, The Elements of Typographic Style.",xp:10},
+    {q:"Qu'est-ce que la 'règle des tiers' en design et photographie ?",diff:'medium',cat:'Design',tip:"Cette règle vient de la photographie et s'applique au design de composition.",opts:["Diviser l'image en 3 couleurs","Diviser la composition en 9 parties égales avec des lignes, placer les éléments importants aux intersections","Utiliser 3 polices différentes","Avoir 3 éléments principaux dans chaque design"],correct:1,expl:"La règle des tiers divise la composition en 9 parties égales (3×3). Les éléments importants sont placés aux 4 intersections ou le long des lignes, créant une composition naturellement harmonieuse.",conseil:"Dans Canva ou Figma, activez la grille d'aide à la composition. Placez votre sujet principal aux intersections des lignes.",ref:"Règle des tiers — Photographie et composition artistique.",xp:15},
+    {q:"Qu'est-ce que le 'white space' (espace négatif) en design ?",diff:'medium',cat:'Design',tip:"Ce n'est pas une erreur de design — c'est une décision intentionnelle.",opts:["L'utilisation de couleur blanche uniquement","L'espace vide intentionnel qui respire et met en valeur les éléments","Une faute dans le design qui doit être remplie","L'arrière-plan blanc des documents"],correct:1,expl:"L'espace négatif (white space) est l'espace vide intentionnel autour des éléments. Il améliore la lisibilité, crée une impression de luxe et premium, et met en valeur le contenu principal. Les marques premium en utilisent beaucoup.",conseil:"Si vous pensez avoir assez d'espace dans votre design, doublez-le. Les designs professionnels ont toujours plus d'espace que prévu.",ref:"Jan Tschichold — Design minimaliste. Apple Design Guidelines.",xp:15},
+    {q:"Quelle est la signification du 'kerning' en typographie ?",diff:'hard',cat:'Design',tip:"Il s'agit d'un terme technique typographique très spécifique.",opts:["L'espacement entre les lignes de texte","L'ajustement de l'espace entre deux caractères spécifiques","La taille de la police","Le style de la police (gras, italique)"],correct:1,expl:"Le kerning est l'ajustement de l'espace entre deux caractères spécifiques pour améliorer la lisibilité visuelle. Différent du tracking (espacement global) et du leading (interligne). Crucial pour les logos et grands titres.",conseil:"Dans Canva : sélectionnez le texte → Espacement → ajustez. Dans Figma : sélectionnez entre 2 caractères → Option+flèches.",ref:"Terminologie typographique professionnelle. Adobe Fonts Guide.",xp:20},
+    {q:"Qu'est-ce que le principe de 'Gestalt' appliqué au design ?",diff:'hard',cat:'Design',tip:"C'est une théorie psychologique qui explique comment le cerveau perçoit les formes.",opts:["Un logiciel de design allemand","Des lois psychologiques expliquant comment notre cerveau regroupe et perçoit les éléments visuels","Une technique de coloration","Un type de mise en page spécifique"],correct:1,expl:"La théorie Gestalt explique comment le cerveau perçoit les éléments visuels comme un tout cohérent. Lois principales : Proximité (éléments proches = liés), Similarité, Continuité, Fermeture (formes incomplètes complétées par le cerveau), Figure/fond.",conseil:"Utilisez la loi de proximité pour grouper les informations liées. Utilisez la loi de similarité pour créer de la cohérence visuelle.",ref:"Théorie de la Gestalt — École de psychologie allemande. Rudolf Arnheim — Art and Visual Perception.",xp:20},
+  ],
+  marketing:[
+    {q:"Qu'est-ce que le 'CTR' (Click-Through Rate) en marketing digital ?",diff:'easy',cat:'Marketing',tip:"C'est une métrique de performance très courante en publicité en ligne.",opts:["Le nombre total de clics","Le pourcentage de personnes qui cliquent sur une annonce par rapport au nombre de vues","Le coût total d'une campagne","Le taux de conversion en vente"],correct:1,expl:"Le CTR = (Clics / Impressions) × 100. Un CTR de 2-3% est bon pour une pub Facebook au Mali. En dessous de 1% = visuels ou ciblage à revoir. Au-dessus de 5% = excellente performance.",conseil:"Pour améliorer le CTR : testez différentes accroches, utilisez des visuels locaux reconnaissables, posez une question dans le titre.",ref:"Facebook Ads Metrics Guide. Google Analytics Academy.",xp:10},
+    {q:"Quelle est la règle de contenu recommandée sur les réseaux sociaux ?",diff:'easy',cat:'Marketing',tip:"Il existe une formule célèbre qui équilibre contenu éducatif et promotionnel.",opts:["100% de contenu promotionnel pour vendre","80% de valeur (éducatif/divertissant) + 20% promotionnel","50% promotionnel + 50% éducatif","Uniquement des stories, jamais de posts"],correct:1,expl:"La règle 80/20 : 80% de contenu qui apporte de la valeur (éduquer, divertir, inspirer) + 20% de contenu promotionnel (vendre, offres, produits). Cette règle maintient l'engagement et évite de fatiguer l'audience.",conseil:"Pour Stageia : 80% = conseils emploi, formations, témoignages, tips | 20% = offres, prix, inscriptions.",ref:"Gary Vaynerchuk — Jab, Jab, Jab, Right Hook. Content Marketing Institute.",xp:10},
+    {q:"Qu'est-ce que le 'tunnel de vente' (sales funnel) ?",diff:'medium',cat:'Marketing',tip:"Pensez au parcours d'un client depuis la découverte jusqu'à l'achat.",opts:["Une page web de vente unique","Le parcours progressif d'un prospect depuis la découverte jusqu'à l'achat, avec plusieurs étapes","Un logiciel de marketing","Un type de publicité Facebook"],correct:1,expl:"Le tunnel de vente = TOFU (Top) → MOFU (Middle) → BOFU (Bottom). Awareness → Intérêt → Désir → Action. Chaque étape nécessite un contenu adapté : sensibilisation → éducation → conversion. Pour Stageia : post viral → email → offre de formation.",conseil:"Identifiez à quelle étape du tunnel se trouvent vos prospects avant de leur envoyer un message. Un prospect froid ne veut pas voir une offre directe.",ref:"Elias St. Elmo Lewis — AIDA Model. Digital Marketing Institute.",xp:15},
+    {q:"Quelle est la différence entre le marketing 'pull' et le marketing 'push' ?",diff:'medium',cat:'Marketing',tip:"Ces deux stratégies ont des directions opposées dans leur approche client.",opts:["Le push est digital et le pull est traditionnel","Le pull attire le client vers la marque (SEO, contenu) ; le push va vers le client (pub, cold email, démarchage)","Le pull est gratuit et le push est payant","Il n'y a pas de différence"],correct:1,expl:"Pull marketing : vous créez du contenu utile qui attire les clients naturellement (SEO, blog, YouTube). Push marketing : vous allez vers le client (publicité, cold calling, emailing de masse). Stratégie optimale : Pull pour construire la confiance + Push pour accélérer.",conseil:"Pour Stageia : créez du contenu éducatif sur l'emploi (pull) + publicités Facebook ciblées (push). Combinez les deux pour maximiser la portée.",ref:"Philip Kotler — Marketing Management. Inbound Marketing Methodology — HubSpot.",xp:15},
+    {q:"Qu'est-ce que le 'Net Promoter Score' (NPS) ?",diff:'hard',cat:'Marketing',tip:"C'est l'une des métriques de satisfaction client les plus utilisées au monde.",opts:["Le nombre de nouveaux clients par mois","Un indicateur de la probabilité qu'un client recommande votre produit/service, sur une échelle de 0 à 10","Le pourcentage de clients fidèles","Le score de qualité d'une publicité Facebook"],correct:1,expl:"NPS = % Promoteurs (9-10) - % Détracteurs (0-6). Score > 50 = excellent, > 30 = bon, > 0 = acceptable, < 0 = problème. Question unique : 'Sur une échelle de 0 à 10, recommanderiez-vous notre service à un ami ?'",conseil:"Envoyez un formulaire NPS à vos clients après chaque formation ou service. Un NPS élevé = bouche-à-oreille naturel = acquisition gratuite.",ref:"Fred Reichheld — The Ultimate Question. Harvard Business Review 2003.",xp:20},
+    {q:"Quelle est la différence entre une 'audience personnalisée' et une 'audience similaire' sur Facebook Ads ?",diff:'hard',cat:'Marketing',tip:"Ces deux fonctionnalités de ciblage Facebook sont très puissantes mais différentes.",opts:["Ce sont des termes identiques","L'audience personnalisée = vos clients existants (email, téléphone) ; l'audience similaire = personnes ressemblant à vos meilleurs clients, trouvées par l'algorithme Facebook","L'audience personnalisée = plus chère ; l'audience similaire = gratuite","L'audience personnalisée = jeunes ; l'audience similaire = adultes"],correct:1,expl:"Audience personnalisée : upload de vos contacts existants (email/tel) → Facebook trouve les profils correspondants → idéal pour le retargeting et la fidélisation. Audience similaire (Lookalike) : Facebook analyse vos meilleurs clients et trouve 1-10% de personnes similaires au Mali → idéal pour l'acquisition.",conseil:"Stratégie optimale : Créez une audience personnalisée avec vos 100 meilleurs clients → Créez une audience similaire 1% → Testez avec un budget de 2 000 FCFA/jour.",ref:"Facebook Ads Manager Guide — Custom Audiences & Lookalike Audiences.",xp:20},
+  ],
+  couleurs:[
+    {q:"Quelles sont les 3 couleurs primaires en arts graphiques (synthèse soustractive) ?",diff:'easy',cat:'Couleurs',tip:"Ce sont les couleurs de base utilisées en impression.",opts:["Rouge, Vert, Bleu","Cyan, Magenta, Jaune","Rouge, Jaune, Bleu","Orange, Violet, Vert"],correct:2,expl:"En synthèse soustractive (impression) : Cyan, Magenta, Jaune (CMJ). En arts graphiques traditionnels : Rouge, Jaune, Bleu. En écran (synthèse additive) : Rouge, Vert, Bleu (RVB/RGB). Important de connaître les deux systèmes !",conseil:"Pour l'impression professionnelle au Mali, utilisez toujours le mode CMJN dans vos fichiers. Pour les écrans (réseaux sociaux), utilisez RVB.",ref:"Théorie des couleurs — Johannes Itten. Systèmes chromatiques RVB et CMJN.",xp:10},
+    {q:"Quelle couleur est traditionnellement associée à la confiance et au professionnalisme ?",diff:'easy',cat:'Couleurs',tip:"Regardez les logos des banques et institutions au Mali — quelle couleur revient le plus ?",opts:["Rouge","Bleu","Jaune","Vert"],correct:1,expl:"Le bleu est universellement associé à la confiance, la fiabilité et le professionnalisme. C'est pourquoi il domine dans la finance (Coris Bank, BMS), la tech (Facebook, LinkedIn) et les institutions. Au Mali, le bleu inspire confiance et sérieux.",conseil:"Pour une startup qui veut paraître crédible rapidement au Mali, intégrez du bleu dans votre identité visuelle.",ref:"Psychologie des couleurs — Eva Heller. Color Psychology in Branding.",xp:10},
+    {q:"Qu'est-ce qu'une palette de couleurs 'complémentaire' ?",diff:'medium',cat:'Couleurs',tip:"Regardez un cercle chromatique — les couleurs complémentaires ont une position spécifique.",opts:["Des couleurs qui se ressemblent","Deux couleurs opposées sur le cercle chromatique, créant un fort contraste","Trois couleurs adjacentes sur le cercle","Des couleurs de même teinte mais différentes luminosités"],correct:1,expl:"Les couleurs complémentaires sont opposées sur le cercle chromatique : Rouge/Vert, Bleu/Orange, Jaune/Violet. Elles créent un contraste fort et vibrant, idéal pour les boutons d'action et les accents. Attention : utilisez-les avec parcimonie.",conseil:"Exemples pour Stageia : Violet (#534AB7) + Orange (#EF9F27) = complémentaires. Le violet pour les fonds, l'orange pour les boutons et accents.",ref:"Josef Albers — Interaction of Color. Adobe Color Wheel.",xp:15},
+    {q:"Que signifie le code couleur hexadécimal '#FFFFFF' ?",diff:'medium',cat:'Couleurs',tip:"C'est le code couleur le plus basique qui existe — pensez aux extrêmes.",opts:["Noir pur","Blanc pur","Rouge","Gris moyen"],correct:1,expl:"#FFFFFF = Blanc pur (FF en hexadécimal = 255 en décimal, la valeur maximale pour Rouge, Vert et Bleu). #000000 = Noir pur (0,0,0). Chaque paire de chiffres hex correspond à R, G, B. Ex: #E1306C = R(225) G(48) B(108) = Rose/Rouge.",conseil:"Dans Canva : cliquez sur une couleur → tapez directement le code HEX. Enregistrez vos codes HEX de marque dans votre Brand Kit pour ne plus les chercher.",ref:"Système de codification hexadécimale. W3Schools — CSS Colors.",xp:15},
+    {q:"Quelle est la signification culturelle du vert au Mali et en Afrique de l'Ouest ?",diff:'hard',cat:'Couleurs',tip:"Au Mali, le contexte religieux et culturel influence fortement la perception des couleurs.",opts:["Danger et avertissement","Symbole de l'Islam, de l'espoir, de la nature et de la prospérité","Deuil et tristesse","Luxe et richesse uniquement"],correct:1,expl:"Au Mali, le vert a une signification culturelle très forte : couleur de l'Islam (très présent au Mali), de l'espoir, de la croissance et de la fertilité. Il évoque aussi la nature et la terre africaine. C'est une couleur extrêmement positive et porteuse de sens dans ce contexte.",conseil:"Pour les produits destinés au marché malien, intégrez le vert si votre marque veut évoquer la croissance, l'espoir ou si elle s'adresse à une clientèle musulmane.",ref:"Psychologie des couleurs en Afrique de l'Ouest. Symbolisme culturel malien.",xp:20},
+    {q:"Qu'est-ce que le rapport de contraste WCAG et pourquoi est-il important ?",diff:'hard',cat:'Couleurs',tip:"Il s'agit d'un standard international d'accessibilité numérique.",opts:["Un type de palette de couleurs créatives","Un standard mesurant le contraste entre texte et fond pour l'accessibilité (ratio minimum 4.5:1 pour le texte normal)","Une technique de mélange de couleurs en impression","Le nombre de couleurs maximum dans un design"],correct:1,expl:"WCAG (Web Content Accessibility Guidelines) définit des ratios de contraste minimum pour l'accessibilité : 4.5:1 pour le texte normal, 3:1 pour les grands titres. Un design inaccessible exclut les personnes malvoyantes et peut nuire au référencement.",conseil:"Testez toujours vos combinaisons texte/fond sur webaim.org/resources/contrastchecker avant de publier. Noir sur blanc = 21:1 (parfait). Gris clair sur blanc = souvent insuffisant.",ref:"W3C — WCAG 2.1 Guidelines. WebAIM Contrast Checker.",xp:20},
+  ],
+  typo:[
+    {q:"Quelle est la différence entre une police 'Serif' et 'Sans-serif' ?",diff:'easy',cat:'Typo',tip:"Regardez les extrémités des lettres — il y a un détail qui les distingue.",opts:["Serif = numérique, Sans-serif = print","Serif = avec petits empattements aux extrémités des lettres, Sans-serif = sans empattements, lignes épurées","Serif = gratuite, Sans-serif = payante","Serif = moderne, Sans-serif = classique"],correct:1,expl:"Serif (ex: Times New Roman, Playfair Display) = petits traits aux extrémités des lettres → tradition, autorité, élégance. Sans-serif (ex: Arial, Montserrat, Inter) = lignes épurées sans empattements → modernité, lisibilité sur écran, tech.",conseil:"Pour les réseaux sociaux et interfaces digitales au Mali : privilégiez les Sans-serif. Pour les documents imprimés premium : Serif peut apporter de l'élégance.",ref:"Classification typographique — Thibaudeau, Vox-ATypI. Google Fonts Guide.",xp:10},
+    {q:"Quelle est la taille de police minimum recommandée pour le corps de texte sur mobile ?",diff:'easy',cat:'Typo',tip:"Sur mobile, la lecture est plus difficile — la taille a une grande importance.",opts:["8px","10px","14-16px","24px"],correct:2,expl:"14-16px minimum pour le corps de texte sur mobile (16px est la valeur par défaut des navigateurs pour une raison). En dessous de 14px, le texte devient illisible sur les petits écrans. Pour Canva/Instagram : minimum 14px pour les légendes, 20px+ pour les messages principaux.",conseil:"Sur Instagram : texte minimum 20px pour les posts (les gens lisent souvent sans lunettes sur téléphone). Pour les stories : minimum 24px.",ref:"Google Mobile UX Guidelines. Apple Human Interface Guidelines — Typography.",xp:10},
+    {q:"Qu'est-ce que l'interligne (leading) et quelle valeur est recommandée ?",diff:'medium',cat:'Typo',tip:"C'est l'espace vertical entre les lignes de texte.",opts:["L'interligne est l'espace entre les mots","L'interligne est l'espace entre les lignes de texte. Recommandation : 1.4 à 1.6× la taille de la police pour le corps de texte","L'interligne est la largeur des marges","L'interligne est l'espace entre les paragraphes"],correct:1,expl:"L'interligne (leading) = espace vertical entre les lignes. Trop serré = illisible et oppressant. Trop espacé = perd la cohérence du texte. Optimal pour le corps de texte : 1.4 à 1.6× la taille. Si texte = 16px, interligne = 22-26px.",conseil:"Dans Canva : Texte → Espacement → Line Height. Pour les posts Instagram avec du texte, utilisez 1.5 minimum pour la lisibilité mobile.",ref:"Robert Bringhurst — The Elements of Typographic Style. W3C CSS Typography.",xp:15},
+    {q:"Quelles polices sont recommandées pour les projets africains contemporains ?",diff:'medium',cat:'Typo',tip:"Certaines polices ont été conçues spécifiquement pour les langues africaines ou ont une esthétique africaine contemporaine.",opts:["Times New Roman uniquement","Comic Sans pour le côté décontracté","Syne, Dela Gothic, Hanken Grotesk, DM Sans — polices modernes avec caractère","Courier New pour le style machine à écrire"],correct:2,expl:"Pour les projets africains contemporains : Syne (conçue avec une esthétique panafricaine), Dela Gothic (impact fort), Hanken Grotesk (moderne et accessible), DM Sans (élégante et polyvalente). Toutes disponibles gratuitement sur Google Fonts.",conseil:"Sur Google Fonts, filtrez par 'Popular this week' pour découvrir les polices tendance. Pour une marque malienne contemporaine : Syne (titres) + DM Sans (corps) = excellent combo.",ref:"Google Fonts — African Design Trends. AIGA — Typography in African Design.",xp:15},
+    {q:"Qu'est-ce que le 'tracking' (letter-spacing) et quand l'utiliser ?",diff:'hard',cat:'Typo',tip:"C'est différent du kerning — il s'applique à un bloc de texte entier.",opts:["Le suivi des performances d'une police","L'espacement global entre tous les caractères d'un texte. Positif pour les MAJUSCULES et titres courts, négatif pour créer de la densité","La taille relative d'une police","La graisse d'une police"],correct:1,expl:"Le tracking = espacement global entre tous les caractères d'un mot/paragraphe. Tracking positif sur MAJUSCULES améliore la lisibilité (les majuscules serrées sont difficiles à lire). Tracking négatif sur titres display peut créer un effet graphique moderne et impactant.",conseil:"Règle pro : texte en MAJUSCULES → toujours augmenter le tracking de +5% minimum. Titres display en minuscules → tracking légèrement négatif pour plus d'impact.",ref:"Erik Spiekermann — Stop Stealing Sheep. The Elements of Typographic Style.",xp:20},
+    {q:"Quelle est la règle de la 'ligne de base' (baseline) en design d'interface ?",diff:'hard',cat:'Typo',tip:"C'est un concept fondamental du design de systèmes visuels cohérents.",opts:["La ligne sur laquelle reposent les caractères est décorative","La ligne de base est la ligne imaginaire sur laquelle reposent les caractères. Un système de grille baseline (8px) assure la cohérence verticale de toute l'interface","La ligne de base est le bas de l'écran","La ligne de base n'existe qu'en calligraphie"],correct:1,expl:"La ligne de base (baseline) est la ligne sur laquelle reposent les lettres. En design d'interface, un système de grille à 8px (multiples de 8) aligne tous les éléments sur la baseline → cohérence visuelle parfaite. Figma a une grille baseline intégrée.",conseil:"Dans Figma : View → Grids → ajoutez une grille 'Baseline' de 8px. Tous vos espacements (padding, margin, line-height) seront des multiples de 8 → design cohérent automatiquement.",ref:"Google Material Design — Typography System. IBM Design Language — Type Scale.",xp:20},
+  ],
+  reseaux:[
+    {q:"Quelle est la taille recommandée pour un post carré Instagram ?",diff:'easy',cat:'Réseaux',tip:"C'est le format le plus standard sur Instagram.",opts:["500×500 pixels","1080×1080 pixels","1920×1080 pixels","800×600 pixels"],correct:1,expl:"1080×1080 pixels = format carré standard Instagram (ratio 1:1). Format Story : 1080×1920 (ratio 9:16). Format paysage : 1080×566 (ratio 1.91:1). Format portrait recommandé : 1080×1350 (ratio 4:5) — prend plus de place dans le feed.",conseil:"Dans Canva, utilisez les modèles prédéfinis : Post Instagram = 1080×1080. Créez toujours en 1080px minimum pour la qualité sur les nouveaux écrans.",ref:"Instagram Creator Studio — Image Specifications. Meta Business Help Center.",xp:10},
+    {q:"À quelle fréquence faut-il publier sur Facebook pour un bon algorithme au Mali ?",diff:'easy',cat:'Réseaux',tip:"L'algorithme Facebook récompense la régularité plus que la quantité.",opts:["1 fois par mois","10 fois par jour","3 à 5 fois par semaine minimum, avec régularité","1 fois par an lors des fêtes"],correct:2,expl:"3 à 5 fois par semaine est le rythme optimal pour Facebook au Mali : assez fréquent pour rester visible dans l'algorithme, assez espacé pour ne pas saturer l'audience. La régularité est plus importante que la quantité. Publiez aux heures de pointe : 7-9h, 12-14h, 19-22h.",conseil:"Utilisez le planificateur Facebook Business Suite pour programmer vos posts à l'avance. Préparez 1 semaine de contenu en une seule session.",ref:"Facebook Algorithm Guide 2024. Hootsuite — Best Times to Post in West Africa.",xp:10},
+    {q:"Qu'est-ce qu'un 'hashtag' efficace sur Instagram pour une marque malienne ?",diff:'medium',cat:'Réseaux',tip:"La stratégie de hashtags combinant local et global est la plus efficace.",opts:["Utiliser #like4like et #follow4follow qui génèrent beaucoup d'engagement","Utiliser aucun hashtag pour paraître professionnel","Combiner des hashtags locaux (#BamakoStyle, #MaliMode) + sectoriels (#GraphisteMali) + tendance — entre 5 et 15 hashtags","Mettre 30 hashtags populaires dans chaque post"],correct:2,expl:"Stratégie optimale : 5-15 hashtags combinant 3 niveaux. Petits (<50K publications) : #GraphisteMali, #DesignBamako — communauté locale ciblée. Moyens (50K-500K) : #AfricanDesign, #MaliEntrepreneur. Grands (>500K) : #Design, #Graphiste — visibilité élargie.",conseil:"Évitez #like4like et les hashtags spam — ils attirent des robots, pas de vrais clients. Créez un hashtag de marque unique : #Stageia ou #FormationMali.",ref:"Instagram Algorithm 2024 — Hashtag Strategy. Later.com — Hashtag Research.",xp:15},
+    {q:"Qu'est-ce que le 'taux d'engagement' sur les réseaux sociaux ?",diff:'medium',cat:'Réseaux',tip:"C'est l'une des métriques les plus importantes pour évaluer la performance d'un compte.",opts:["Le nombre total d'abonnés","Le pourcentage d'abonnés qui interagissent avec vos contenus (likes, commentaires, partages, sauvegardes / nombre d'abonnés)","Le nombre de publicités payées","Le taux de clics sur vos liens"],correct:1,expl:"Taux d'engagement = (Likes + Commentaires + Partages + Sauvegardes) / Abonnés × 100. Benchmarks Instagram 2024 : >6% excellent, 3-6% bon, 1-3% moyen, <1% faible. Un compte avec 1000 abonnés engagés vaut mieux qu'un compte avec 100 000 abonnés fantômes.",conseil:"Pour booster l'engagement : posez des questions dans vos légendes, utilisez les sondages en Story, répondez à TOUS les commentaires dans les premières heures.",ref:"Sprout Social — Engagement Rate Benchmarks 2024. Hootsuite Social Media Metrics.",xp:15},
+    {q:"Comment fonctionne l'algorithme TikTok pour distribuer les vidéos ?",diff:'hard',cat:'Réseaux',tip:"TikTok a un algorithme unique qui donne une chance à tous les créateurs.",opts:["Il favorise uniquement les comptes avec beaucoup d'abonnés","Il distribue d'abord à un petit groupe test, puis élargit si le taux de completion et d'engagement est élevé — n'importe quelle vidéo peut devenir virale","Il montre uniquement les vidéos aux abonnés du compte","Il favorise uniquement les vidéos avec musique tendance"],correct:1,expl:"Algorithme TikTok : chaque vidéo est d'abord montrée à 100-500 personnes test. Si le taux de complétion (>70%), de replay, de partages et de commentaires est élevé → la vidéo est distribuée à 1000 personnes, puis 10 000, puis potentiellement viral. C'est la plateforme la plus équitable pour les nouveaux créateurs.",conseil:"Pour le Mali : publiez entre 19h et 22h. Les 3 premières secondes sont cruciales. Ajoutez des sous-titres (accessibilité + algorithmique). Durée optimale : 15-60 secondes.",ref:"TikTok Creator Academy — How TikTok Recommends Content. The Information — TikTok Algorithm.",xp:20},
+    {q:"Qu'est-ce que le 'social listening' et comment l'utiliser pour une marque malienne ?",diff:'hard',cat:'Réseaux',tip:"C'est une technique de veille qui transforme les conversations en ligne en intelligence marketing.",opts:["Écouter des podcasts sur les réseaux sociaux","Surveiller et analyser les mentions de votre marque et de vos concurrents sur les réseaux sociaux pour extraire des insights","Publier uniquement du contenu audio","Regarder les stories des concurrents"],correct:1,expl:"Social listening = surveillance des mentions de votre marque, de vos concurrents et de votre secteur sur les réseaux. Pour le Mali : cherchez votre nom de marque sur Facebook, suivez les groupes entrepreneurs maliens, analysez les commentaires de vos concurrents pour identifier les points de frustration.",conseil:"Méthode pratique au Mali : créez des alertes Google (gratuit) pour votre marque + mots-clés secteur. Surveillez les groupes Facebook maliens de votre secteur. Transformez les plaintes des clients de concurrents en opportunités.",ref:"Hootsuite — Social Listening Guide. Mention.com — Brand Monitoring.",xp:20},
+  ],
+  branding:[
+    {q:"Qu'est-ce qu'une 'charte graphique' ?",diff:'easy',cat:'Branding',tip:"C'est un document indispensable pour toute marque professionnelle.",opts:["Un document juridique de protection de marque","Un guide définissant les règles d'utilisation de l'identité visuelle : logo, couleurs, typographie, style photographique","Un logiciel de design professionnel","Une liste de tous les produits de la marque"],correct:1,expl:"La charte graphique (brand guidelines) est le 'mode d'emploi' de votre identité visuelle. Elle définit : le logo (versions autorisées/interdites), la palette de couleurs (codes HEX/RGB/CMJN), les typographies officielles, le style photo, le ton de voix, et les usages autorisés.",conseil:"Pour Stageia : créez une charte graphique de 4-6 pages sur Canva. Partagez-la avec tous vos partenaires et prestataires pour garantir la cohérence visuelle.",ref:"David Airey — Logo Design Love. Brand Manual Creation Guide.",xp:10},
+    {q:"Quelle est la différence entre un 'logo' et une 'identité de marque' ?",diff:'easy',cat:'Branding',tip:"Le logo est seulement une partie d'un système plus large.",opts:["Il n'y a pas de différence — ce sont des synonymes","Le logo est un symbole graphique ; l'identité de marque est l'ensemble du système visuel (logo + couleurs + typographie + style photo + ton de voix + expérience)","L'identité de marque ne concerne que les grandes entreprises","Le logo est payant et l'identité est gratuite"],correct:1,expl:"Un logo seul n'est pas une marque. L'identité de marque = logo + palette de couleurs + typographie + style photographique + ton de voix + expérience client + valeurs. Apple sans ses couleurs épurées, sa typo San Francisco et son design minimaliste ne serait pas 'Apple'.",conseil:"Commencez par définir les valeurs de votre marque en 3 mots avant de créer visuellement. Pour Stageia : Innovation + Accessibilité + Impact.",ref:"Marty Neumeier — The Brand Gap. Simon Sinek — Start With Why.",xp:10},
+    {q:"Qu'est-ce que le 'brand storytelling' et pourquoi est-il efficace ?",diff:'medium',cat:'Branding',tip:"Les humains retiennent 22 fois mieux les histoires que les faits secs.",opts:["Raconter l'histoire de l'entreprise uniquement dans les rapports annuels","Utiliser des récits narratifs pour communiquer les valeurs et la mission de la marque, créant une connexion émotionnelle avec l'audience","Écrire des communiqués de presse","Faire de la publicité traditionnelle avec des slogans"],correct:1,expl:"Le storytelling de marque exploite le pouvoir des histoires pour créer une connexion émotionnelle. Les neurosciences montrent qu'une histoire active plus de zones cérébrales qu'un fait brut → meilleure mémorisation et engagement. Exemple : 'Je suis Kady, j'ai créé Stageia parce que j'ai vu mes amis diplômés sans emploi...' > 'Stageia est une plateforme EdTech'.",conseil:"Pour Stageia : partagez l'histoire de votre fondatrice sur les réseaux. Les histoires personnelles authentiques convertissent 3 à 5 fois mieux que la communication corporate.",ref:"Donald Miller — Building a StoryBrand. Joseph Campbell — The Hero's Journey.",xp:15},
+    {q:"Qu'est-ce que le positionnement de marque et comment le définir ?",diff:'medium',cat:'Branding',tip:"C'est la place que vous occupez dans l'esprit de votre client cible.",opts:["Le positionnement est le prix de vos produits","La position géographique de votre entreprise","La place unique que votre marque occupe dans l'esprit du client cible par rapport aux concurrents","Le nombre de followers sur les réseaux sociaux"],correct:2,expl:"Positionnement = Pour [cible], [marque] est la seule [catégorie] qui [bénéfice unique] parce que [preuve]. Exemple Stageia : 'Pour les étudiants maliens cherchant un emploi, Stageia est la seule plateforme qui combine formation IA + stage virtuel rémunéré, avec une approche 100% adaptée au marché local.'",conseil:"Template de positionnement : Pour [qui] qui veulent [quoi], [votre marque] est la seule [catégorie] qui [bénéfice unique] parce que [preuve]. Remplissez ce template et affichez-le dans votre bureau.",ref:"Al Ries & Jack Trout — Positioning: The Battle for Your Mind. Keller — Strategic Brand Management.",xp:15},
+    {q:"Qu'est-ce que le 'brand equity' (capital de marque) et comment se mesure-t-il ?",diff:'hard',cat:'Branding',tip:"C'est la valeur ajoutée que la marque apporte au-delà du produit lui-même.",opts:["Le budget marketing annuel de la marque","La valeur financière et perceptuelle ajoutée par la marque au-delà du produit physique, mesurée par la notoriété, la fidélité, la qualité perçue et les associations","Le nombre de produits de la marque","Le chiffre d'affaires annuel"],correct:1,expl:"Brand equity (capital de marque) = valeur ajoutée par la notoriété + fidélité + qualité perçue + associations de marque. Coca-Cola vaut des milliards non pour son sirop mais pour sa marque. Mesure : études de notoriété assistée/spontanée, NPS, premium pricing (acceptez-vous de payer plus pour cette marque ?), taux de fidélité.",conseil:"Pour construire le brand equity de Stageia dès maintenant : cohérence visuelle absolue, storytelling de fondatrice, témoignages clients, partenariats avec des institutions reconnues.",ref:"David Aaker — Managing Brand Equity. Kevin Keller — Strategic Brand Management.",xp:20},
+    {q:"Comment construire une architecture de marque quand on a plusieurs produits ?",diff:'hard',cat:'Branding',tip:"Il existe 3 stratégies principales utilisées par les grandes marques.",opts:["Il faut toujours créer une nouvelle marque pour chaque produit","Il existe 3 stratégies : Marque-mère (tout sous une marque), Marque endorsée (sous-marques avec lien visible), Maison de marques (marques indépendantes). Le choix dépend des synergies entre produits et des marchés cibles","Il faut uniquement utiliser des numéros pour différencier les produits","L'architecture de marque ne s'applique qu'aux multinationales"],correct:1,expl:"Architecture de marque : 1) Branded House (Apple Mac, Apple iPhone) — cohérence maximale, transfert de réputation automatique. 2) Endorsed brand (Nestlé KitKat) — sous-marques avec caution de la mère. 3) House of Brands (P&G : Ariel, Pampers) — marques totalement indépendantes, risque isolé. Pour Stageia : Branded House recommandé — tout sous la marque Stageia.",conseil:"Pour Stageia avec ses 3 piliers (Formation + Contenu + Stage), restez sous une seule marque Stageia avec des sous-catégories visuelles distinctes. Simplification = mémorisation.",ref:"David Aaker — Brand Portfolio Strategy. Interbrand — Brand Architecture Models.",xp:20},
+  ],
+};
+
+let state={cat:'design',diff:'all',score:0,xp:0,sessions:0,best:0,badges:0,totalQ:0,totalOk:0};
+let curQ=0,questions=[],answers=[],timer=null,timeLeft=0,scores=[];
+
+function setDiff(d){
+  document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  state.diff=d;
+}
+
+function getCats(){return document.getElementById('cats');}
+function initCats(){
+  getCats().innerHTML=CATS.map(c=>`<button class="cat-btn ${c.id===state.cat?'active':''}" onclick="setCat('${c.id}')" style="${c.id===state.cat?'background:'+c.color+';color:#fff;border-color:'+c.color:''}">${c.icon} ${c.name}</button>`).join('');
+}
+function setCat(id){
+  state.cat=id;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  const catData=CATS.find(c=>c.id===id);
+  const btns=document.querySelectorAll('.cat-btn');
+  btns.forEach(b=>{b.style='';if(b.textContent.includes(catData.name)){b.classList.add('active');b.style=`background:${catData.color};color:#fff;border-color:${catData.color}`;}});
+  showStart();
+}
+
+function showStart(){
+  const catData=CATS.find(c=>c.id===state.cat);
+  const qs=getFilteredQs();
+  document.getElementById('mainArea').innerHTML=`
+    <div class="start-card">
+      <div style="font-size:40px;margin-bottom:10px">${catData.icon}</div>
+      <div class="start-title">${catData.name}</div>
+      <div class="start-sub">
+        ${qs.length} questions disponibles dans cette catégorie${state.diff!=='all'?' (filtre: '+state.diff+')':''}.<br>
+        Chaque question a un chronomètre. Plus vous répondez vite, plus vous gagnez de points bonus !<br>
+        Obtenez des badges selon votre performance.
+      </div>
+      <button class="btn-start" style="background:${catData.color}" onclick="startQuiz()">🚀 Démarrer le Quiz</button>
+    </div>`;
+}
+
+function getFilteredQs(){
+  let qs=QS[state.cat]||[];
+  if(state.diff!=='all') qs=qs.filter(q=>q.diff===state.diff);
+  return qs;
+}
+
+function startQuiz(){
+  questions=getFilteredQs();
+  if(questions.length===0){document.getElementById('mainArea').innerHTML='<div class="start-card"><div class="start-title">Aucune question dans ce filtre</div><button class="btn-start" onclick="showStart()">Retour</button></div>';return;}
+  curQ=0;answers=[];
+  state.sessions++;
+  renderQ();
+}
+
+function renderQ(){
+  if(curQ>=questions.length){showBilan();return;}
+  const q=questions[curQ];
+  const catData=CATS.find(c=>c.id===state.cat);
+  const pct=Math.round(curQ/questions.length*100);
+  const ans=answers[curQ];
+  const xpMax=q.xp||10;
+
+  let optsHTML='';
+  if(ans!==undefined){
+    optsHTML=q.opts.map((o,i)=>{
+      let cls='opt dis';
+      if(i===q.correct)cls='opt correct';
+      else if(i===ans)cls='opt wrong';
+      return `<div class="${cls}"><div class="opt-letter">${String.fromCharCode(65+i)}</div><div class="opt-text">${o}</div></div>`;
+    }).join('');
+  } else {
+    optsHTML=q.opts.map((o,i)=>`<div class="opt" onclick="answerQ(${i})"><div class="opt-letter">${String.fromCharCode(65+i)}</div><div class="opt-text">${o}</div></div>`).join('');
+  }
+
+  let fbHTML='';
+  if(ans!==undefined){
+    const ok=ans===q.correct;
+    const xpGained=ok?Math.ceil(xpMax*(timeLeft/30)):0;
+    fbHTML=`<div class="fb show ${ok?'good':'bad'}">
+      <div class="fb-title">${ok?'✅ Excellente réponse !':'❌ Pas tout à fait...'}</div>
+      <div class="fb-text">${q.expl}</div>
+      ${q.conseil?`<div class="fb-ref">💡 Conseil pratique : ${q.conseil}</div>`:''}
+      ${q.ref?`<div class="fb-ref">📚 Référence : ${q.ref}</div>`:''}
+      ${ok?`<div class="xp-gain">+${xpGained} XP gagnés !</div>`:''}
+    </div>`;
+  }
+
+  document.getElementById('mainArea').innerHTML=`
+    <div class="quiz-card">
+      <div class="quiz-top">
+        <div class="qt-left">
+          <div style="width:32px;height:32px;border-radius:50%;background:${catData.color};display:flex;align-items:center;justify-content:center;font-size:15px">${catData.icon}</div>
+          <div><div class="qt-cat">${catData.name}</div><div class="qt-num">Question ${curQ+1}/${questions.length}</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="prog-wrap">
+            <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+            <div class="prog-txt">${pct}%</div>
+          </div>
+          <div class="timer" id="timer">${ans!==undefined?'—':'30'}</div>
+        </div>
+      </div>
+      <div class="q-body">
+        <span class="q-diff ${q.diff}">${q.diff==='easy'?'⭐ Facile':q.diff==='medium'?'⭐⭐ Intermédiaire':'⭐⭐⭐ Avancé'}</span>
+        <span class="q-cat-badge" style="background:${catData.color}22;color:${catData.color}">${catData.icon} ${q.cat||catData.name}</span>
+        <div class="q-text">${q.q}</div>
+        ${q.tip?`<div class="tip-box"><div class="tip-lbl">💡 Indice</div>${q.tip}</div>`:''}
+        <div class="opts">${optsHTML}</div>
+        ${fbHTML}
+        <button class="btn-next ${ans!==undefined?'show':''}" onclick="nextQ()" style="background:${catData.color}">
+          ${curQ<questions.length-1?'Question suivante →':'Voir mon score →'}
+        </button>
+      </div>
+    </div>`;
+
+  if(ans===undefined) startTimer();
+}
+
+function startTimer(){
+  timeLeft=30;clearInterval(timer);
+  const el=document.getElementById('timer');
+  if(el) el.textContent=timeLeft;
+  timer=setInterval(()=>{
+    timeLeft--;
+    const el=document.getElementById('timer');
+    if(el){el.textContent=timeLeft;el.className='timer'+(timeLeft<=5?' danger':timeLeft<=10?' warn':'');}
+    if(timeLeft<=0){clearInterval(timer);if(answers[curQ]===undefined)timeOut();}
+  },1000);
+}
+
+function timeOut(){
+  answers[curQ]=-1;state.totalQ++;
+  const q=questions[curQ];
+  const catData=CATS.find(c=>c.id===state.cat);
+  const optsHTML=q.opts.map((o,i)=>{
+    let cls=i===q.correct?'opt correct':'opt dis';
+    return `<div class="${cls}"><div class="opt-letter">${String.fromCharCode(65+i)}</div><div class="opt-text">${o}</div></div>`;
+  }).join('');
+  const qBody=document.querySelector('.q-body');
+  if(qBody){
+    qBody.querySelector('.opts').innerHTML=optsHTML;
+    const fb=document.createElement('div');
+    fb.className='fb show bad';
+    fb.innerHTML=`<div class="fb-title">⏱️ Temps écoulé !</div><div class="fb-text">La bonne réponse était : ${q.opts[q.correct]}<br><br>${q.expl}</div>`;
+    qBody.querySelector('.opts').after(fb);
+    const btn=qBody.querySelector('.btn-next');
+    if(btn)btn.classList.add('show');
+  }
+}
+
+function answerQ(i){
+  clearInterval(timer);
+  const q=questions[curQ];
+  const ok=i===q.correct;
+  answers[curQ]=i;
+  state.totalQ++;
+  if(ok){
+    const xp=Math.ceil((q.xp||10)*(timeLeft/30));
+    state.xp+=xp;state.totalOk++;
+    updateStatsDisplay();
+  }
+  renderQ();
+}
+
+function nextQ(){clearInterval(timer);curQ++;renderQ();}
+
+function showBilan(){
+  clearInterval(timer);
+  const total=questions.length;
+  const correct=answers.filter((a,i)=>a===questions[i].correct).length;
+  const pct=Math.round(correct/total*100);
+  state.sessions++;
+  if(pct>state.best){state.best=pct;}
+  const catData=CATS.find(c=>c.id===state.cat);
+  const ringCls=pct>=90?'exc':pct>=70?'bon':pct>=50?'moy':'fai';
+  let msg=pct>=90?`🏆 Exceptionnel ! Vous maîtrisez parfaitement la ${catData.name}. Vous êtes prêt(e) pour le niveau professionnel !`:
+          pct>=70?`👍 Très bon score ! Vous avez de solides bases en ${catData.name}. Quelques points à approfondir.`:
+          pct>=50?`📚 Score passable. Revisez les questions ratées et recommencez pour progresser.`:
+          `🔄 Des lacunes importantes en ${catData.name}. Consultez les ressources recommandées et réessayez.`;
+
+  // Badges
+  let badges=[];
+  if(pct===100) badges.push({cls:'gold',txt:'🏅 Score Parfait'});
+  if(pct>=80) badges.push({cls:'pink',txt:'⭐ Expert '+catData.name});
+  if(answers.filter((a,i)=>a!==undefined&&a!==-1&&(Date.now()-answers.answerTime)<5).length>=3) badges.push({cls:'silver',txt:'⚡ Speed Runner'});
+  if(state.sessions>=3) badges.push({cls:'silver',txt:'🎓 Assidu(e)'});
+  state.badges+=badges.length;
+
+  // Scores leaderboard
+  scores.push({name:'Vous',cat:catData.name,score:pct,xp:state.xp});
+  scores.sort((a,b)=>b.score-a.score);
+
+  const detail=questions.map((q,i)=>{
+    const ok=answers[i]===q.correct;
+    return `<div class="detail-item ${ok?'ok':'ko'}">
+      <span>${ok?'✅':'❌'}</span>
+      <span>${q.q.substring(0,60)}... → ${ok?'Correct':'Bonne réponse : '+q.opts[q.correct].substring(0,40)+'...'}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('mainArea').innerHTML=`
+    <div class="bilan-card show">
+      <div class="score-ring ${ringCls}">${correct}/${total}</div>
+      <div class="bilan-title">${pct>=90?'Expert !':pct>=70?'Excellent !':pct>=50?'Bien essayé !':'À améliorer'}</div>
+      <div class="bilan-msg">${msg}</div>
+      <div class="bilan-stats">
+        <div class="bs"><div class="bs-val">${pct}%</div><div class="bs-lbl">Score</div></div>
+        <div class="bs"><div class="bs-val">+${state.xp}</div><div class="bs-lbl">XP gagnés</div></div>
+        <div class="bs"><div class="bs-val">${total-correct}</div><div class="bs-lbl">Erreurs</div></div>
+      </div>
+      ${badges.length>0?`<div class="badge-list">${badges.map(b=>`<div class="badge ${b.cls}">${b.txt}</div>`).join('')}</div>`:''}
+      <div class="detail-list">${detail}</div>
+      <div class="bilan-btns">
+        <button class="btn-retry" onclick="startQuiz()">🔄 Recommencer</button>
+        <button class="btn-other" style="background:${catData.color}" onclick="showStart()">Autre catégorie →</button>
+      </div>
+    </div>`;
+
+  updateStatsDisplay();
+  renderLeaderboard();
+}
+
+function updateStatsDisplay(){
+  document.getElementById('st1').textContent=state.sessions;
+  document.getElementById('st2').textContent=state.xp;
+  document.getElementById('st3').textContent=state.best+'%';
+  document.getElementById('st4').textContent=state.badges;
+}
+
+function renderLeaderboard(){
+  const lb=document.getElementById('lbList');
+  if(!lb)return;
+  if(scores.length===0){lb.innerHTML='<div style="text-align:center;color:#888;font-size:12px;padding:10px">Complétez un quiz pour apparaître au classement !</div>';return;}
+  lb.innerHTML=scores.slice(0,5).map((s,i)=>`
+    <div class="lb-item">
+      <div class="lb-rank ${i===0?'r1':i===1?'r2':i===2?'r3':'rn'}">${i+1}</div>
+      <div>
+        <div class="lb-name">${s.name}</div>
+        <div class="lb-cat">${s.cat}</div>
+      </div>
+      <div class="lb-score">${s.score}%</div>
+    </div>`).join('');
+}
+
+// Init
+initCats();showStart();renderLeaderboard();
+</script>
+</body>
+</html>
