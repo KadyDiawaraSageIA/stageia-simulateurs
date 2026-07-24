@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Développement Web</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#1D4ED8);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#93C5FD;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#1D4ED8;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+.box{background:#EFF6FF;border-left:3px solid #1D4ED8;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.ok{background:#D1FAE5;border-left-color:#10B981;color:#065F46}
+.warn{background:#FEF3C7;border-left-color:#F59E0B;color:#92400E}
+.section-title{font-size:13px;font-weight:700;color:#0D0B2E;margin:14px 0 8px;border-bottom:2px solid #1D4ED8;padding-bottom:5px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+th{background:#1E3A8A;color:#fff;padding:8px;text-align:left;font-weight:600}
+td{padding:8px;border-bottom:1px solid #eee}
+tr:nth-child(even) td{background:#f8f8f8}
+code{background:#EFF6FF;padding:2px 6px;border-radius:4px;font-family:monospace;color:#1D4ED8}
+/* EDITOR */
+.editor-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.editor-col label{font-size:11px;font-weight:700;color:#1D4ED8;display:block;margin-bottom:4px}
+.code-area{width:100%;height:160px;font-family:'Courier New',monospace;font-size:12px;padding:10px;border:1px solid #ccc;border-radius:8px;resize:vertical;background:#0D0B2E;color:#93C5FD}
+.preview-frame{width:100%;height:340px;border:2px solid #e0e0e0;border-radius:10px;background:#fff}
+.btn{padding:8px 16px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600}
+.btn-blue{background:#1D4ED8;color:#fff}
+.btn-green{background:#10B981;color:#fff}
+.btn-orange{background:#F59E0B;color:#fff}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+/* QUIZ */
+.quiz-q{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:12px}
+.q-text{font-size:13px;font-weight:600;color:#0D0B2E;margin-bottom:10px;line-height:1.5}
+.opt{width:100%;padding:9px 14px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;font-size:12px;background:#fff;text-align:left;margin-bottom:5px;font-family:Arial}
+.opt:hover{border-color:#1D4ED8;background:#EFF6FF}
+.opt.good{border-color:#10B981;background:#D1FAE5;pointer-events:none;color:#065F46}
+.opt.bad{border-color:#EF4444;background:#FEE2E2;pointer-events:none;color:#991B1B}
+.opt.dis{pointer-events:none;opacity:.5}
+.fb{border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;line-height:1.6;display:none}
+.fb.show{display:block}
+.fb.ok{background:#D1FAE5;color:#065F46}
+.fb.ko{background:#FEE2E2;color:#991B1B}
+@media(max-width:700px){.editor-wrap{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<h1>💻 Développement Web — Stageia
+<small>HTML, CSS, éditeur en direct · Exercices · Quiz</small></h1>
+<div class="tabs">
+<button class="tab on" onclick="show(0)">📚 Leçons</button>
+<button class="tab" onclick="show(1)">🖥️ Éditeur en direct</button>
+<button class="tab" onclick="show(2)">✏️ Exercice</button>
+<button class="tab" onclick="show(3)">🎯 Quiz</button>
+</div>
+<!-- PANE 0: LEÇONS -->
+<div class="pane on" id="p0">
+<div class="section-title">🌐 Les bases du web</div>
+<div class="box">Une page web repose sur 3 langages complémentaires :<br>
+• <b>HTML</b> — la structure (titres, paragraphes, images, liens)<br>
+• <b>CSS</b> — l'apparence (couleurs, tailles, mise en page)<br>
+• <b>JavaScript</b> — le comportement interactif (clics, animations)</div>
+<div class="section-title">🏷️ Les balises HTML essentielles</div>
+<table>
+<thead><tr><th>Balise</th><th>Usage</th><th>Exemple</th></tr></thead>
+<tbody>
+<tr><td><code>&lt;h1&gt;</code></td><td>Titre principal</td><td><code>&lt;h1&gt;Bienvenue&lt;/h1&gt;</code></td></tr>
+<tr><td><code>&lt;p&gt;</code></td><td>Paragraphe</td><td><code>&lt;p&gt;Du texte...&lt;/p&gt;</code></td></tr>
+<tr><td><code>&lt;a&gt;</code></td><td>Lien</td><td><code>&lt;a href="..."&gt;Clique&lt;/a&gt;</code></td></tr>
+<tr><td><code>&lt;img&gt;</code></td><td>Image</td><td><code>&lt;img src="..."&gt;</code></td></tr>
+<tr><td><code>&lt;div&gt;</code></td><td>Conteneur (bloc)</td><td><code>&lt;div class="carte"&gt;</code></td></tr>
+<tr><td><code>&lt;button&gt;</code></td><td>Bouton</td><td><code>&lt;button&gt;Envoyer&lt;/button&gt;</code></td></tr>
+</tbody>
+</table>
+<div class="section-title">🎨 Les propriétés CSS essentielles</div>
+<table>
+<thead><tr><th>Propriété</th><th>Rôle</th><th>Exemple</th></tr></thead>
+<tbody>
+<tr><td><code>color</code></td><td>Couleur du texte</td><td><code>color: #1D4ED8;</code></td></tr>
+<tr><td><code>background</code></td><td>Couleur de fond</td><td><code>background: #EFF6FF;</code></td></tr>
+<tr><td><code>padding</code></td><td>Espace intérieur</td><td><code>padding: 16px;</code></td></tr>
+<tr><td><code>margin</code></td><td>Espace extérieur</td><td><code>margin: 10px;</code></td></tr>
+<tr><td><code>border-radius</code></td><td>Coins arrondis</td><td><code>border-radius: 8px;</code></td></tr>
+<tr><td><code>font-size</code></td><td>Taille du texte</td><td><code>font-size: 16px;</code></td></tr>
+</tbody>
+</table>
+<div class="box ok" style="margin-top:8px">💡 Astuce : le CSS s'applique aux balises HTML via une classe (<code>class="nom"</code>) ciblée dans le style avec un point (<code>.nom { ... }</code>).</div>
+</div>
+<!-- PANE 1: EDITEUR -->
+<div class="pane" id="p1">
+<div class="box" style="margin-bottom:12px">🖥️ Modifie le code HTML et CSS ci-dessous — l'aperçu à droite se met à jour automatiquement.</div>
+<div class="editor-wrap">
+<div class="editor-col">
+<label>HTML</label>
+<textarea class="code-area" id="htmlCode" oninput="renderPreview()"><div class="carte">
+  <h2>Ma Carte Produit</h2>
+  <p>Modifie ce texte et regarde le résultat !</p>
+  <button>Acheter</button>
+</div></textarea>
+<label style="margin-top:10px">CSS</label>
+<textarea class="code-area" id="cssCode" oninput="renderPreview()">.carte {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+  font-family: Arial;
+  text-align: center;
+}
+h2 { color: #1D4ED8; }
+button {
+  background: #10B981;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}</textarea>
+</div>
+<div class="editor-col">
+<label>Aperçu en direct</label>
+<iframe class="preview-frame" id="previewFrame"></iframe>
+</div>
+</div>
+<div class="btn-row">
+<button class="btn btn-orange" onclick="loadTemplate('carte')">📋 Modèle : Carte produit</button>
+<button class="btn btn-green" onclick="loadTemplate('form')">📋 Modèle : Formulaire de contact</button>
+</div>
+</div>
+<!-- PANE 2: EXERCICE -->
+<div class="pane" id="p2">
+<div class="section-title">✏️ Exercice — Corrige le code cassé</div>
+<div class="box warn" style="margin-bottom:12px">📝 Ce code contient 3 erreurs (balises mal fermées, propriété CSS mal orthographiée). Corrige-les directement dans l'éditeur ci-dessous puis observe si l'aperçu s'améliore.</div>
+<div class="editor-wrap">
+<div class="editor-col">
+<label>HTML à corriger</label>
+<textarea class="code-area" id="exHtml" oninput="renderExPreview()"><div class="profil">
+  <h2>Fatoumata Coulibaly
+  <p>Développeuse Web</p>
+</div></textarea>
+<label style="margin-top:10px">CSS à corriger</label>
+<textarea class="code-area" id="exCss" oninput="renderExPreview()">.profil {
+  backgroundcolor: #EFF6FF;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  font-family: Arial;
+}
+h2 { color: #1D4ED8; }</textarea>
+</div>
+<div class="editor-col">
+<label>Aperçu</label>
+<iframe class="preview-frame" id="exPreviewFrame" style="height:200px"></iframe>
+<button class="btn btn-blue" style="margin-top:10px" onclick="checkExercise()">✅ Vérifier ma correction</button>
+<div id="exRes"></div>
+</div>
+</div>
+</div>
+<!-- PANE 3: QUIZ -->
+<div class="pane" id="p3">
+<div id="quizArea"></div>
+</div>
+<script>
+function show(i){
+document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+if(i===1) renderPreview();
+if(i===2) renderExPreview();
+if(i===3) renderQuiz();
+}
+function renderPreview(){
+var h=document.getElementById('htmlCode').value;
+var c=document.getElementById('cssCode').value;
+var f=document.getElementById('previewFrame');
+f.srcdoc='<!DOCTYPE html><html><head><style>body{margin:0;padding:16px;font-family:Arial}'+c+'</style></head><body>'+h+'</body></html>';
+}
+function renderExPreview(){
+var h=document.getElementById('exHtml').value;
+var c=document.getElementById('exCss').value;
+var f=document.getElementById('exPreviewFrame');
+f.srcdoc='<!DOCTYPE html><html><head><style>body{margin:0;padding:16px;font-family:Arial}'+c+'</style></head><body>'+h+'</body></html>';
+}
+function checkExercise(){
+var h=document.getElementById('exHtml').value;
+var c=document.getElementById('exCss').value;
+var okH2Closed=h.includes('</h2>');
+var okDivStruct=(h.match(/<div/g)||[]).length===(h.match(/<\/div>/g)||[]).length;
+var okBg=c.includes('background-color')||c.includes('background:');
+var el=document.getElementById('exRes');
+var score=[okH2Closed,okDivStruct,okBg].filter(Boolean).length;
+el.innerHTML='<div class="box '+(score===3?'ok':'warn')+'" style="margin-top:10px">'+
+(okH2Closed?'✅ Balise &lt;h2&gt; correctement fermée':'❌ La balise &lt;h2&gt; n\'est pas fermée avec &lt;/h2&gt;')+'<br>'+
+(okDivStruct?'✅ Les balises &lt;div&gt; sont équilibrées':'❌ Il manque une balise &lt;/div&gt; ou il y en a trop')+'<br>'+
+(okBg?'✅ La propriété de couleur de fond est correcte':'❌ "backgroundcolor" n\'existe pas — c\'est "background-color" ou "background"')+'<br>'+
+(score===3?'<b>🏆 Bravo, tout est corrigé !</b>':'Score : '+score+'/3 — continue !')+
+'</div>';
+}
+function loadTemplate(t){
+if(t==='carte'){
+document.getElementById('htmlCode').value='<div class="carte">\n  <h2>Ma Carte Produit</h2>\n  <p>Modifie ce texte et regarde le résultat !</p>\n  <button>Acheter</button>\n</div>';
+document.getElementById('cssCode').value='.carte {\n  background: white;\n  border-radius: 12px;\n  padding: 20px;\n  box-shadow: 0 4px 12px rgba(0,0,0,.1);\n  font-family: Arial;\n  text-align: center;\n}\nh2 { color: #1D4ED8; }\nbutton {\n  background: #10B981;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 8px;\n  cursor: pointer;\n}';
+}else{
+document.getElementById('htmlCode').value='<div class="formulaire">\n  <h2>Contactez-nous</h2>\n  <input type="text" placeholder="Votre nom">\n  <input type="email" placeholder="Votre email">\n  <button>Envoyer</button>\n</div>';
+document.getElementById('cssCode').value='.formulaire {\n  background: #EFF6FF;\n  padding: 24px;\n  border-radius: 12px;\n  max-width: 300px;\n  font-family: Arial;\n}\ninput {\n  width: 100%;\n  padding: 10px;\n  margin-bottom: 10px;\n  border: 1px solid #ccc;\n  border-radius: 6px;\n  box-sizing: border-box;\n}\nbutton {\n  background: #1D4ED8;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 8px;\n  width: 100%;\n  cursor: pointer;\n}';
+}
+renderPreview();
+}
+// QUIZ
+var qStep=0,qScore=0,qAnswers=[];
+var QUESTIONS=[
+{q:"Quelle balise HTML sert à créer un lien vers une autre page ?",
+opts:["<link>","<a>","<href>","<url>"],correct:1,
+fb:"✅ La balise <a href=\"...\"> crée un lien cliquable. <link> sert à autre chose (relier une feuille de style par exemple).",pts:10},
+{q:"Quelle propriété CSS permet d'arrondir les coins d'un élément ?",
+opts:["corner-radius","round-corners","border-radius","box-round"],correct:2,
+fb:"✅ border-radius est la propriété standard pour arrondir les coins. Exemple : border-radius: 12px;",pts:10},
+{q:"Que signifie CSS ?",
+opts:["Computer Style Sheets","Cascading Style Sheets","Creative Style System","Colored Style Sheets"],correct:1,
+fb:"✅ CSS = Cascading Style Sheets (feuilles de style en cascade). 'Cascade' car les styles s'appliquent selon un ordre de priorité.",pts:10},
+{q:"Comment cible-t-on une classe CSS nommée 'carte' dans une feuille de style ?",
+opts:[".carte { }","#carte { }","carte { }","*carte { }"],correct:0,
+fb:"✅ Un point (.) cible une classe CSS. Un dièse (#) cible un id, qui doit être unique sur la page.",pts:15},
+{q:"Quelle balise structure le contenu principal invisible d'une page (métadonnées, titre d'onglet) ?",
+opts:["<body>","<header>","<head>","<meta>"],correct:2,
+fb:"✅ <head> contient les métadonnées (titre, encodage, liens CSS) — non visible sur la page. <body> contient tout le contenu visible.",pts:10},
+{q:"Un site est 'responsive'. Que signifie ce terme ?",
+opts:["Le site répond vite aux clics","Le site s'adapte automatiquement à toutes les tailles d'écran","Le site utilise beaucoup de JavaScript","Le site a un chat en direct"],correct:1,
+fb:"✅ Un design responsive s'adapte à la taille de l'écran (mobile, tablette, ordinateur) grâce au CSS (media queries notamment).",pts:15},
+];
+function renderQuiz(){
+if(qStep>=QUESTIONS.length){showResult();return;}
+var q=QUESTIONS[qStep];
+var ans=qAnswers[qStep]!==undefined;
+var html='<div style="text-align:center;margin-bottom:10px;font-size:12px;color:#666">Question '+(qStep+1)+'/'+QUESTIONS.length+' · Score : <b>'+qScore+' pts</b></div>'+
+'<div class="quiz-q"><div class="q-text">'+q.q+'</div>'+
+q.opts.map(function(o,i){
+var cls='opt';
+if(ans) cls+=(i===q.correct?' good':(i===qAnswers[qStep]?' bad':' dis'));
+return '<button class="'+cls+'" onclick="ansQ('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+}).join('')+
+(ans?'<div class="fb show '+(qAnswers[qStep]===q.correct?'ok':'ko')+'">'+q.fb+'</div>':'')+
+(ans?'<button class="btn btn-blue" style="margin-top:8px" onclick="nextQ()">'+(qStep<QUESTIONS.length-1?'Suivant →':'Voir mon score →')+'</button>':'')+
+'</div>';
+document.getElementById('quizArea').innerHTML=html;
+}
+function ansQ(i){if(qAnswers[qStep]!==undefined)return;qAnswers[qStep]=i;if(i===QUESTIONS[qStep].correct)qScore+=QUESTIONS[qStep].pts;renderQuiz();}
+function nextQ(){qStep++;renderQuiz();}
+function showResult(){
+var max=QUESTIONS.reduce(function(s,q){return s+q.pts;},0);
+var p=Math.round(qScore/max*100);
+var msg=p>=80?'🏆 Futur(e) développeur(se) confirmé(e) !':p>=60?'👍 Bonnes bases !':'📚 Continue à pratiquer !';
+document.getElementById('quizArea').innerHTML=
+'<div style="text-align:center;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-radius:12px;padding:20px;margin-bottom:14px;border:2px solid #1D4ED8">'+
+'<div style="font-size:36px;font-weight:700;color:#1D4ED8">'+qScore+'/'+max+'</div>'+
+'<div style="font-size:14px;font-weight:700;margin:6px 0">'+msg+'</div>'+
+'<div style="font-size:12px;color:#666">Score : '+p+'%</div></div>'+
+'<button onclick="qStep=0;qScore=0;qAnswers=[];renderQuiz()" class="btn btn-blue" style="width:100%;padding:12px">🔄 Recommencer</button>';
+}
+renderPreview();
+</script>
+</body>
+</html>
