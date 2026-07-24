@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Design Graphique</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#BE185D);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#FBCFE8;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#BE185D;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+.box{background:#FCE4EC;border-left:3px solid #BE185D;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.ok{background:#D1FAE5;border-left-color:#10B981;color:#065F46}
+.warn{background:#FEF3C7;border-left-color:#F59E0B;color:#92400E}
+.section-title{font-size:13px;font-weight:700;color:#0D0B2E;margin:14px 0 8px;border-bottom:2px solid #BE185D;padding-bottom:5px}
+label{font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:4px}
+input[type="color"]{width:100%;height:44px;border:1px solid #ccc;border-radius:8px;cursor:pointer}
+.swatch-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.swatch{border-radius:10px;height:80px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;color:#fff;font-size:10px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.btn{padding:8px 16px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600}
+.btn-pink{background:#BE185D;color:#fff}
+.btn-purple{background:#8B5CF6;color:#fff}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+th{background:#831843;color:#fff;padding:8px;text-align:left;font-weight:600}
+td{padding:8px;border-bottom:1px solid #eee}
+tr:nth-child(even) td{background:#f8f8f8}
+.font-demo{padding:16px;border:2px solid #e0e0e0;border-radius:10px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.font-demo:hover{border-color:#BE185D}
+.font-demo.sel{border-color:#BE185D;background:#FCE4EC}
+.font-demo h3{font-size:20px;margin-bottom:4px}
+.font-demo p{font-size:12px;color:#666}
+.brief-card{background:#f8f8f8;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid #e0e0e0}
+.opt-palette{display:flex;gap:4px;margin:8px 0;cursor:pointer;padding:8px;border-radius:8px;border:2px solid #ddd}
+.opt-palette:hover{border-color:#BE185D}
+.opt-palette.good{border-color:#10B981;background:#D1FAE5}
+.opt-palette.bad{border-color:#EF4444;background:#FEE2E2}
+.opt-palette .sw{width:32px;height:32px;border-radius:6px}
+.quiz-q{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:12px}
+.q-text{font-size:13px;font-weight:600;color:#0D0B2E;margin-bottom:10px;line-height:1.5}
+.opt{width:100%;padding:9px 14px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;font-size:12px;background:#fff;text-align:left;margin-bottom:5px;font-family:Arial}
+.opt:hover{border-color:#BE185D;background:#FCE4EC}
+.opt.good{border-color:#10B981;background:#D1FAE5;pointer-events:none;color:#065F46}
+.opt.bad{border-color:#EF4444;background:#FEE2E2;pointer-events:none;color:#991B1B}
+.opt.dis{pointer-events:none;opacity:.5}
+.fb{border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;line-height:1.6;display:none}
+.fb.show{display:block}
+.fb.ok{background:#D1FAE5;color:#065F46}
+.fb.ko{background:#FEE2E2;color:#991B1B}
+@media(max-width:600px){.swatch-row{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<h1>🎨 Design Graphique — Stageia
+<small>Théorie des couleurs · Typographie · Composition · Quiz</small></h1>
+<div class="tabs">
+<button class="tab on" onclick="show(0)">📚 Leçons</button>
+<button class="tab" onclick="show(1)">🎨 Outil Couleurs</button>
+<button class="tab" onclick="show(2)">🔤 Typographie</button>
+<button class="tab" onclick="show(3)">✏️ Exercice Brief</button>
+<button class="tab" onclick="show(4)">🎯 Quiz</button>
+</div>
+<!-- PANE 0: LEÇONS -->
+<div class="pane on" id="p0">
+<div class="section-title">🎨 Les bases de la théorie des couleurs</div>
+<div class="box">Le cercle chromatique organise les couleurs et permet de créer des palettes harmonieuses :<br>
+• <b>Complémentaires</b> — couleurs opposées (fort contraste, dynamique)<br>
+• <b>Analogues</b> — couleurs voisines (harmonie douce)<br>
+• <b>Triadiques</b> — 3 couleurs équidistantes (équilibré et vif)</div>
+<div class="section-title">🌈 Psychologie des couleurs</div>
+<table>
+<thead><tr><th>Couleur</th><th>Émotion associée</th><th>Usage fréquent</th></tr></thead>
+<tbody>
+<tr><td>🔵 Bleu</td><td>Confiance, sérieux, calme</td><td>Banques, tech, santé</td></tr>
+<tr><td>🟢 Vert</td><td>Nature, croissance, argent</td><td>Écologie, finance, agro</td></tr>
+<tr><td>🔴 Rouge</td><td>Urgence, passion, énergie</td><td>Promotions, alimentaire</td></tr>
+<tr><td>🟡 Jaune</td><td>Joie, optimisme, attention</td><td>Enfants, alertes</td></tr>
+<tr><td>🟣 Violet</td><td>Luxe, créativité, spiritualité</td><td>Beauté, premium</td></tr>
+<tr><td>⚫ Noir</td><td>Élégance, puissance, sobriété</td><td>Luxe, mode</td></tr>
+</tbody>
+</table>
+<div class="section-title">📐 Règles de composition</div>
+<div class="box">1️⃣ <b>Règle des tiers :</b> diviser l'espace en 3x3, placer les éléments clés sur les intersections.<br>
+2️⃣ <b>Hiérarchie visuelle :</b> l'élément le plus important doit être le plus visible (taille, couleur, contraste).<br>
+3️⃣ <b>Espace négatif :</b> laisser de l'air autour des éléments — ne pas tout remplir.<br>
+4️⃣ <b>Alignement :</b> tout élément doit être aligné avec un autre — rien au hasard.</div>
+<div class="box ok" style="margin-top:8px">💡 Un bon design n'est jamais "joli au hasard" — chaque couleur et chaque espace a une raison d'être.</div>
+</div>
+<!-- PANE 1: OUTIL COULEURS -->
+<div class="pane" id="p1">
+<div class="box" style="margin-bottom:12px">🎨 Choisis une couleur de base, l'outil te génère automatiquement 3 palettes harmonieuses à partir du cercle chromatique.</div>
+<label>Couleur de base</label>
+<input type="color" id="baseColor" value="#1D4ED8" oninput="renderPalettes()">
+<div id="paletteResult"></div>
+</div>
+<!-- PANE 2: TYPOGRAPHIE -->
+<div class="pane" id="p2">
+<div class="box" style="margin-bottom:12px">🔤 Clique sur une association de polices pour voir laquelle convient le mieux à un projet professionnel.</div>
+<div class="font-demo sel" onclick="selFont(this)">
+<h3 style="font-family:Georgia,serif">Titre en Georgia (serif)</h3>
+<p style="font-family:Arial">Texte courant en Arial (sans-serif) — Association classique, sérieuse, adaptée aux marques financières ou institutionnelles.</p>
+</div>
+<div class="font-demo" onclick="selFont(this)">
+<h3 style="font-family:'Trebuchet MS',sans-serif;font-weight:900">Titre en Trebuchet Bold</h3>
+<p style="font-family:'Trebuchet MS',sans-serif">Texte courant assorti — Association moderne et dynamique, adaptée aux startups et marques tech.</p>
+</div>
+<div class="font-demo" onclick="selFont(this)">
+<h3 style="font-family:'Courier New',monospace">Titre en Courier (monospace)</h3>
+<p style="font-family:Arial">Texte courant en Arial — Association originale évoquant le code/tech, à utiliser avec parcimonie.</p>
+</div>
+<div class="box" style="margin-top:12px">📌 <b>Règle d'or :</b> ne jamais utiliser plus de 2 polices différentes sur un même support. Une pour les titres, une pour le texte courant.</div>
+</div>
+<!-- PANE 3: EXERCICE -->
+<div class="pane" id="p3">
+<div class="section-title">✏️ Exercice — Choisis la bonne palette selon le brief</div>
+<div class="brief-card">
+<b>Brief 1 :</b> Une clinique de santé à Bamako veut un logo qui inspire confiance et propreté.
+<div class="opt-palette" onclick="checkBrief(this,true)"><div class="sw" style="background:#1D4ED8"></div><div class="sw" style="background:#93C5FD"></div><div class="sw" style="background:#fff;border:1px solid #ddd"></div></div>
+<div class="opt-palette" onclick="checkBrief(this,false)"><div class="sw" style="background:#EF4444"></div><div class="sw" style="background:#F59E0B"></div><div class="sw" style="background:#1a1a1a"></div></div>
+</div>
+<div class="brief-card">
+<b>Brief 2 :</b> Une marque de vêtements de luxe malienne veut évoquer l'élégance.
+<div class="opt-palette" onclick="checkBrief(this,true)"><div class="sw" style="background:#1a1a1a"></div><div class="sw" style="background:#D4AF37"></div><div class="sw" style="background:#fff;border:1px solid #ddd"></div></div>
+<div class="opt-palette" onclick="checkBrief(this,false)"><div class="sw" style="background:#10B981"></div><div class="sw" style="background:#F59E0B"></div><div class="sw" style="background:#3B82F6"></div></div>
+</div>
+<div class="brief-card">
+<b>Brief 3 :</b> Une association écologique de reboisement au Mali.
+<div class="opt-palette" onclick="checkBrief(this,false)"><div class="sw" style="background:#7C3AED"></div><div class="sw" style="background:#EC4899"></div><div class="sw" style="background:#1a1a1a"></div></div>
+<div class="opt-palette" onclick="checkBrief(this,true)"><div class="sw" style="background:#059669"></div><div class="sw" style="background:#92400E"></div><div class="sw" style="background:#FDE68A"></div></div>
+</div>
+<div id="briefRes"></div>
+</div>
+<!-- PANE 4: QUIZ -->
+<div class="pane" id="p4">
+<div id="quizArea"></div>
+</div>
+<script>
+function show(i){
+document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+if(i===1) renderPalettes();
+if(i===4) renderQuiz();
+}
+function hexToHsl(hex){
+var r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;
+var max=Math.max(r,g,b),min=Math.min(r,g,b),h,s,l=(max+min)/2;
+if(max===min){h=s=0;}else{
+var d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);
+if(max===r)h=(g-b)/d+(g<b?6:0);else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;
+h/=6;}
+return [h*360,s*100,l*100];
+}
+function hslToHex(h,s,l){
+h/=360;s/=100;l/=100;
+function hue2rgb(p,q,t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;}
+var r,g,b;
+if(s===0){r=g=b=l;}else{
+var q=l<0.5?l*(1+s):l+s-l*s;var p=2*l-q;
+r=hue2rgb(p,q,h+1/3);g=hue2rgb(p,q,h);b=hue2rgb(p,q,h-1/3);}
+function toHex(x){var h=Math.round(x*255).toString(16);return h.length===1?'0'+h:h;}
+return '#'+toHex(r)+toHex(g)+toHex(b);
+}
+function renderPalettes(){
+var base=document.getElementById('baseColor').value;
+var hsl=hexToHsl(base);
+var h=hsl[0],s=hsl[1],l=hsl[2];
+var comp=hslToHex((h+180)%360,s,l);
+var an1=hslToHex((h+30)%360,s,l),an2=hslToHex((h-30+360)%360,s,l);
+var tri1=hslToHex((h+120)%360,s,l),tri2=hslToHex((h+240)%360,s,l);
+var el=document.getElementById('paletteResult');
+el.innerHTML=
+'<div class="section-title">Palette Complémentaire</div>'+
+'<div class="swatch-row"><div class="swatch" style="background:'+base+'">'+base+'</div><div class="swatch" style="background:'+comp+'">'+comp+'</div></div>'+
+'<div class="section-title">Palette Analogue</div>'+
+'<div class="swatch-row"><div class="swatch" style="background:'+an2+'">'+an2+'</div><div class="swatch" style="background:'+base+'">'+base+'</div><div class="swatch" style="background:'+an1+'">'+an1+'</div></div>'+
+'<div class="section-title">Palette Triadique</div>'+
+'<div class="swatch-row"><div class="swatch" style="background:'+base+'">'+base+'</div><div class="swatch" style="background:'+tri1+'">'+tri1+'</div><div class="swatch" style="background:'+tri2+'">'+tri2+'</div></div>';
+}
+function selFont(el){
+document.querySelectorAll('.font-demo').forEach(function(f){f.classList.remove('sel');});
+el.classList.add('sel');
+}
+function checkBrief(el,isGood){
+var parent=el.parentElement;
+parent.querySelectorAll('.opt-palette').forEach(function(p){p.style.pointerEvents='none';});
+if(isGood) el.classList.add('good'); else el.classList.add('bad');
+if(!isGood){
+parent.querySelectorAll('.opt-palette').forEach(function(p,idx){
+if(p!==el) p.classList.add('good');
+});
+}
+}
+// QUIZ
+var qStep=0,qScore=0,qAnswers=[];
+var QUESTIONS=[
+{q:"Sur le cercle chromatique, que sont des couleurs 'complémentaires' ?",
+opts:["Des couleurs identiques","Des couleurs opposées sur le cercle","Des couleurs voisines","Des nuances de gris"],correct:1,
+fb:"✅ Les couleurs complémentaires sont opposées sur le cercle chromatique (ex: bleu/orange). Elles créent un fort contraste visuel.",pts:10},
+{q:"Quelle couleur est le plus souvent associée à la confiance et au sérieux ?",
+opts:["Rouge","Jaune","Bleu","Rose"],correct:2,
+fb:"✅ Le bleu évoque la confiance, le calme et le professionnalisme — très utilisé par les banques et entreprises tech.",pts:10},
+{q:"Combien de polices différentes maximum recommande-t-on sur un même support ?",
+opts:["1","2","4","6"],correct:1,
+fb:"✅ La règle d'or : 2 polices maximum (une pour les titres, une pour le texte courant) pour garder une composition claire et professionnelle.",pts:10},
+{q:"Qu'est-ce que 'l'espace négatif' en design ?",
+opts:["Une couleur sombre","L'espace vide autour des éléments","Une erreur de mise en page","Le fond noir d'une image"],correct:1,
+fb:"✅ L'espace négatif (ou 'espace blanc') est l'espace vide intentionnellement laissé autour des éléments — il aide à la lisibilité et donne un aspect professionnel.",pts:15},
+{q:"La 'règle des tiers' en composition consiste à...",
+opts:["Diviser l'image en 3 couleurs","Utiliser 3 polices","Diviser l'espace en grille 3x3 et placer les éléments clés sur les intersections","Créer 3 versions du design"],correct:2,
+fb:"✅ La règle des tiers aide à créer des compositions équilibrées et naturellement agréables à l'œil, en plaçant les éléments importants sur les lignes/intersections d'une grille 3x3.",pts:15},
+{q:"Un logo pour une marque de luxe utilise souvent quelle association de couleurs ?",
+opts:["Rouge vif et jaune fluo","Noir et doré","Vert pomme et rose bonbon","Toutes les couleurs de l'arc-en-ciel"],correct:1,
+fb:"✅ Noir et doré évoquent l'élégance, le prestige et le luxe — c'est un classique du design haut de gamme.",pts:10},
+];
+function renderQuiz(){
+if(qStep>=QUESTIONS.length){showResult();return;}
+var q=QUESTIONS[qStep];
+var ans=qAnswers[qStep]!==undefined;
+var html='<div style="text-align:center;margin-bottom:10px;font-size:12px;color:#666">Question '+(qStep+1)+'/'+QUESTIONS.length+' · Score : <b>'+qScore+' pts</b></div>'+
+'<div class="quiz-q"><div class="q-text">'+q.q+'</div>'+
+q.opts.map(function(o,i){
+var cls='opt';
+if(ans) cls+=(i===q.correct?' good':(i===qAnswers[qStep]?' bad':' dis'));
+return '<button class="'+cls+'" onclick="ansQ('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+}).join('')+
+(ans?'<div class="fb show '+(qAnswers[qStep]===q.correct?'ok':'ko')+'">'+q.fb+'</div>':'')+
+(ans?'<button class="btn btn-pink" style="margin-top:8px" onclick="nextQ()">'+(qStep<QUESTIONS.length-1?'Suivant →':'Voir mon score →')+'</button>':'')+
+'</div>';
+document.getElementById('quizArea').innerHTML=html;
+}
+function ansQ(i){if(qAnswers[qStep]!==undefined)return;qAnswers[qStep]=i;if(i===QUESTIONS[qStep].correct)qScore+=QUESTIONS[qStep].pts;renderQuiz();}
+function nextQ(){qStep++;renderQuiz();}
+function showResult(){
+var max=QUESTIONS.reduce(function(s,q){return s+q.pts;},0);
+var p=Math.round(qScore/max*100);
+var msg=p>=80?'🏆 Œil de designer confirmé !':p>=60?'👍 Bonnes bases créatives !':'📚 Continue à t\'exercer !';
+document.getElementById('quizArea').innerHTML=
+'<div style="text-align:center;background:linear-gradient(135deg,#FCE4EC,#FBCFE8);border-radius:12px;padding:20px;margin-bottom:14px;border:2px solid #BE185D">'+
+'<div style="font-size:36px;font-weight:700;color:#BE185D">'+qScore+'/'+max+'</div>'+
+'<div style="font-size:14px;font-weight:700;margin:6px 0">'+msg+'</div>'+
+'<div style="font-size:12px;color:#666">Score : '+p+'%</div></div>'+
+'<button onclick="qStep=0;qScore=0;qAnswers=[];renderQuiz()" class="btn btn-pink" style="width:100%;padding:12px">🔄 Recommencer</button>';
+}
+renderPalettes();
+</script>
+</body>
+</html>
