@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Publicité en Ligne</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#7C3AED);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#DDD6FE;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#7C3AED;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+.box{background:#F5F3FF;border-left:3px solid #7C3AED;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.ok{background:#D1FAE5;border-left-color:#10B981;color:#065F46}
+.warn{background:#FEF3C7;border-left-color:#F59E0B;color:#92400E}
+.section-title{font-size:13px;font-weight:700;color:#0D0B2E;margin:14px 0 8px;border-bottom:2px solid #7C3AED;padding-bottom:5px}
+label{font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:4px}
+input,select{width:100%;padding:7px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;font-family:Arial;background:#fff}
+input:focus,select:focus{outline:none;border-color:#7C3AED}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.row.r3{grid-template-columns:1fr 1fr 1fr}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+th{background:#4C1D95;color:#fff;padding:8px;text-align:left;font-weight:600}
+td{padding:8px;border-bottom:1px solid #eee}
+tr:nth-child(even) td{background:#f8f8f8}
+tr.tot td{background:#F5F3FF;font-weight:700;color:#7C3AED}
+.btn{padding:8px 16px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600}
+.btn-purple{background:#7C3AED;color:#fff}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.stat-card{background:#F5F3FF;border-radius:10px;padding:14px;text-align:center;border:1px solid #DDD6FE}
+.stat-val{font-size:20px;font-weight:700;color:#7C3AED}
+.stat-lbl{font-size:10px;color:#666;margin-top:3px}
+.quiz-q{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:12px}
+.q-text{font-size:13px;font-weight:600;color:#0D0B2E;margin-bottom:10px;line-height:1.5}
+.opt{width:100%;padding:9px 14px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;font-size:12px;background:#fff;text-align:left;margin-bottom:5px;font-family:Arial}
+.opt:hover{border-color:#7C3AED;background:#F5F3FF}
+.opt.good{border-color:#10B981;background:#D1FAE5;pointer-events:none;color:#065F46}
+.opt.bad{border-color:#EF4444;background:#FEE2E2;pointer-events:none;color:#991B1B}
+.opt.dis{pointer-events:none;opacity:.5}
+.fb{border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;line-height:1.6;display:none}
+.fb.show{display:block}
+.fb.ok{background:#D1FAE5;color:#065F46}
+.fb.ko{background:#FEE2E2;color:#991B1B}
+@media(max-width:600px){.row,.row.r3,.stat-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<h1>📢 Publicité en Ligne — Stageia
+<small>Facebook Ads · Google Ads · Budget, portée, conversions · Quiz</small></h1>
+<div class="tabs">
+<button class="tab on" onclick="show(0)">📚 Leçons</button>
+<button class="tab" onclick="show(1)">🧮 Simulateur Budget</button>
+<button class="tab" onclick="show(2)">✏️ Exercice</button>
+<button class="tab" onclick="show(3)">🎯 Quiz</button>
+</div>
+<!-- PANE 0: LEÇONS -->
+<div class="pane on" id="p0">
+<div class="section-title">📢 Les bases de la publicité en ligne</div>
+<div class="box">Que ce soit sur Facebook, Instagram ou Google, une campagne publicitaire repose sur les mêmes indicateurs clés à comprendre avant de dépenser un seul FCFA.</div>
+<div class="section-title">🔤 Le vocabulaire essentiel</div>
+<table>
+<thead><tr><th>Terme</th><th>Signification</th></tr></thead>
+<tbody>
+<tr><td><b>CPC</b></td><td>Coût Par Clic — ce que tu payes à chaque fois que quelqu'un clique sur ta pub</td></tr>
+<tr><td><b>CPM</b></td><td>Coût Pour Mille impressions — prix pour 1000 affichages de ta pub</td></tr>
+<tr><td><b>Portée (Reach)</b></td><td>Nombre de personnes uniques ayant vu ta publicité</td></tr>
+<tr><td><b>Taux de conversion</b></td><td>% de personnes ayant réalisé l'action voulue (achat, inscription...)</td></tr>
+<tr><td><b>ROAS</b></td><td>Retour sur investissement publicitaire (revenu généré ÷ argent dépensé)</td></tr>
+<tr><td><b>Ciblage</b></td><td>Choix du public qui verra la pub (âge, ville, centres d'intérêt...)</td></tr>
+</tbody>
+</table>
+<div class="section-title">🎯 Bien cibler sa publicité</div>
+<div class="box">1️⃣ Définir précisément qui est le client idéal (âge, ville, revenu, intérêts)<br>
+2️⃣ Commencer avec un petit budget test avant d'investir massivement<br>
+3️⃣ Tester plusieurs visuels/textes différents (A/B testing)<br>
+4️⃣ Suivre les résultats chaque jour et ajuster</div>
+<div class="box ok" style="margin-top:8px">💡 Au Mali, le marché mobile (WhatsApp Business, Facebook) est particulièrement puissant vu le taux élevé d'usage du mobile pour accéder à internet.</div>
+</div>
+<!-- PANE 1: SIMULATEUR -->
+<div class="pane" id="p1">
+<div class="box" style="margin-bottom:12px">🧮 Renseigne ton budget et tes estimations pour voir la performance prévisionnelle de ta campagne.</div>
+<div class="row r3">
+<div><label>Budget total (FCFA)</label><input type="number" id="budget" value="50000" oninput="calcCampagne()"></div>
+<div><label>CPC estimé (FCFA)</label><input type="number" id="cpc" value="150" oninput="calcCampagne()"></div>
+<div><label>Taux de conversion (%)</label><input type="number" id="tconv" value="3" oninput="calcCampagne()"></div>
+</div>
+<div class="row">
+<div><label>Panier moyen / valeur d'une conversion (FCFA)</label><input type="number" id="panier" value="15000" oninput="calcCampagne()"></div>
+<div><label>Plateforme</label><select id="plateforme" onchange="calcCampagne()">
+<option value="facebook">Facebook / Instagram</option>
+<option value="google">Google Ads (recherche)</option>
+<option value="whatsapp">WhatsApp Business (boost)</option>
+</select></div>
+</div>
+<div id="campResult"></div>
+</div>
+<!-- PANE 2: EXERCICE -->
+<div class="pane" id="p2">
+<div class="section-title">✏️ Exercice — Optimise ce budget</div>
+<div class="box warn" style="margin-bottom:10px">📝 Une boutique en ligne à Bamako a un budget de 100 000 FCFA. Le CPC est de 200 FCFA. Le taux de conversion habituel est de 2%. Le panier moyen est de 25 000 FCFA.</div>
+<div class="row r3">
+<div><label>Combien de clics obtiendra-t-elle ? (FCFA)</label><input type="number" id="ex_clics" oninput="checkEx()"></div>
+<div><label>Combien de ventes estimées ?</label><input type="number" id="ex_ventes" oninput="checkEx()"></div>
+<div><label>Chiffre d'affaires généré (FCFA) ?</label><input type="number" id="ex_ca" oninput="checkEx()"></div>
+</div>
+<div id="exRes"></div>
+</div>
+<!-- PANE 3: QUIZ -->
+<div class="pane" id="p3">
+<div id="quizArea"></div>
+</div>
+<script>
+function show(i){
+document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+if(i===1) calcCampagne();
+if(i===3) renderQuiz();
+}
+function gn(id,d){return parseFloat(document.getElementById(id)?.value)||d||0;}
+function fm(n){return Math.round(n).toLocaleString('fr-FR');}
+function calcCampagne(){
+var budget=gn('budget',50000);
+var cpc=gn('cpc',150);
+var tconv=gn('tconv',3);
+var panier=gn('panier',15000);
+var clics=budget/cpc;
+var conversions=clics*(tconv/100);
+var ca=conversions*panier;
+var roas=budget>0?(ca/budget):0;
+var el=document.getElementById('campResult');
+el.innerHTML='<div class="stat-grid">'+
+'<div class="stat-card"><div class="stat-val">'+fm(clics)+'</div><div class="stat-lbl">Clics estimés</div></div>'+
+'<div class="stat-card"><div class="stat-val">'+fm(conversions)+'</div><div class="stat-lbl">Conversions/Ventes</div></div>'+
+'<div class="stat-card"><div class="stat-val">'+fm(ca)+' F</div><div class="stat-lbl">Chiffre d\'affaires généré</div></div>'+
+'<div class="stat-card" style="background:'+(roas>=2?'#D1FAE5':'#FEE2E2')+'"><div class="stat-val" style="color:'+(roas>=2?'#065F46':'#991B1B')+'">'+roas.toFixed(1)+'x</div><div class="stat-lbl">ROAS (retour sur investissement)</div></div>'+
+'</div>'+
+'<div class="box '+(roas>=2?'ok':'warn')+'">'+
+(roas>=2?'✅ Bon ROAS ! Pour chaque FCFA dépensé, tu génères '+roas.toFixed(1)+' FCFA de chiffre d\'affaires. Une campagne est généralement jugée rentable à partir d\'un ROAS de 2x à 4x selon la marge.':
+'⚠️ ROAS faible ('+roas.toFixed(1)+'x) — soit le CPC est trop élevé, soit le taux de conversion ou le panier moyen sont trop bas. Essaie d\'ajuster le ciblage ou l\'offre.')+
+'</div>';
+}
+function checkEx(){
+var clics=gn('ex_clics',0);
+var ventes=gn('ex_ventes',0);
+var ca=gn('ex_ca',0);
+var okClics=Math.abs(clics-500)<5;
+var okVentes=Math.abs(ventes-10)<1;
+var okCa=Math.abs(ca-250000)<2000;
+var el=document.getElementById('exRes');
+el.innerHTML='<div class="box '+(okClics&&okVentes&&okCa?'ok':'warn')+'" style="margin-top:8px">'+
+(okClics?'✅ Clics = 500 (100 000 ÷ 200)':'❌ Clics = Budget ÷ CPC = 100 000 ÷ 200 = <b>500 clics</b>')+'<br>'+
+(okVentes?'✅ Ventes = 10 (500 × 2%)':'❌ Ventes = Clics × Taux conversion = 500 × 2% = <b>10 ventes</b>')+'<br>'+
+(okCa?'✅ CA = 250 000 FCFA (10 × 25 000)':'❌ CA = Ventes × Panier moyen = 10 × 25 000 = <b>250 000 FCFA</b>')+
+'</div>';
+}
+// QUIZ
+var qStep=0,qScore=0,qAnswers=[];
+var QUESTIONS=[
+{q:"Que signifie CPC en publicité en ligne ?",
+opts:["Coût Par Client","Coût Par Clic","Campagne Publicitaire Ciblée","Contenu Publié Chaque jour"],correct:1,
+fb:"✅ CPC = Coût Par Clic. C'est le montant payé à chaque fois qu'un utilisateur clique sur la publicité.",pts:10},
+{q:"Une campagne a un ROAS de 4. Que signifie ce chiffre ?",
+opts:["4 personnes ont vu la pub","Pour 1 FCFA dépensé, 4 FCFA de chiffre d'affaires générés","4% de taux de conversion","Le budget a été divisé par 4"],correct:1,
+fb:"✅ ROAS (Return On Ad Spend) = chiffre d'affaires généré ÷ budget dépensé. Un ROAS de 4 signifie 4 FCFA gagnés pour chaque FCFA investi.",pts:15},
+{q:"Pourquoi est-il recommandé de tester plusieurs visuels (A/B testing) avant une grosse campagne ?",
+opts:["Pour payer plus cher","Pour identifier quel visuel convertit le mieux avant d'investir massivement","C'est obligatoire légalement","Pour ralentir la campagne"],correct:1,
+fb:"✅ L'A/B testing permet de comparer plusieurs versions à petite échelle pour identifier la plus performante, avant d'investir le budget principal dessus.",pts:15},
+{q:"Le 'ciblage' publicitaire consiste à...",
+opts:["Choisir la couleur de la pub","Définir le public qui verra la publicité (âge, ville, intérêts...)","Réduire le budget","Choisir l'heure de publication uniquement"],correct:1,
+fb:"✅ Le ciblage définit précisément QUI verra la publicité, ce qui a un impact énorme sur son efficacité et son coût.",pts:10},
+{q:"Une entreprise malienne a un petit budget test. Que doit-elle faire en priorité ?",
+opts:["Cibler tout le pays sans distinction","Tester avec un public réduit et bien défini avant d'élargir","Dépenser tout le budget en une journée","Ignorer les statistiques"],correct:1,
+fb:"✅ Avec un budget limité, mieux vaut tester sur un public restreint et bien ciblé, analyser les résultats, puis élargir progressivement ce qui fonctionne.",pts:15},
+];
+function renderQuiz(){
+if(qStep>=QUESTIONS.length){showResult();return;}
+var q=QUESTIONS[qStep];
+var ans=qAnswers[qStep]!==undefined;
+var html='<div style="text-align:center;margin-bottom:10px;font-size:12px;color:#666">Question '+(qStep+1)+'/'+QUESTIONS.length+' · Score : <b>'+qScore+' pts</b></div>'+
+'<div class="quiz-q"><div class="q-text">'+q.q+'</div>'+
+q.opts.map(function(o,i){
+var cls='opt';
+if(ans) cls+=(i===q.correct?' good':(i===qAnswers[qStep]?' bad':' dis'));
+return '<button class="'+cls+'" onclick="ansQ('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+}).join('')+
+(ans?'<div class="fb show '+(qAnswers[qStep]===q.correct?'ok':'ko')+'">'+q.fb+'</div>':'')+
+(ans?'<button class="btn btn-purple" style="margin-top:8px" onclick="nextQ()">'+(qStep<QUESTIONS.length-1?'Suivant →':'Voir mon score →')+'</button>':'')+
+'</div>';
+document.getElementById('quizArea').innerHTML=html;
+}
+function ansQ(i){if(qAnswers[qStep]!==undefined)return;qAnswers[qStep]=i;if(i===QUESTIONS[qStep].correct)qScore+=QUESTIONS[qStep].pts;renderQuiz();}
+function nextQ(){qStep++;renderQuiz();}
+function showResult(){
+var max=QUESTIONS.reduce(function(s,q){return s+q.pts;},0);
+var p=Math.round(qScore/max*100);
+var msg=p>=80?'🏆 Futur(e) expert(e) en pub en ligne !':p>=60?'👍 Bonnes bases !':'📚 Continue à pratiquer !';
+document.getElementById('quizArea').innerHTML=
+'<div style="text-align:center;background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-radius:12px;padding:20px;margin-bottom:14px;border:2px solid #7C3AED">'+
+'<div style="font-size:36px;font-weight:700;color:#7C3AED">'+qScore+'/'+max+'</div>'+
+'<div style="font-size:14px;font-weight:700;margin:6px 0">'+msg+'</div>'+
+'<div style="font-size:12px;color:#666">Score : '+p+'%</div></div>'+
+'<button onclick="qStep=0;qScore=0;qAnswers=[];renderQuiz()" class="btn btn-purple" style="width:100%;padding:12px">🔄 Recommencer</button>';
+}
+calcCampagne();
+</script>
+</body>
+</html>
