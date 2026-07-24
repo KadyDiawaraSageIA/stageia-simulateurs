@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Bilan & Compte de Résultat Vierge</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#065F46);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#6EE7B7;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#059669;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+/* INFO BAR */
+.infobar{background:#ECFDF5;border:1px solid #059669;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#065F46;display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+.warn{background:#FEF3C7;border-color:#F59E0B;color:#92400E}
+.err{background:#FEE2E2;border-color:#EF4444;color:#991B1B}
+/* EN-TÊTE DOCUMENT */
+.doc-header{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.doc-field{display:flex;flex-direction:column;gap:3px}
+.doc-field label{font-size:11px;color:#666;font-weight:600}
+.doc-field input{padding:7px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;font-family:Arial}
+.doc-field input:focus{outline:none;border-color:#059669}
+/* TABLEAU BILAN */
+.bilan-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.bilan-side{border:1px solid #e0e0e0;border-radius:10px;overflow:hidden}
+.bilan-side-header{padding:10px 14px;font-size:13px;font-weight:700;color:#fff}
+.bilan-side-header.actif{background:#1E3A5F}
+.bilan-side-header.passif{background:#064E3B}
+.bilan-section{padding:6px 12px;font-size:11px;font-weight:700;color:#fff;margin-top:2px}
+.bilan-section.actif-sec{background:#3B82F6}
+.bilan-section.passif-sec{background:#059669}
+.bilan-row{display:grid;grid-template-columns:1fr auto;align-items:center;padding:4px 12px;border-bottom:1px solid #f5f5f5;gap:8px;min-height:36px}
+.bilan-row:last-child{border-bottom:none}
+.bilan-row.total{background:#ECFDF5;font-weight:700}
+.bilan-row.subtotal{background:#f5f5f5;font-weight:600}
+.bilan-row.grand-total{background:#064E3B;color:#fff;font-weight:700;font-size:13px}
+.bilan-row.grand-total-actif{background:#1E3A5F;color:#fff;font-weight:700;font-size:13px}
+.bilan-label{font-size:12px;line-height:1.4}
+.bilan-label.sub{padding-left:12px;color:#555;font-size:11px}
+.bilan-input{width:130px;padding:5px 8px;border:2px solid #F59E0B;border-radius:6px;font-size:12px;font-family:Arial;text-align:right;background:#FFFDE7}
+.bilan-input:focus{outline:none;border-color:#059669;background:#ECFDF5}
+.bilan-input.calc{background:#ECFDF5;border-color:#059669;font-weight:700;color:#065F46;pointer-events:none}
+.bilan-input.grand{background:#fff;border-color:#fff;font-weight:700;color:#fff;pointer-events:none;font-size:13px}
+/* ÉQUILIBRE */
+.equilibre-bar{border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:13px;font-weight:600;transition:all .3s}
+.equilibre-bar.ok{background:#D1FAE5;border:2px solid #059669;color:#065F46}
+.equilibre-bar.ko{background:#FEE2E2;border:2px solid #EF4444;color:#991B1B}
+.equilibre-bar.neutral{background:#f5f5f5;border:2px solid #ddd;color:#666}
+/* COMPTE RÉSULTAT */
+.cr-table{width:100%;border-collapse:collapse;margin-bottom:12px}
+.cr-table th{background:#064E3B;color:#fff;padding:9px 12px;font-size:11px;font-weight:600;text-align:left}
+.cr-table th:last-child{text-align:right;width:160px}
+.cr-table td{padding:5px 12px;border-bottom:1px solid #f5f5f5;font-size:12px;vertical-align:middle}
+.cr-table tr.section td{background:#1E3A5F;color:#fff;font-weight:700;padding:7px 12px}
+.cr-table tr.sub td:first-child{padding-left:24px;color:#555;font-size:11px}
+.cr-table tr.subtotal td{background:#ECFDF5;font-weight:700;color:#065F46}
+.cr-table tr.total td{background:#064E3B;color:#fff;font-weight:700;font-size:13px}
+.cr-table tr.negatif td{color:#991B1B}
+.cr-input{width:140px;padding:5px 8px;border:2px solid #F59E0B;border-radius:6px;font-size:12px;font-family:Arial;text-align:right;background:#FFFDE7}
+.cr-input:focus{outline:none;border-color:#059669;background:#ECFDF5}
+.cr-calc{width:140px;padding:5px 8px;border-radius:6px;font-size:12px;font-family:Arial;text-align:right;background:#ECFDF5;color:#065F46;font-weight:700;border:1px solid #059669;display:inline-block}
+.cr-calc.red{background:#FEE2E2;color:#991B1B;border-color:#EF4444}
+.cr-calc.total{background:#064E3B;color:#fff;font-weight:700;font-size:13px;border:none}
+/* BOUTONS */
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.btn{padding:8px 16px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600;transition:all .2s}
+.btn:hover{transform:translateY(-1px)}
+.btn-green{background:#059669;color:#fff}
+.btn-red{background:#EF4444;color:#fff}
+.btn-orange{background:#F59E0B;color:#fff}
+.btn-blue{background:#3B82F6;color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:12px}
+.kpi{background:#f5f5f5;border-radius:8px;padding:10px;text-align:center;border:1px solid #e0e0e0}
+.kpi b{display:block;font-size:17px;color:#059669;margin-bottom:2px}
+.kpi.r b{color:#A32D2D}.kpi.o b{color:#BA7517}.kpi.b b{color:#185FA5}
+@media(max-width:600px){.bilan-wrap{grid-template-columns:1fr}.doc-header{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<h1>📋 Bilan & Compte de Résultat Vierge — Stageia
+<small>Saisissez vos données · Calculs automatiques · Vérification équilibre · Ratios instantanés</small></h1>
+
+<div class="tabs">
+  <button class="tab on" onclick="show(0)">📋 Bilan Vierge</button>
+  <button class="tab" onclick="show(1)">📈 Compte de Résultat</button>
+  <button class="tab" onclick="show(2)">📊 Ratios Automatiques</button>
+</div>
+
+<!-- PANE 0: BILAN -->
+<div class="pane on" id="p0">
+  <div class="infobar">💡 <span>Saisissez vos chiffres dans les <b>cases jaunes</b>. Les totaux se calculent automatiquement. La barre d'équilibre vérifie si Actif = Passif.</span></div>
+
+  <div class="doc-header">
+    <div class="doc-field"><label>Nom de la société</label><input id="socNom" placeholder="Ex: MALI TECH SARL" oninput="calc()"></div>
+    <div class="doc-field"><label>Exercice comptable</label><input id="socExercice" placeholder="Ex: 31/12/2025" oninput="calc()"></div>
+  </div>
+
+  <!-- BARRE ÉQUILIBRE -->
+  <div class="equilibre-bar neutral" id="equilibreBar">
+    <span id="equilibreMsg">📊 Remplissez le bilan pour vérifier l'équilibre Actif = Passif</span>
+    <span id="equilibreVal"></span>
+  </div>
+
+  <div class="bilan-wrap">
+    <!-- ACTIF -->
+    <div class="bilan-side">
+      <div class="bilan-side-header actif">🏦 ACTIF — Ce que l'entreprise possède</div>
+
+      <div class="bilan-section actif-sec">Actif Immobilisé (Long terme)</div>
+      <div class="bilan-row"><span class="bilan-label sub">Terrains</span><input class="bilan-input" id="a_terrains" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Bâtiments</span><input class="bilan-input" id="a_batiments" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Matériel & outillage</span><input class="bilan-input" id="a_materiel" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Mobilier de bureau</span><input class="bilan-input" id="a_mobilier" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Véhicules</span><input class="bilan-input" id="a_vehicules" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Immob. incorporelles (logiciels, brevets)</span><input class="bilan-input" id="a_incorp" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Immob. financières (titres, cautions)</span><input class="bilan-input" id="a_immo_fin" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row subtotal"><span class="bilan-label">Sous-total Actif Immobilisé</span><input class="bilan-input calc" id="a_total_immo" readonly></div>
+
+      <div class="bilan-section actif-sec">Actif Circulant (Court terme)</div>
+      <div class="bilan-row"><span class="bilan-label sub">Stocks de marchandises</span><input class="bilan-input" id="a_stocks" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Matières premières (stocks)</span><input class="bilan-input" id="a_matieres" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Créances clients</span><input class="bilan-input" id="a_creances" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Autres créances</span><input class="bilan-input" id="a_autres_creances" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Banque</span><input class="bilan-input" id="a_banque" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Caisse</span><input class="bilan-input" id="a_caisse" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row subtotal"><span class="bilan-label">Sous-total Actif Circulant</span><input class="bilan-input calc" id="a_total_circ" readonly></div>
+
+      <div class="bilan-row grand-total-actif"><span class="bilan-label" style="font-size:13px;color:#fff">TOTAL ACTIF</span><input class="bilan-input grand" id="a_total" readonly></div>
+    </div>
+
+    <!-- PASSIF -->
+    <div class="bilan-side">
+      <div class="bilan-side-header passif">💰 PASSIF — Sources de financement</div>
+
+      <div class="bilan-section passif-sec">Capitaux Propres</div>
+      <div class="bilan-row"><span class="bilan-label sub">Capital social</span><input class="bilan-input" id="p_capital" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Réserves légales</span><input class="bilan-input" id="p_reserves_legales" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Autres réserves</span><input class="bilan-input" id="p_autres_reserves" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Report à nouveau</span><input class="bilan-input" id="p_report" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Résultat de l'exercice</span><input class="bilan-input" id="p_resultat" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row subtotal"><span class="bilan-label">Sous-total Capitaux Propres</span><input class="bilan-input calc" id="p_total_cp" readonly></div>
+
+      <div class="bilan-section passif-sec">Dettes Financières (Long terme)</div>
+      <div class="bilan-row"><span class="bilan-label sub">Emprunts bancaires LT</span><input class="bilan-input" id="p_emprunts_lt" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Autres dettes LT</span><input class="bilan-input" id="p_autres_lt" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row subtotal"><span class="bilan-label">Sous-total Dettes LT</span><input class="bilan-input calc" id="p_total_lt" readonly></div>
+
+      <div class="bilan-section passif-sec">Dettes à Court Terme</div>
+      <div class="bilan-row"><span class="bilan-label sub">Dettes fournisseurs</span><input class="bilan-input" id="p_fournisseurs" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Dettes fiscales (impôts à payer)</span><input class="bilan-input" id="p_fiscales" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Dettes sociales (CNSS/INPS)</span><input class="bilan-input" id="p_sociales" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Découverts bancaires</span><input class="bilan-input" id="p_decouvert" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row"><span class="bilan-label sub">Autres dettes CT</span><input class="bilan-input" id="p_autres_ct" type="number" placeholder="0" oninput="calc()"></div>
+      <div class="bilan-row subtotal"><span class="bilan-label">Sous-total Dettes CT</span><input class="bilan-input calc" id="p_total_ct" readonly></div>
+
+      <div class="bilan-row grand-total"><span class="bilan-label" style="font-size:13px;color:#fff">TOTAL PASSIF</span><input class="bilan-input grand" id="p_total" readonly></div>
+    </div>
+  </div>
+
+  <!-- INDICATEURS BILAN -->
+  <div class="kpis" id="kpiBilan"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-red" onclick="resetBilan()">🗑️ Effacer le bilan</button>
+    <button class="btn btn-orange" onclick="exemplesBilan()">📋 Charger un exemple</button>
+    <button class="btn btn-blue" onclick="show(2)">📊 Voir les ratios →</button>
+  </div>
+</div>
+
+<!-- PANE 1: COMPTE DE RÉSULTAT -->
+<div class="pane" id="p1">
+  <div class="infobar">💡 <span>Saisissez vos produits et charges dans les <b>cases jaunes</b>. Les soldes intermédiaires de gestion (SIG) se calculent automatiquement.</span></div>
+
+  <div class="doc-header">
+    <div class="doc-field"><label>Nom de la société</label><input id="cr_soc" placeholder="Ex: BOUTIQUE AMINATA" oninput="calcCR()"></div>
+    <div class="doc-field"><label>Période</label><input id="cr_periode" placeholder="Ex: Janvier 2025" oninput="calcCR()"></div>
+  </div>
+
+  <table class="cr-table">
+    <thead><tr><th>Poste</th><th>Montant (FCFA)</th></tr></thead>
+    <tbody>
+      <!-- PRODUITS -->
+      <tr class="section"><td colspan="2">📈 PRODUITS D'EXPLOITATION</td></tr>
+      <tr><td class="bilan-label sub">Ventes de marchandises</td><td><input class="cr-input" id="cr_ventes_march" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Ventes de produits fabriqués</td><td><input class="cr-input" id="cr_ventes_prod" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Prestations de services</td><td><input class="cr-input" id="cr_services" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Subventions d'exploitation</td><td><input class="cr-input" id="cr_subventions" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Autres produits</td><td><input class="cr-input" id="cr_autres_prod" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr class="subtotal"><td><b>CHIFFRE D'AFFAIRES TOTAL</b></td><td><div class="cr-calc" id="cr_ca">0</div></td></tr>
+
+      <!-- CHARGES VARIABLES -->
+      <tr class="section"><td colspan="2">📦 CHARGES VARIABLES (Coût des ventes)</td></tr>
+      <tr><td class="bilan-label sub">Achats de marchandises</td><td><input class="cr-input" id="cr_achats_march" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Achats matières premières</td><td><input class="cr-input" id="cr_achats_mp" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Variation de stocks (+ si déstockage)</td><td><input class="cr-input" id="cr_var_stocks" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr class="subtotal"><td><b>COÛT DES MARCHANDISES VENDUES (CMV)</b></td><td><div class="cr-calc" id="cr_cmv">0</div></td></tr>
+      <tr class="subtotal" style="background:#D1FAE5"><td><b>✅ MARGE BRUTE = CA − CMV</b></td><td><div class="cr-calc" id="cr_mb">0</div></td></tr>
+
+      <!-- CHARGES FIXES -->
+      <tr class="section"><td colspan="2">💼 CHARGES D'EXPLOITATION FIXES</td></tr>
+      <tr><td class="bilan-label sub">Salaires et traitements</td><td><input class="cr-input" id="cr_salaires" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Charges sociales (CNSS/INPS)</td><td><input class="cr-input" id="cr_charges_soc" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Loyer et charges locatives</td><td><input class="cr-input" id="cr_loyer" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Eau, électricité, téléphone</td><td><input class="cr-input" id="cr_energie" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Publicité et marketing</td><td><input class="cr-input" id="cr_marketing" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Assurances</td><td><input class="cr-input" id="cr_assurances" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Transports et déplacements</td><td><input class="cr-input" id="cr_transport" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Autres charges d'exploitation</td><td><input class="cr-input" id="cr_autres_charges" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr class="subtotal"><td><b>TOTAL CHARGES FIXES</b></td><td><div class="cr-calc" id="cr_total_fixes">0</div></td></tr>
+      <tr class="subtotal" style="background:#D1FAE5"><td><b>✅ EBE (EBITDA) = Marge brute − Charges fixes</b></td><td><div class="cr-calc" id="cr_ebe">0</div></td></tr>
+
+      <!-- AMORTISSEMENTS -->
+      <tr class="section"><td colspan="2">🔧 AMORTISSEMENTS & PROVISIONS</td></tr>
+      <tr><td class="bilan-label sub">Dotations aux amortissements</td><td><input class="cr-input" id="cr_amort" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Dotations aux provisions</td><td><input class="cr-input" id="cr_provisions" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr class="subtotal" style="background:#D1FAE5"><td><b>✅ RÉSULTAT D'EXPLOITATION (EBIT)</b></td><td><div class="cr-calc" id="cr_ebit">0</div></td></tr>
+
+      <!-- CHARGES FINANCIÈRES -->
+      <tr class="section"><td colspan="2">🏦 CHARGES & PRODUITS FINANCIERS</td></tr>
+      <tr><td class="bilan-label sub">Intérêts sur emprunts</td><td><input class="cr-input" id="cr_interets" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Autres charges financières</td><td><input class="cr-input" id="cr_autres_fin" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr><td class="bilan-label sub">Produits financiers (intérêts reçus)</td><td><input class="cr-input" id="cr_prod_fin" type="number" placeholder="0" oninput="calcCR()"></td></tr>
+      <tr class="subtotal" style="background:#D1FAE5"><td><b>✅ RÉSULTAT AVANT IMPÔTS (EBT)</b></td><td><div class="cr-calc" id="cr_ebt">0</div></td></tr>
+
+      <!-- IMPÔTS -->
+      <tr class="section"><td colspan="2">🏛️ IMPÔTS SUR LES BÉNÉFICES</td></tr>
+      <tr><td class="bilan-label sub">Impôts sur les sociétés (IS — 30% Mali)</td><td><input class="cr-input" id="cr_is" type="number" placeholder="0" oninput="calcCR()"><div style="font-size:10px;color:#888;margin-top:2px">💡 IS = EBT × 30% si bénéfice</div></td></tr>
+      <tr class="total"><td><b>✅ RÉSULTAT NET DE L'EXERCICE</b></td><td><div class="cr-calc total" id="cr_rn">0</div></td></tr>
+    </tbody>
+  </table>
+
+  <div class="kpis" id="kpiCR"></div>
+  <div id="alerteCR"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-red" onclick="resetCR()">🗑️ Effacer</button>
+    <button class="btn btn-orange" onclick="exemplesCR()">📋 Charger un exemple</button>
+    <button class="btn btn-green" onclick="calcIS()">🧮 Calculer l'IS automatiquement (30%)</button>
+  </div>
+</div>
+
+<!-- PANE 2: RATIOS -->
+<div class="pane" id="p2">
+  <div class="infobar">📊 <span>Les ratios se calculent à partir des données du Bilan et du Compte de Résultat. Remplissez-les d'abord !</span></div>
+  <div id="ratiosBox"></div>
+</div>
+
+<script>
+function show(i){
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+  document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+  if(i===2) calcRatios();
+}
+
+function gn(id){return parseFloat(document.getElementById(id)?.value)||0;}
+function sv(id,val){var e=document.getElementById(id);if(e)e.value=val>=0?Math.round(val).toLocaleString('fr-FR'):'-'+Math.round(Math.abs(val)).toLocaleString('fr-FR');}
+function sd(id,val){var e=document.getElementById(id);if(e)e.textContent=val>=0?Math.round(val).toLocaleString('fr-FR'):'-'+Math.round(Math.abs(val)).toLocaleString('fr-FR');}
+function fm(n){return Math.round(n).toLocaleString('fr-FR');}
+function pct(a,b){return b?Math.round(a/b*100):0;}
+
+function calc(){
+  // ACTIF
+  var immo=gn('a_terrains')+gn('a_batiments')+gn('a_materiel')+gn('a_mobilier')+gn('a_vehicules')+gn('a_incorp')+gn('a_immo_fin');
+  var circ=gn('a_stocks')+gn('a_matieres')+gn('a_creances')+gn('a_autres_creances')+gn('a_banque')+gn('a_caisse');
+  var totalA=immo+circ;
+  sv('a_total_immo',immo);sv('a_total_circ',circ);sv('a_total',totalA);
+  // PASSIF
+  var cp=gn('p_capital')+gn('p_reserves_legales')+gn('p_autres_reserves')+gn('p_report')+gn('p_resultat');
+  var lt=gn('p_emprunts_lt')+gn('p_autres_lt');
+  var ct=gn('p_fournisseurs')+gn('p_fiscales')+gn('p_sociales')+gn('p_decouvert')+gn('p_autres_ct');
+  var totalP=cp+lt+ct;
+  sv('p_total_cp',cp);sv('p_total_lt',lt);sv('p_total_ct',ct);sv('p_total',totalP);
+  // ÉQUILIBRE
+  var bar=document.getElementById('equilibreBar');
+  var msg=document.getElementById('equilibreMsg');
+  var val=document.getElementById('equilibreVal');
+  var ecart=totalA-totalP;
+  if(totalA===0&&totalP===0){bar.className='equilibre-bar neutral';msg.textContent='📊 Remplissez le bilan pour vérifier l\'équilibre';val.textContent='';}
+  else if(Math.abs(ecart)<1){bar.className='equilibre-bar ok';msg.textContent='✅ BILAN ÉQUILIBRÉ — Actif = Passif';val.textContent='Actif = '+fm(totalA)+' FCFA = Passif';}
+  else{bar.className='equilibre-bar ko';msg.textContent='❌ BILAN DÉSÉQUILIBRÉ — Vérifiez vos chiffres';val.textContent='Écart = '+fm(Math.abs(ecart))+' FCFA';}
+  // KPIs bilan
+  var bfr=(gn('a_stocks')+gn('a_matieres')+gn('a_creances'))-gn('p_fournisseurs');
+  var fr=(cp+lt)-immo;
+  var tresoNette=fr-bfr;
+  var kpi=document.getElementById('kpiBilan');
+  if(kpi) kpi.innerHTML=
+    '<div class="kpi"><b>'+fm(totalA)+'</b><span>Total Actif (F)</span></div>'+
+    '<div class="kpi"><b>'+fm(cp)+'</b><span>Capitaux Propres (F)</span></div>'+
+    '<div class="kpi '+(bfr>0?'o':'')+'"><b>'+fm(bfr)+'</b><span>BFR (F)</span></div>'+
+    '<div class="kpi '+(fr>0?'':'r')+'"><b>'+fm(fr)+'</b><span>Fonds de Roulement (F)</span></div>'+
+    '<div class="kpi '+(tresoNette>0?'':'r')+'"><b>'+fm(tresoNette)+'</b><span>Trésorerie Nette (F)</span></div>'+
+    '<div class="kpi b"><b>'+pct(cp,totalP)+'%</b><span>Autonomie financière</span></div>';
+  calcRatios();
+}
+
+function calcCR(){
+  var ca=gn('cr_ventes_march')+gn('cr_ventes_prod')+gn('cr_services')+gn('cr_subventions')+gn('cr_autres_prod');
+  var cmv=gn('cr_achats_march')+gn('cr_achats_mp')+gn('cr_var_stocks');
+  var mb=ca-cmv;
+  var fixes=gn('cr_salaires')+gn('cr_charges_soc')+gn('cr_loyer')+gn('cr_energie')+gn('cr_marketing')+gn('cr_assurances')+gn('cr_transport')+gn('cr_autres_charges');
+  var ebe=mb-fixes;
+  var amortProv=gn('cr_amort')+gn('cr_provisions');
+  var ebit=ebe-amortProv;
+  var chargesFin=gn('cr_interets')+gn('cr_autres_fin')-gn('cr_prod_fin');
+  var ebt=ebit-chargesFin;
+  var is=gn('cr_is');
+  var rn=ebt-is;
+
+  sd('cr_ca',ca);sd('cr_cmv',cmv);sd('cr_mb',mb);
+  sd('cr_total_fixes',fixes);sd('cr_ebe',ebe);
+  sd('cr_ebit',ebit);sd('cr_ebt',ebt);sd('cr_rn',rn);
+
+  // Couleur résultat
+  var rnEl=document.getElementById('cr_rn');
+  if(rnEl){rnEl.className='cr-calc total'+(rn<0?' red':'');}
+
+  // KPIs CR
+  var kpi=document.getElementById('kpiCR');
+  if(kpi&&ca>0) kpi.innerHTML=
+    '<div class="kpi"><b>'+fm(ca)+'</b><span>CA Total (F)</span></div>'+
+    '<div class="kpi o"><b>'+pct(mb,ca)+'%</b><span>Marge brute</span></div>'+
+    '<div class="kpi o"><b>'+pct(ebe,ca)+'%</b><span>Marge EBITDA</span></div>'+
+    '<div class="kpi '+(rn>=0?'':'r')+'"><b>'+pct(rn,ca)+'%</b><span>Marge nette</span></div>'+
+    '<div class="kpi '+(rn>=0?'':'r')+'"><b>'+fm(rn)+'</b><span>Résultat net (F)</span></div>';
+
+  // Alertes
+  var al=document.getElementById('alerteCR');
+  if(al){
+    var msgs=[];
+    if(rn<0) msgs.push('<div class="infobar err">🚨 Résultat net négatif — L\'entreprise est déficitaire. Analysez vos charges les plus importantes.</div>');
+    if(ca>0&&mb/ca<0.2) msgs.push('<div class="infobar warn">⚠️ Marge brute inférieure à 20% — Votre coût d\'achat est trop élevé par rapport au prix de vente.</div>');
+    if(ca>0&&ebe/ca<0.05&&ebe>0) msgs.push('<div class="infobar warn">⚠️ EBE faible ('+pct(ebe,ca)+'%) — Vos charges fixes pèsent lourd sur la rentabilité.</div>');
+    if(ca>0&&rn/ca>=0.15) msgs.push('<div class="infobar">✅ Excellente marge nette ('+pct(rn,ca)+'%) — Entreprise très rentable !</div>');
+    al.innerHTML=msgs.join('');
+  }
+  calcRatios();
+}
+
+function calcIS(){
+  var ca=gn('cr_ventes_march')+gn('cr_ventes_prod')+gn('cr_services')+gn('cr_subventions')+gn('cr_autres_prod');
+  var cmv=gn('cr_achats_march')+gn('cr_achats_mp')+gn('cr_var_stocks');
+  var mb=ca-cmv;
+  var fixes=gn('cr_salaires')+gn('cr_charges_soc')+gn('cr_loyer')+gn('cr_energie')+gn('cr_marketing')+gn('cr_assurances')+gn('cr_transport')+gn('cr_autres_charges');
+  var ebe=mb-fixes;
+  var amortProv=gn('cr_amort')+gn('cr_provisions');
+  var ebit=ebe-amortProv;
+  var chargesFin=gn('cr_interets')+gn('cr_autres_fin')-gn('cr_prod_fin');
+  var ebt=ebit-chargesFin;
+  if(ebt>0){var is=Math.round(ebt*0.30);document.getElementById('cr_is').value=is;calcCR();alert('IS calculé automatiquement : '+fm(is)+' FCFA (30% × '+fm(ebt)+' FCFA)');}
+  else{alert('EBT ≤ 0 : pas d\'IS à payer si l\'entreprise est déficitaire.');}
+}
+
+function calcRatios(){
+  // Récupérer données bilan
+  var immo=gn('a_terrains')+gn('a_batiments')+gn('a_materiel')+gn('a_mobilier')+gn('a_vehicules')+gn('a_incorp')+gn('a_immo_fin');
+  var circ=gn('a_stocks')+gn('a_matieres')+gn('a_creances')+gn('a_autres_creances')+gn('a_banque')+gn('a_caisse');
+  var totalA=immo+circ;
+  var cp=gn('p_capital')+gn('p_reserves_legales')+gn('p_autres_reserves')+gn('p_report')+gn('p_resultat');
+  var lt=gn('p_emprunts_lt')+gn('p_autres_lt');
+  var ct=gn('p_fournisseurs')+gn('p_fiscales')+gn('p_sociales')+gn('p_decouvert')+gn('p_autres_ct');
+  var stocks=gn('a_stocks')+gn('a_matieres');
+  // Récupérer données CR
+  var ca=gn('cr_ventes_march')+gn('cr_ventes_prod')+gn('cr_services')+gn('cr_subventions')+gn('cr_autres_prod');
+  var cmv=gn('cr_achats_march')+gn('cr_achats_mp')+gn('cr_var_stocks');
+  var mb=ca-cmv;
+  var fixes=gn('cr_salaires')+gn('cr_charges_soc')+gn('cr_loyer')+gn('cr_energie')+gn('cr_marketing')+gn('cr_assurances')+gn('cr_transport')+gn('cr_autres_charges');
+  var ebe=mb-fixes;
+  var amortProv=gn('cr_amort')+gn('cr_provisions');
+  var ebit=ebe-amortProv;
+  var chargesFin=gn('cr_interets')+gn('cr_autres_fin')-gn('cr_prod_fin');
+  var ebt=ebit-chargesFin;
+  var rn=ebt-gn('cr_is');
+  var totalDettes=lt+ct;
+  var el=document.getElementById('ratiosBox');
+  if(!el) return;
+  if(totalA===0&&ca===0){el.innerHTML='<div class="infobar">📊 Remplissez le Bilan et le Compte de Résultat pour calculer vos ratios.</div>';return;}
+  var ratios=[
+    {cat:'RENTABILITÉ',items:[
+      {n:'Taux Marge Brute',v:ca>0?pct(mb,ca):null,u:'%',ok:function(v){return v>=30;},ref:'> 30%',f:'Marge brute / CA × 100'},
+      {n:'Taux Marge EBITDA',v:ca>0?pct(ebe,ca):null,u:'%',ok:function(v){return v>=10;},ref:'> 10%',f:'EBE / CA × 100'},
+      {n:'Taux Marge Nette',v:ca>0?pct(rn,ca):null,u:'%',ok:function(v){return v>=8;},ref:'> 8%',f:'Résultat net / CA × 100'},
+      {n:'ROE',v:cp>0?pct(rn,cp):null,u:'%',ok:function(v){return v>=15;},ref:'> 15%',f:'Résultat net / Capitaux propres × 100'},
+      {n:'ROA',v:totalA>0?pct(rn,totalA):null,u:'%',ok:function(v){return v>=5;},ref:'> 5%',f:'Résultat net / Total actif × 100'},
+    ]},
+    {cat:'LIQUIDITÉ',items:[
+      {n:'Liquidité Générale',v:ct>0?Math.round(circ/ct*100)/100:null,u:'x',ok:function(v){return v>=1.5;},ref:'> 1.5',f:'Actif circulant / Dettes CT'},
+      {n:'Liquidité Réduite',v:ct>0?Math.round((circ-stocks)/ct*100)/100:null,u:'x',ok:function(v){return v>=1;},ref:'> 1.0',f:'(AC - Stocks) / Dettes CT'},
+      {n:'Trésorerie / CA',v:ca>0?pct(gn('a_banque')+gn('a_caisse'),ca):null,u:'%',ok:function(v){return v>=10;},ref:'> 10%',f:'Disponibilités / CA × 100'},
+    ]},
+    {cat:'STRUCTURE FINANCIÈRE',items:[
+      {n:'Autonomie Financière',v:cp+totalDettes>0?pct(cp,cp+totalDettes):null,u:'%',ok:function(v){return v>=30;},ref:'> 30%',f:'Capitaux propres / Total passif × 100'},
+      {n:'Taux Endettement',v:cp>0?Math.round(totalDettes/cp*100)/100:null,u:'x',ok:function(v){return v<=1;},ref:'< 1.0',f:'Total dettes / Capitaux propres'},
+      {n:'Capacité Remboursement',v:ebe>0?Math.round(totalDettes/ebe*100)/100:null,u:'ans',ok:function(v){return v<=3;},ref:'< 3 ans',f:'Dettes financières / EBE'},
+      {n:'Fonds de Roulement',v:(cp+lt)-immo,u:'F',ok:function(v){return v>=0;},ref:'> 0',f:'Capitaux permanents − Actif immobilisé'},
+    ]},
+  ];
+  var html='';
+  ratios.forEach(function(cat){
+    html+='<div style="margin-bottom:14px"><div style="font-size:13px;font-weight:700;color:#065F46;background:#ECFDF5;padding:8px 12px;border-radius:8px;margin-bottom:8px">'+cat.cat+'</div>';
+    cat.items.forEach(function(r){
+      var v=r.v;
+      var hasVal=v!==null&&!isNaN(v);
+      var good=hasVal&&r.ok(v);
+      var disp=hasVal?(r.u==='F'?fm(v)+' FCFA':v+' '+r.u):'N/A';
+      html+='<div style="display:grid;grid-template-columns:180px 100px 100px 1fr;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid #f5f5f5;font-size:12px">'+
+        '<div><b>'+r.n+'</b><br><span style="font-size:10px;color:#888;font-style:italic">'+r.f+'</span></div>'+
+        '<div style="text-align:center;font-size:14px;font-weight:700;color:'+(hasVal?(good?'#059669':'#EF4444'):'#aaa')+'">'+disp+'</div>'+
+        '<div style="text-align:center;font-size:11px;color:#666">'+r.ref+'</div>'+
+        '<div style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;background:'+(hasVal?(good?'#D1FAE5':'#FEE2E2'):'#f5f5f5')+';color:'+(hasVal?(good?'#065F46':'#991B1B'):'#aaa')+';text-align:center;max-width:120px">'+
+        (hasVal?(good?'✅ Bon':'⚠️ À améliorer'):'Données manquantes')+
+        '</div></div>';
+    });
+    html+='</div>';
+  });
+  el.innerHTML=html;
+}
+
+function resetBilan(){
+  ['a_terrains','a_batiments','a_materiel','a_mobilier','a_vehicules','a_incorp','a_immo_fin','a_stocks','a_matieres','a_creances','a_autres_creances','a_banque','a_caisse','p_capital','p_reserves_legales','p_autres_reserves','p_report','p_resultat','p_emprunts_lt','p_autres_lt','p_fournisseurs','p_fiscales','p_sociales','p_decouvert','p_autres_ct'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  calc();
+}
+
+function resetCR(){
+  ['cr_ventes_march','cr_ventes_prod','cr_services','cr_subventions','cr_autres_prod','cr_achats_march','cr_achats_mp','cr_var_stocks','cr_salaires','cr_charges_soc','cr_loyer','cr_energie','cr_marketing','cr_assurances','cr_transport','cr_autres_charges','cr_amort','cr_provisions','cr_interets','cr_autres_fin','cr_prod_fin','cr_is'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  calcCR();
+}
+
+function exemplesBilan(){
+  var ex={a_terrains:0,a_batiments:0,a_materiel:1500000,a_mobilier:200000,a_vehicules:500000,a_incorp:100000,a_immo_fin:0,a_stocks:800000,a_matieres:0,a_creances:400000,a_autres_creances:50000,a_banque:600000,a_caisse:100000,p_capital:2000000,p_reserves_legales:200000,p_autres_reserves:100000,p_report:0,p_resultat:350000,p_emprunts_lt:800000,p_autres_lt:0,p_fournisseurs:300000,p_fiscales:150000,p_sociales:100000,p_decouvert:0,p_autres_ct:50000};
+  Object.keys(ex).forEach(function(k){var e=document.getElementById(k);if(e)e.value=ex[k]||'';});
+  document.getElementById('socNom').value='MALI TECH SARL';
+  document.getElementById('socExercice').value='31/12/2025';
+  calc();
+}
+
+function exemplesCR(){
+  var ex={cr_ventes_march:800000,cr_ventes_prod:0,cr_services:200000,cr_subventions:0,cr_autres_prod:50000,cr_achats_march:400000,cr_achats_mp:0,cr_var_stocks:0,cr_salaires:200000,cr_charges_soc:30000,cr_loyer:60000,cr_energie:20000,cr_marketing:30000,cr_assurances:10000,cr_transport:15000,cr_autres_charges:25000,cr_amort:40000,cr_provisions:0,cr_interets:30000,cr_autres_fin:0,cr_prod_fin:0,cr_is:0};
+  Object.keys(ex).forEach(function(k){var e=document.getElementById(k);if(e)e.value=ex[k]||'';});
+  document.getElementById('cr_soc').value='MALI TECH SARL';
+  document.getElementById('cr_periode').value='2025';
+  calcCR();
+}
+</script>
+</body>
+</html>
