@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Simulateur de Bourse Débutant</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#0E7490);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#67E8F9;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#0891B2;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+.box{background:#ECFEFF;border-left:3px solid #0891B2;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.ok{background:#D1FAE5;border-left-color:#10B981;color:#065F46}
+.warn{background:#FEF3C7;border-left-color:#F59E0B;color:#92400E}
+.err{background:#FEE2E2;border-left-color:#EF4444;color:#991B1B}
+.info{background:#DBEAFE;border-left-color:#3B82F6;color:#1E40AF}
+.purple{background:#F5F3FF;border-left-color:#8B5CF6;color:#5B21B6}
+label{font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:4px}
+input,select{width:100%;padding:7px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;font-family:Arial;background:#fff}
+input:focus,select:focus{outline:none;border-color:#0891B2}
+.hint{font-size:10px;color:#888;margin-top:3px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.row.r3{grid-template-columns:1fr 1fr 1fr}
+.section-title{font-size:13px;font-weight:700;color:#0D0B2E;margin:14px 0 8px;border-bottom:2px solid #0891B2;padding-bottom:5px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:12px 0}
+.kpi{background:#f5f5f5;border-radius:8px;padding:10px;text-align:center;border:1px solid #e0e0e0}
+.kpi b{display:block;font-size:17px;color:#0891B2;margin-bottom:2px}
+.kpi.g b{color:#065F46}.kpi.r b{color:#A32D2D}.kpi.o b{color:#BA7517}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+th{background:#0E7490;color:#fff;padding:8px;text-align:left;font-weight:600}
+td{padding:8px;border-bottom:1px solid #eee}
+tr:nth-child(even) td{background:#ECFEFF}
+.btn{padding:8px 16px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:600}
+.btn-cyan{background:#0891B2;color:#fff}
+.btn-green{background:#10B981;color:#fff}
+.btn-red{background:#EF4444;color:#fff}
+.btn-orange{background:#F59E0B;color:#fff}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+/* PORTEFEUILLE TRADING */
+.portfolio-header{background:linear-gradient(135deg,#0E7490,#0891B2);border-radius:12px;padding:16px;color:#fff;margin-bottom:14px}
+.portfolio-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-top:10px}
+.pstat{text-align:center}
+.pstat b{display:block;font-size:18px}
+.pstat span{font-size:10px;opacity:.85}
+/* ACTIONS MARCHÉ */
+.action-card{display:grid;grid-template-columns:50px 1fr 90px 80px 100px;gap:10px;align-items:center;padding:10px 12px;border:1px solid #eee;border-radius:8px;margin-bottom:6px;cursor:pointer}
+.action-card:hover{border-color:#0891B2;background:#ECFEFF}
+.action-logo{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;font-weight:700}
+.action-nom{font-size:12px;font-weight:700}
+.action-sect{font-size:10px;color:#888}
+.action-prix{text-align:right;font-weight:700;font-size:13px}
+.action-var{text-align:right;font-size:11px;font-weight:600}
+.action-var.up{color:#10B981}
+.action-var.down{color:#EF4444}
+/* HOLDINGS */
+.holding-row{display:grid;grid-template-columns:1fr 80px 90px 90px 90px 80px;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px solid #f0f0f0;font-size:11px}
+.holding-row.header{font-weight:700;color:#0E7490;background:#ECFEFF;border-radius:6px}
+/* QUIZ */
+.quiz-q{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:12px}
+.q-num{font-size:10px;color:#0891B2;font-weight:700;margin-bottom:5px}
+.q-text{font-size:13px;font-weight:600;color:#0D0B2E;margin-bottom:10px;line-height:1.5}
+.q-tip{font-size:11px;color:#888;background:#fff;border:1px solid #eee;border-radius:6px;padding:6px 10px;margin-bottom:10px}
+.opt{width:100%;padding:9px 14px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;font-size:12px;background:#fff;text-align:left;margin-bottom:5px;font-family:Arial;line-height:1.5}
+.opt:hover{border-color:#0891B2;background:#ECFEFF}
+.opt.good{border-color:#10B981;background:#D1FAE5;pointer-events:none;color:#065F46}
+.opt.bad{border-color:#EF4444;background:#FEE2E2;pointer-events:none;color:#991B1B}
+.opt.dis{pointer-events:none;opacity:.5}
+.fb{border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;line-height:1.6;display:none}
+.fb.show{display:block}
+.fb.ok{background:#D1FAE5;color:#065F46}
+.fb.ko{background:#FEE2E2;color:#991B1B}
+.lexique-item{border-bottom:1px solid #eee;padding:8px 0}
+.lexique-term{font-weight:700;color:#0E7490;font-size:12px}
+.lexique-def{font-size:11px;color:#555;margin-top:2px;line-height:1.5}
+@media(max-width:600px){.row,.row.r3{grid-template-columns:1fr}.action-card{grid-template-columns:40px 1fr 70px;}.action-var{display:none}.holding-row{grid-template-columns:1fr 1fr 1fr;font-size:10px}}
+</style>
+</head>
+<body>
+<h1>📈 Simulateur de Bourse — Débutant — Stageia
+<small>Apprendre la bourse · Portefeuille virtuel · BRVM Mali · Sans risque réel</small></h1>
+
+<div class="tabs">
+  <button class="tab on" onclick="show(0)">📚 C'est quoi la bourse ?</button>
+  <button class="tab" onclick="show(1)">📖 Lexique du Débutant</button>
+  <button class="tab" onclick="show(2)">💼 Mon Portefeuille</button>
+  <button class="tab" onclick="show(3)">📊 Marché (Acheter/Vendre)</button>
+  <button class="tab" onclick="show(4)">✏️ Exercices</button>
+  <button class="tab" onclick="show(5)">🎯 Quiz</button>
+</div>
+
+<!-- PANE 0: LEÇONS -->
+<div class="pane on" id="p0">
+  <div class="section-title">🎓 La bourse expliquée simplement</div>
+  <div class="box">💡 <b>Imaginez :</b> Une entreprise comme Sonatel a besoin d'argent pour grandir. Au lieu d'emprunter à la banque, elle découpe sa valeur en milliers de petites parts appelées <b>"actions"</b> et les vend au public.<br><br>
+  <b>Si vous achetez une action Sonatel, vous devenez littéralement copropriétaire de l'entreprise</b> — même avec une seule action !</div>
+
+  <div class="section-title">🛒 Comment ça marche concrètement ?</div>
+  <div class="box info">📌 <b>3 façons de gagner de l'argent avec une action :</b><br><br>
+  1️⃣ <b>La plus-value</b> — Vous achetez à 10 000 FCFA, le prix monte à 12 000 FCFA, vous vendez → +2 000 FCFA de gain<br><br>
+  2️⃣ <b>Le dividende</b> — L'entreprise partage ses bénéfices avec vous chaque année, même si vous ne vendez pas<br><br>
+  3️⃣ <b>Les deux combinés</b> — La plupart des investisseurs long terme cumulent plus-value + dividendes</div>
+
+  <div class="section-title">❓ Pourquoi le prix d'une action monte ou descend ?</div>
+  <div class="box">📈 <b>Le prix monte quand :</b><br>
+  • L'entreprise annonce de bons résultats (plus de bénéfices)<br>
+  • Plus de gens veulent acheter que vendre (demande > offre)<br>
+  • Bonnes nouvelles sur le secteur ou l'économie<br><br>
+  📉 <b>Le prix descend quand :</b><br>
+  • Mauvais résultats financiers<br>
+  • Plus de vendeurs que d'acheteurs<br>
+  • Mauvaises nouvelles économiques ou politiques</div>
+
+  <div class="section-title">🌍 La BRVM — Où s'achètent les actions au Mali</div>
+  <div class="box purple">🏛️ La <b>BRVM</b> (Bourse Régionale des Valeurs Mobilières) est basée à Abidjan et couvre 8 pays dont le Mali. Toutes les transactions sont en FCFA.<br><br>
+  Pour acheter une action, vous devez passer par un intermédiaire agréé appelé <b>SGI</b> (Société de Gestion et d'Intermédiation), un peu comme un agent immobilier mais pour les actions.</div>
+
+  <div class="section-title">⚠️ Les 5 erreurs de débutant à éviter</div>
+  <div class="box err">🚨 <b>Ne faites pas ça :</b><br>
+  1. <b>Investir l'argent dont vous avez besoin bientôt</b> — La bourse est pour le long terme (5+ ans)<br>
+  2. <b>Acheter parce que "tout le monde en parle"</b> — Comprenez l'entreprise avant d'investir<br>
+  3. <b>Paniquer et vendre quand le prix baisse</b> — Les marchés montent et descendent, c'est normal<br>
+  4. <b>Mettre tout son argent sur une seule action</b> — Diversifiez toujours<br>
+  5. <b>Regarder son portefeuille tous les jours</b> — Ça crée du stress inutile pour rien</div>
+
+  <div class="section-title">✅ Les règles d'or pour bien démarrer</div>
+  <div class="box ok">✅ <b>Pour bien commencer en bourse :</b><br>
+  1. Pratiquez d'abord avec ce simulateur (argent virtuel, sans risque)<br>
+  2. Commencez petit avec de l'argent réel quand vous serez prête<br>
+  3. Choisissez des entreprises que vous comprenez (Sonatel, banques connues...)<br>
+  4. Investissez régulièrement plutôt qu'en une seule fois<br>
+  5. Pensez en années, pas en jours<br>
+  6. Ne paniquez jamais — le marché récompense la patience</div>
+</div>
+
+<!-- PANE 1: LEXIQUE -->
+<div class="pane" id="p1">
+  <div class="box info" style="margin-bottom:12px">📖 <span>Tous les mots de la bourse expliqués simplement, sans jargon compliqué.</span></div>
+  <div id="lexiqueList"></div>
+</div>
+
+<!-- PANE 2: MON PORTEFEUILLE -->
+<div class="pane" id="p2">
+  <div class="portfolio-header">
+    <div style="font-size:13px;opacity:.9">💼 Mon Portefeuille Virtuel</div>
+    <div class="portfolio-stats" id="portfolioStats"></div>
+  </div>
+  <div class="section-title">📊 Mes actions détenues</div>
+  <div id="holdingsTable"></div>
+  <div class="section-title">📜 Historique des transactions</div>
+  <div id="historiqueList"></div>
+  <div class="btn-row">
+    <button class="btn btn-red" onclick="resetPortefeuille()">🔄 Réinitialiser le portefeuille (200 000 F virtuels)</button>
+  </div>
+</div>
+
+<!-- PANE 3: MARCHÉ -->
+<div class="pane" id="p3">
+  <div class="box" style="margin-bottom:12px">📊 <span>Voici des actions fictives inspirées d'entreprises réelles de la BRVM. Cliquez sur une action pour l'acheter ou la vendre. Les prix évoluent légèrement à chaque actualisation pour simuler le marché.</span></div>
+  <div class="btn-row">
+    <button class="btn btn-cyan" onclick="actualiserMarche()">🔄 Actualiser les prix du marché</button>
+  </div>
+  <div id="marcheList"></div>
+  <div id="tradeBox"></div>
+</div>
+
+<!-- PANE 4: EXERCICES -->
+<div class="pane" id="p4">
+  <div class="section-title">✏️ Exercice 1 — Calculer un gain</div>
+  <div class="box info" style="margin-bottom:10px">📝 Vous achetez 50 actions à 8 000 FCFA chacune. Un an plus tard, vous les vendez à 9 500 FCFA. Vous avez aussi reçu 300 FCFA de dividende par action durant l'année.</div>
+  <div class="row r3">
+    <div><label>Montant investi au départ (FCFA)</label><input type="number" id="e1_inv" placeholder="50×8000" oninput="checkE1()"></div>
+    <div><label>Plus-value à la vente (FCFA)</label><input type="number" id="e1_pv" placeholder="(9500-8000)×50" oninput="checkE1()"></div>
+    <div><label>Gain total (plus-value + dividendes) (FCFA)</label><input type="number" id="e1_gain" placeholder="PV + Dividendes" oninput="checkE1()"></div>
+  </div>
+  <div id="e1_res"></div>
+
+  <div class="section-title" style="margin-top:16px">✏️ Exercice 2 — Calculer un rendement en %</div>
+  <div class="box info" style="margin-bottom:10px">📝 Avec les données de l'exercice 1, calculez le rendement total en pourcentage de votre investissement.</div>
+  <div class="row">
+    <div><label>Rendement total (%)</label><input type="number" id="e2_rend" placeholder="Gain/Investi×100" step="0.1" oninput="checkE2()"></div>
+    <div><label>Est-ce un bon rendement ?</label>
+    <select id="e2_choix" onchange="checkE2()">
+      <option value="">— Choisissez —</option>
+      <option value="oui">Oui, c'est un excellent rendement pour 1 an</option>
+      <option value="non">Non, c'est un mauvais rendement</option>
+    </select></div>
+  </div>
+  <div id="e2_res"></div>
+
+  <div class="section-title" style="margin-top:16px">✏️ Exercice 3 — Diversification</div>
+  <div class="box info" style="margin-bottom:10px">📝 Vous avez 600 000 FCFA à investir. Identifiez la stratégie la PLUS prudente parmi les options.</div>
+  <div class="row">
+    <div><label>Quelle stratégie est la plus prudente ?</label>
+    <select id="e3_choix" onchange="checkE3()">
+      <option value="">— Choisissez —</option>
+      <option value="a">Tout investir dans 1 seule action</option>
+      <option value="b">Répartir sur 4-5 actions de secteurs différents</option>
+      <option value="c">Investir tout d'un coup dans la première action vue</option>
+    </select></div>
+  </div>
+  <div id="e3_res"></div>
+</div>
+
+<!-- PANE 5: QUIZ -->
+<div class="pane" id="p5">
+  <div id="quizArea"></div>
+</div>
+
+<script>
+var SOLDE_INITIAL=200000;
+var portefeuille={solde:SOLDE_INITIAL,holdings:{},historique:[]};
+var qStep=0,qScore=0,qAnswers=[];
+var actionSel=null;
+
+var LEXIQUE=[
+  {t:'Action',d:'Une petite part de propriété d\'une entreprise. Si vous avez 1 action sur 1 000 000 émises, vous possédez 0,0001% de l\'entreprise.'},
+  {t:'Dividende',d:'L\'argent que l\'entreprise vous reverse chaque année si elle fait des bénéfices, en récompense d\'être actionnaire.'},
+  {t:'Plus-value',d:'Le gain réalisé quand vous vendez une action plus cher que vous ne l\'avez achetée.'},
+  {t:'Moins-value',d:'La perte quand vous vendez une action moins cher que le prix d\'achat.'},
+  {t:'Cours / Prix',d:'Le prix actuel d\'une action sur le marché, qui change selon l\'offre et la demande.'},
+  {t:'BRVM',d:'Bourse Régionale des Valeurs Mobilières, basée à Abidjan, où s\'échangent les actions des 8 pays UEMOA dont le Mali.'},
+  {t:'SGI',d:'Société de Gestion et d\'Intermédiation — l\'intermédiaire obligatoire pour acheter/vendre des actions à la BRVM.'},
+  {t:'Portefeuille',d:'L\'ensemble des actions et placements que vous possédez.'},
+  {t:'Diversification',d:'Répartir son argent sur plusieurs actions/secteurs différents pour réduire le risque de tout perdre.'},
+  {t:'Volatilité',d:'À quel point le prix d\'une action bouge (monte/descend) rapidement. Plus c\'est volatile, plus c\'est risqué.'},
+  {t:'Capitalisation boursière',d:'La valeur totale d\'une entreprise en bourse = prix de l\'action × nombre total d\'actions.'},
+  {t:'Haussier (Bull)',d:'Un marché ou une action dont le prix monte, ou un investisseur qui pense que ça va monter.'},
+  {t:'Baissier (Bear)',d:'Un marché ou une action dont le prix descend, ou un investisseur qui pense que ça va baisser.'},
+  {t:'Ordre d\'achat/vente',d:'L\'instruction que vous donnez pour acheter ou vendre une action à un prix donné.'},
+  {t:'Indice boursier',d:'Un indicateur qui mesure la performance moyenne d\'un groupe d\'actions (ex: l\'indice BRVM Composite).'},
+  {t:'Liquidité',d:'La facilité à acheter ou vendre rapidement une action sans trop changer son prix.'},
+];
+
+var ACTIONS_MARCHE=[
+  {id:'tel',nom:'TelCom Mali',sect:'Télécom',color:'#F97316',prixBase:14500,vol:0.03},
+  {id:'bank',nom:'Banque Sahel',sect:'Banque',color:'#1D4ED8',prixBase:8200,vol:0.025},
+  {id:'brew',nom:'Brasserie Niger',sect:'Agro-Alimentaire',color:'#CA8A04',prixBase:5400,vol:0.02},
+  {id:'ciment',nom:'CimSahel SA',sect:'Industrie',color:'#64748B',prixBase:11200,vol:0.035},
+  {id:'energie',nom:'SolarMali Energy',sect:'Énergie',color:'#16A34A',prixBase:3800,vol:0.05},
+  {id:'assur',nom:'Assurance Wassa',sect:'Assurance',color:'#9333EA',vol:0.02,prixBase:6700},
+];
+var prixActuels={};
+
+var QUESTIONS=[
+  {q:"Qu'est-ce qu'une action exactement ?",tip:"Pensez à ce que vous achetez réellement.",
+   opts:["Un prêt que vous faites à une entreprise","Une petite part de propriété d'une entreprise","Un produit que l'entreprise vend","Une assurance sur l'entreprise"],
+   correct:1,fb:"✅ Une action = une part de propriété. Si vous achetez une action Sonatel, vous devenez littéralement copropriétaire (même minime) de l'entreprise, avec droit aux dividendes et parfois de vote.",pts:10},
+  {q:"Quelles sont les 2 façons principales de gagner de l'argent avec une action ?",tip:"L'une se réalise en vendant, l'autre sans vendre.",
+   opts:["Les intérêts et les frais bancaires","La plus-value (vendre plus cher) et les dividendes (partage des bénéfices)","Le remboursement automatique mensuel","Les bonus de fidélité"],
+   correct:1,fb:"✅ Plus-value = différence entre prix d'achat et de vente. Dividende = part des bénéfices versée chaque année sans avoir besoin de vendre. Les deux peuvent se cumuler !",pts:15},
+  {q:"Pourquoi est-il dangereux de mettre TOUT son argent dans une seule action ?",tip:"Pensez à ce qui se passe si cette entreprise a des problèmes.",
+   opts:["C'est interdit par la loi malienne","Si cette entreprise a des problèmes, vous perdez tout — la diversification réduit ce risque","Une seule action coûte toujours trop cher","Cela augmente automatiquement les impôts"],
+   correct:1,fb:"✅ Sans diversification, tout votre argent dépend du sort d'UNE seule entreprise. Si elle fait faillite ou a de mauvais résultats, vous perdez gros. En répartissant sur plusieurs actions/secteurs, un mauvais résultat est compensé par d'autres.",pts:15},
+  {q:"Que faire quand le prix d'une action que vous possédez baisse fortement ?",tip:"Pensez à la psychologie de l'investisseur débutant vs expérimenté.",
+   opts:["Vendre immédiatement par panique","Rester calme, ne pas paniquer, et analyser si les fondamentaux de l'entreprise ont changé avant de décider","Acheter encore plus immédiatement sans réfléchir","Appeler la police"],
+   correct:1,fb:"✅ Les baisses font partie normale du marché boursier. Paniquer et vendre au pire moment est l'erreur n°1 des débutants. Demandez-vous : l'entreprise a-t-elle vraiment un problème, ou est-ce juste une fluctuation normale du marché ?",pts:15},
+  {q:"Qu'est-ce que la BRVM ?",tip:"L'endroit où s'échangent les actions pour les pays UEMOA.",
+   opts:["Une banque malienne","La Bourse Régionale des Valeurs Mobilières, basée à Abidjan, couvrant 8 pays dont le Mali","Un programme gouvernemental d'aide aux entreprises","Une assurance pour les investisseurs"],
+   correct:1,fb:"✅ La BRVM (Bourse Régionale des Valeurs Mobilières) permet aux investisseurs des pays UEMOA (Mali, Côte d'Ivoire, Sénégal...) d'acheter des actions d'entreprises régionales, tout en FCFA.",pts:10},
+  {q:"Sur quelle durée devrait-on idéalement investir en bourse pour limiter le risque ?",tip:"Le court terme est risqué en bourse.",opts:["Quelques jours seulement","Quelques semaines","Le long terme — 5 ans ou plus","Toujours moins d'un mois"],correct:2,fb:"✅ La bourse récompense la patience. Sur le court terme, les prix sont imprévisibles et volatils. Sur 5-10 ans et plus, les bonnes entreprises ont historiquement tendance à créer de la valeur. Investissez de l'argent que vous n'aurez pas besoin avant plusieurs années.",pts:15},
+  {q:"Vous voulez acheter votre première action à la BRVM. Par qui devez-vous obligatoirement passer ?",tip:"Un intermédiaire agréé spécifique.",opts:["Directement par l'entreprise","Par une SGI (Société de Gestion et d'Intermédiation)","Par Orange Money uniquement","Par la BCEAO directement"],correct:1,fb:"✅ Pour acheter/vendre des actions à la BRVM, il faut passer par une SGI agréée (comme Hudson & Cie ou Phoenix Capital). C'est l'intermédiaire obligatoire entre vous et le marché boursier.",pts:10},
+];
+
+function show(i){
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+  document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+  if(i===1) renderLexique();
+  if(i===2) renderPortefeuille();
+  if(i===3) renderMarche();
+  if(i===5) renderQuiz();
+}
+
+function fm(n){return Math.round(n).toLocaleString('fr-FR');}
+
+// LEXIQUE
+function renderLexique(){
+  var el=document.getElementById('lexiqueList');
+  if(!el) return;
+  el.innerHTML=LEXIQUE.map(function(l){
+    return '<div class="lexique-item"><div class="lexique-term">📌 '+l.t+'</div><div class="lexique-def">'+l.d+'</div></div>';
+  }).join('');
+}
+
+// MARCHÉ
+function initPrix(){
+  ACTIONS_MARCHE.forEach(function(a){
+    if(!prixActuels[a.id]) prixActuels[a.id]={prix:a.prixBase,prixPrec:a.prixBase};
+  });
+}
+
+function actualiserMarche(){
+  ACTIONS_MARCHE.forEach(function(a){
+    var p=prixActuels[a.id];
+    p.prixPrec=p.prix;
+    var variation=(Math.random()*2-1)*a.vol;
+    p.prix=Math.max(100,Math.round(p.prix*(1+variation)));
+  });
+  renderMarche();
+}
+
+function renderMarche(){
+  initPrix();
+  var el=document.getElementById('marcheList');
+  if(!el) return;
+  el.innerHTML=ACTIONS_MARCHE.map(function(a){
+    var p=prixActuels[a.id];
+    var varPct=Math.round((p.prix-p.prixPrec)/p.prixPrec*1000)/10;
+    var sign=varPct>=0?'+':'';
+    return '<div class="action-card" onclick="selAction(\''+a.id+'\')">'+
+      '<div class="action-logo" style="background:'+a.color+'">'+a.nom.charAt(0)+'</div>'+
+      '<div><div class="action-nom">'+a.nom+'</div><div class="action-sect">'+a.sect+'</div></div>'+
+      '<div class="action-prix">'+fm(p.prix)+' F</div>'+
+      '<div class="action-var '+(varPct>=0?'up':'down')+'">'+sign+varPct+'%</div>'+
+      '<div style="text-align:right"><button class="btn btn-cyan" style="padding:5px 10px;font-size:11px" onclick="event.stopPropagation();selAction(\''+a.id+'\')">Trader</button></div>'+
+      '</div>';
+  }).join('');
+  renderTradeBox();
+}
+
+function selAction(id){actionSel=id;renderTradeBox();}
+
+function renderTradeBox(){
+  var el=document.getElementById('tradeBox');
+  if(!el) return;
+  if(!actionSel){el.innerHTML='';return;}
+  var a=ACTIONS_MARCHE.find(function(x){return x.id===actionSel;});
+  var p=prixActuels[actionSel];
+  var possede=portefeuille.holdings[actionSel]?.qty||0;
+  el.innerHTML='<div style="border:2px solid '+a.color+';border-radius:12px;padding:16px;margin-top:14px">'+
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'+
+    '<div class="action-logo" style="background:'+a.color+'">'+a.nom.charAt(0)+'</div>'+
+    '<div><div style="font-size:14px;font-weight:700">'+a.nom+'</div><div style="font-size:11px;color:#888">'+a.sect+' — Prix actuel : '+fm(p.prix)+' FCFA — Vous possédez : '+possede+' actions</div></div>'+
+    '</div>'+
+    '<div class="row">'+
+    '<div><label>Nombre d\'actions à acheter</label><input type="number" id="qtyAchat" value="1" min="1"><div class="hint">Coût total : <span id="coutAchat">'+fm(p.prix)+'</span> FCFA — Solde dispo : '+fm(portefeuille.solde)+' F</div></div>'+
+    '<div><label>Nombre d\'actions à vendre</label><input type="number" id="qtyVente" value="1" min="1" max="'+possede+'"><div class="hint">Recette : <span id="recetteVente">'+fm(p.prix)+'</span> FCFA</div></div>'+
+    '</div>'+
+    '<div class="btn-row">'+
+    '<button class="btn btn-green" onclick="acheterAction()">🛒 Acheter</button>'+
+    '<button class="btn btn-red" onclick="vendreAction()" '+(possede===0?'disabled style="opacity:.4"':'')+'>💰 Vendre</button>'+
+    '</div></div>';
+  document.getElementById('qtyAchat').addEventListener('input',function(){document.getElementById('coutAchat').textContent=fm((parseFloat(this.value)||0)*p.prix);});
+  document.getElementById('qtyVente').addEventListener('input',function(){document.getElementById('recetteVente').textContent=fm((parseFloat(this.value)||0)*p.prix);});
+}
+
+function acheterAction(){
+  var qty=parseFloat(document.getElementById('qtyAchat')?.value)||0;
+  if(qty<=0) return;
+  var a=ACTIONS_MARCHE.find(function(x){return x.id===actionSel;});
+  var p=prixActuels[actionSel];
+  var cout=qty*p.prix;
+  if(cout>portefeuille.solde){alert('Solde insuffisant ! Vous avez '+fm(portefeuille.solde)+' FCFA disponible.');return;}
+  portefeuille.solde-=cout;
+  if(!portefeuille.holdings[actionSel]) portefeuille.holdings[actionSel]={qty:0,prixMoyen:0};
+  var h=portefeuille.holdings[actionSel];
+  h.prixMoyen=Math.round((h.prixMoyen*h.qty+cout)/(h.qty+qty));
+  h.qty+=qty;
+  portefeuille.historique.unshift({type:'achat',nom:a.nom,qty:qty,prix:p.prix,total:cout,date:new Date().toLocaleDateString('fr-FR')});
+  renderTradeBox();
+  renderMarche();
+  alert('✅ Achat réussi : '+qty+' actions '+a.nom+' à '+fm(p.prix)+' FCFA = '+fm(cout)+' FCFA');
+}
+
+function vendreAction(){
+  var qty=parseFloat(document.getElementById('qtyVente')?.value)||0;
+  var a=ACTIONS_MARCHE.find(function(x){return x.id===actionSel;});
+  var h=portefeuille.holdings[actionSel];
+  if(!h||qty>h.qty){alert('Vous ne possédez pas assez d\'actions !');return;}
+  var p=prixActuels[actionSel];
+  var recette=qty*p.prix;
+  var gainPerte=(p.prix-h.prixMoyen)*qty;
+  portefeuille.solde+=recette;
+  h.qty-=qty;
+  if(h.qty===0) delete portefeuille.holdings[actionSel];
+  portefeuille.historique.unshift({type:'vente',nom:a.nom,qty:qty,prix:p.prix,total:recette,gain:gainPerte,date:new Date().toLocaleDateString('fr-FR')});
+  renderTradeBox();
+  renderMarche();
+  alert((gainPerte>=0?'✅ Vente avec gain de '+fm(gainPerte)+' FCFA !':'⚠️ Vente avec perte de '+fm(Math.abs(gainPerte))+' FCFA.'));
+}
+
+// PORTEFEUILLE
+function renderPortefeuille(){
+  initPrix();
+  var valTotal=Object.keys(portefeuille.holdings).reduce(function(s,id){
+    var h=portefeuille.holdings[id];
+    var p=prixActuels[id]?.prix||0;
+    return s+h.qty*p;
+  },0);
+  var patrimoineGlobal=portefeuille.solde+valTotal;
+  var gainTotal=patrimoineGlobal-SOLDE_INITIAL;
+  var ps=document.getElementById('portfolioStats');
+  if(ps) ps.innerHTML=
+    '<div class="pstat"><b>'+fm(portefeuille.solde)+'</b><span>Solde disponible (F)</span></div>'+
+    '<div class="pstat"><b>'+fm(valTotal)+'</b><span>Valeur actions (F)</span></div>'+
+    '<div class="pstat"><b>'+fm(patrimoineGlobal)+'</b><span>Patrimoine total (F)</span></div>'+
+    '<div class="pstat"><b style="color:'+(gainTotal>=0?'#86EFAC':'#FCA5A5')+'">'+(gainTotal>=0?'+':'')+fm(gainTotal)+'</b><span>Gain/Perte total (F)</span></div>';
+
+  var ht=document.getElementById('holdingsTable');
+  if(ht){
+    var ids=Object.keys(portefeuille.holdings);
+    if(!ids.length){ht.innerHTML='<div class="box">📊 Vous ne possédez aucune action. Allez dans l\'onglet "Marché" pour commencer à investir !</div>';}
+    else{
+      var h='<div class="holding-row header"><div>Action</div><div>Qté</div><div>Prix moyen</div><div>Prix actuel</div><div>Valeur</div><div>Gain/Perte</div></div>';
+      ids.forEach(function(id){
+        var hd=portefeuille.holdings[id];
+        var a=ACTIONS_MARCHE.find(function(x){return x.id===id;});
+        var p=prixActuels[id].prix;
+        var valeur=hd.qty*p;
+        var gain=(p-hd.prixMoyen)*hd.qty;
+        h+='<div class="holding-row"><div><b>'+a.nom+'</b></div><div>'+hd.qty+'</div><div>'+fm(hd.prixMoyen)+' F</div><div>'+fm(p)+' F</div><div>'+fm(valeur)+' F</div><div style="color:'+(gain>=0?'#10B981':'#EF4444')+';font-weight:700">'+(gain>=0?'+':'')+fm(gain)+' F</div></div>';
+      });
+      ht.innerHTML=h;
+    }
+  }
+
+  var hl=document.getElementById('historiqueList');
+  if(hl){
+    if(!portefeuille.historique.length) hl.innerHTML='<div class="box">📜 Aucune transaction encore. Commencez à trader dans l\'onglet "Marché" !</div>';
+    else hl.innerHTML=portefeuille.historique.slice(0,15).map(function(t){
+      return '<div style="display:flex;justify-content:space-between;padding:7px 10px;border-bottom:1px solid #f0f0f0;font-size:11px">'+
+        '<span>'+(t.type==='achat'?'🛒 Achat':'💰 Vente')+' '+t.qty+' '+t.nom+' à '+fm(t.prix)+' F</span>'+
+        '<span style="font-weight:600">'+t.date+' — '+fm(t.total)+' F'+(t.gain!==undefined?' ('+(t.gain>=0?'+':'')+fm(t.gain)+' F)':'')+'</span>'+
+        '</div>';
+    }).join('');
+  }
+}
+
+function resetPortefeuille(){
+  if(!confirm('Réinitialiser votre portefeuille virtuel à 200 000 FCFA ?')) return;
+  portefeuille={solde:SOLDE_INITIAL,holdings:{},historique:[]};
+  renderPortefeuille();
+}
+
+// EXERCICES
+function checkE1(){
+  var inv=parseFloat(document.getElementById('e1_inv')?.value)||0;
+  var pv=parseFloat(document.getElementById('e1_pv')?.value)||0;
+  var gain=parseFloat(document.getElementById('e1_gain')?.value)||0;
+  var invOk=Math.abs(inv-400000)<1;
+  var pvOk=Math.abs(pv-75000)<1;
+  var gainOk=Math.abs(gain-90000)<1;
+  var el=document.getElementById('e1_res');
+  if(el) el.innerHTML='<div class="box '+(invOk&&pvOk&&gainOk?'ok':'warn')+'" style="margin-top:8px">'+
+    (invOk?'✅ Investi = 400 000 F ':'❌ Investi = 50×8 000 = <b>400 000 FCFA</b><br>')+
+    (pvOk?'✅ Plus-value = 75 000 F ':'❌ PV = (9 500−8 000)×50 = <b>75 000 FCFA</b><br>')+
+    (gainOk?'✅ Gain total = 90 000 F !':'❌ Gain = 75 000+(300×50) = 75 000+15 000 = <b>90 000 FCFA</b>')+
+    '</div>';
+}
+
+function checkE2(){
+  var rend=parseFloat(document.getElementById('e2_rend')?.value)||0;
+  var choix=document.getElementById('e2_choix')?.value;
+  var rendOk=Math.abs(rend-22.5)<0.5;
+  var choixOk=choix==='oui';
+  var el=document.getElementById('e2_res');
+  if(el) el.innerHTML='<div class="box '+(rendOk&&choixOk?'ok':'warn')+'" style="margin-top:8px">'+
+    (rendOk?'✅ Rendement = 22,5% ':'❌ Rendement = 90 000/400 000×100 = <b>22,5%</b><br>')+
+    (choixOk?'✅ Oui, excellent rendement !':'❌ 22,5% en 1 an est EXCELLENT — bien au-dessus de la moyenne du marché (8-12%/an)')+
+    '</div>';
+}
+
+function checkE3(){
+  var choix=document.getElementById('e3_choix')?.value;
+  var el=document.getElementById('e3_res');
+  if(el) el.innerHTML='<div class="box '+(choix==='b'?'ok':'warn')+'" style="margin-top:8px">'+
+    (choix==='b'?'✅ Exact ! Répartir sur 4-5 actions de secteurs différents réduit le risque sans sacrifier le potentiel de rendement.':'❌ La meilleure réponse est B : répartir sur plusieurs actions/secteurs. Mettre tout sur une seule action (A) est très risqué, et acheter sans réfléchir (C) aussi.')+
+    '</div>';
+}
+
+// QUIZ
+function renderQuiz(){
+  if(qStep>=QUESTIONS.length){showResult();return;}
+  var q=QUESTIONS[qStep];
+  var ans=qAnswers[qStep]!==undefined;
+  var html='<div style="text-align:center;margin-bottom:10px;font-size:12px;color:#666">Question '+(qStep+1)+'/'+QUESTIONS.length+' · Score : <b>'+qScore+' pts</b></div>'+
+    '<div class="quiz-q"><div class="q-num">Question '+(qStep+1)+' — '+q.pts+' points</div>'+
+    '<div class="q-text">'+q.q+'</div>'+
+    '<div class="q-tip">💡 '+q.tip+'</div>'+
+    q.opts.map(function(o,i){
+      var cls='opt';
+      if(ans) cls+=(i===q.correct?' good':(i===qAnswers[qStep]?' bad':' dis'));
+      return '<button class="'+cls+'" onclick="ansQ('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+    }).join('')+
+    (ans?'<div class="fb show '+(qAnswers[qStep]===q.correct?'ok':'ko')+'">'+q.fb+'</div>':'')+
+    (ans?'<button class="btn btn-cyan" style="margin-top:8px" onclick="nextQ()">'+( qStep<QUESTIONS.length-1?'Question suivante →':'Voir mon score →')+'</button>':'')+
+    '</div>';
+  document.getElementById('quizArea').innerHTML=html;
+}
+function ansQ(i){if(qAnswers[qStep]!==undefined)return;qAnswers[qStep]=i;if(i===QUESTIONS[qStep].correct)qScore+=QUESTIONS[qStep].pts;renderQuiz();}
+function nextQ(){qStep++;renderQuiz();}
+function showResult(){
+  var max=QUESTIONS.reduce(function(s,q){return s+q.pts;},0);
+  var p=Math.round(qScore/max*100);
+  var msg=p>=80?'🏆 Future experte en bourse !':p>=60?'👍 Bonne compréhension !':'📚 Continuez à apprendre, c\'est normal au début !';
+  document.getElementById('quizArea').innerHTML=
+    '<div style="text-align:center;background:linear-gradient(135deg,#ECFEFF,#CFFAFE);border-radius:12px;padding:20px;margin-bottom:14px;border:2px solid #0891B2">'+
+    '<div style="font-size:36px;font-weight:700;color:#0891B2">'+qScore+'/'+max+'</div>'+
+    '<div style="font-size:14px;font-weight:700;margin:6px 0">'+msg+'</div>'+
+    '<div style="font-size:12px;color:#666">Score : '+p+'%</div></div>'+
+    '<button onclick="qStep=0;qScore=0;qAnswers=[];renderQuiz()" class="btn btn-cyan" style="width:100%;padding:12px">🔄 Recommencer le quiz</button>';
+}
+
+initPrix();
+</script>
+</body>
+</html>
