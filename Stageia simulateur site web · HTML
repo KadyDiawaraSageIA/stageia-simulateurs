@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Simulateur Création Site Web</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f5;color:#1a1a1a;padding:16px}
+.header{background:linear-gradient(135deg,#0D0B2E,#1a1060);border-radius:12px;padding:18px 22px;margin-bottom:16px;color:#fff;display:flex;align-items:center;gap:12px}
+.h-icon{width:44px;height:44px;background:rgba(24,119,242,.25);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.h-title{font-size:16px;font-weight:600}.h-sub{font-size:11px;color:#AFA9EC;margin-top:3px}
+.progress-wrap{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:16px;border:1px solid #e0e0e0}
+.prog-steps{display:flex;align-items:center;gap:0}
+.ps{display:flex;align-items:center;gap:0;flex:1}
+.ps-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .3s}
+.ps-circle.done{background:#3B82F6;color:#fff}
+.ps-circle.active{background:#1877F2;color:#fff;box-shadow:0 0 0 3px rgba(24,119,242,.2)}
+.ps-circle.wait{background:#f0f0f0;color:#999}
+.ps-line{flex:1;height:2px;background:#e0e0e0;transition:background .3s}
+.ps-line.done{background:#3B82F6}
+.ps-labels{display:flex;justify-content:space-between;margin-top:6px}
+.ps-lbl{font-size:9px;color:#888;text-align:center;flex:1}
+.ps-lbl.active{color:#1877F2;font-weight:600}
+.step-card{background:#fff;border-radius:12px;border:1px solid #e0e0e0;overflow:hidden;margin-bottom:12px}
+.step-top{background:linear-gradient(135deg,#1877F2,#0D0B2E);padding:14px 18px;color:#fff}
+.step-title{font-size:15px;font-weight:600}
+.step-sub{font-size:11px;color:#AFA9EC;margin-top:3px}
+.step-body{padding:18px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.frow.full{grid-template-columns:1fr}
+.frow.t3{grid-template-columns:1fr 1fr 1fr}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fl{font-size:11px;color:#666;font-weight:500}
+.fi{padding:7px 9px;border:1px solid #ddd;border-radius:8px;font-size:13px;color:#1a1a1a;background:#fff;font-family:Arial;width:100%}
+.fi:focus{outline:none;border-color:#1877F2}
+.fh{font-size:10px;color:#888;line-height:1.4}
+.check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:12px}
+.check-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid #ddd;border-radius:8px;cursor:pointer;transition:all .15s;background:#fff}
+.check-item:hover{border-color:#1877F2;background:#EBF3FE}
+.check-item.selected{border-color:#1877F2;background:#EBF3FE}
+.check-item input{accent-color:#1877F2}
+.check-item label{font-size:12px;color:#1a1a1a;cursor:pointer;line-height:1.4}
+.check-item .ci-icon{font-size:16px;flex-shrink:0}
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:12px}
+.tech-card{border:2px solid #ddd;border-radius:10px;padding:12px;cursor:pointer;text-align:center;transition:all .15s;background:#fff}
+.tech-card:hover{border-color:#1877F2}
+.tech-card.selected{border-color:#1877F2;background:#EBF3FE}
+.tech-icon{font-size:24px;margin-bottom:6px}
+.tech-name{font-size:12px;font-weight:600;margin-bottom:3px}
+.tech-desc{font-size:10px;color:#666;line-height:1.3}
+.tech-diff{font-size:10px;padding:2px 6px;border-radius:4px;margin-top:4px;display:inline-block}
+.tech-diff.easy{background:#D1FAE5;color:#065F46}
+.tech-diff.medium{background:#FEF3C7;color:#92400E}
+.tech-diff.hard{background:#FEE2E2;color:#991B1B}
+.checklist-steps{display:flex;flex-direction:column;gap:8px}
+.cl-step{border:1px solid #ddd;border-radius:10px;overflow:hidden}
+.cl-step-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;background:#fff;transition:background .15s}
+.cl-step-header:hover{background:#f5f5f5}
+.cl-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.cl-step-title{font-size:13px;font-weight:600;flex:1}
+.cl-step-status{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
+.cl-step-status.done{background:#D1FAE5;color:#065F46}
+.cl-step-status.todo{background:#f0f0f0;color:#666}
+.cl-step-body{padding:12px 14px;border-top:1px solid #eee;display:none}
+.cl-step-body.open{display:block}
+.cl-task{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid #f5f5f5;font-size:12px;line-height:1.5}
+.cl-task:last-child{border-bottom:none}
+.cl-task input{margin-top:2px;accent-color:#1877F2;flex-shrink:0}
+.cl-task label{color:#444;cursor:pointer}
+.cl-task label.done-task{text-decoration:line-through;color:#aaa}
+.devis-card{background:#fff;border-radius:12px;border:1px solid #e0e0e0;padding:16px;margin-bottom:12px}
+.devis-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px}
+.devis-table th{background:#f5f5f5;padding:8px;text-align:left;font-weight:500;color:#666;border-bottom:1px solid #eee}
+.devis-table td{padding:8px;border-bottom:1px solid #eee}
+.devis-total{background:linear-gradient(135deg,#1877F2,#0D0B2E);color:#fff;border-radius:10px;padding:14px;text-align:center;margin-bottom:12px}
+.devis-total-lbl{font-size:12px;color:rgba(255,255,255,.7);margin-bottom:4px}
+.devis-total-val{font-size:28px;font-weight:700}
+.conseil{font-size:12px;padding:8px 12px;background:#f5f5f5;border-radius:8px;margin-bottom:6px;display:flex;gap:8px;line-height:1.5;border-left:3px solid #1877F2}
+.alert{border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.alert.ok{background:#D1FAE5;border:1px solid #10B981;color:#065F46}
+.alert.info{background:#DBEAFE;border:1px solid #3B82F6;color:#1E40AF}
+.alert.warn{background:#FEF3C7;border:1px solid #F59E0B;color:#92400E}
+.nav-btns{display:flex;gap:10px;margin-top:14px}
+.btn-prev{padding:10px 20px;border:1px solid #ddd;background:#fff;color:#555;border-radius:8px;cursor:pointer;font-size:13px;font-family:Arial}
+.btn-next{padding:10px 20px;background:#1877F2;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:Arial}
+.btn-next:hover{background:#0D5FD8}
+.preview-mockup{background:#f0f4ff;border:2px dashed #1877F2;border-radius:12px;padding:20px;margin-bottom:12px}
+.mockup-browser{background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.mockup-bar{background:#f5f5f5;padding:8px 12px;display:flex;align-items:center;gap:8px}
+.mockup-dots{display:flex;gap:4px}
+.mockup-dot{width:10px;height:10px;border-radius:50%}
+.mockup-url{background:#fff;border:1px solid #ddd;border-radius:4px;padding:3px 10px;font-size:11px;color:#666;flex:1}
+.mockup-hero{padding:24px;text-align:center}
+.mockup-nav{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid #eee}
+.mockup-logo{font-size:14px;font-weight:700;color:#1877F2}
+.mockup-links{display:flex;gap:12px;font-size:11px;color:#666}
+.mockup-title{font-size:18px;font-weight:700;margin-bottom:6px}
+.mockup-sub{font-size:12px;color:#666;margin-bottom:12px}
+.mockup-btn{display:inline-block;padding:8px 20px;border-radius:6px;font-size:12px;font-weight:600;color:#fff}
+.mockup-sections{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 16px;background:#f8f9ff}
+.mockup-section{background:#fff;border-radius:6px;padding:10px;text-align:center;border:1px solid #e0e0e0}
+.mockup-section-icon{font-size:18px;margin-bottom:4px}
+.mockup-section-title{font-size:10px;font-weight:600;color:#333}
+.mockup-section-text{font-size:9px;color:#888}
+.ressources-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.res-card{border-radius:10px;padding:12px;border:1px solid #ddd;background:#fff}
+.res-icon{font-size:20px;margin-bottom:6px}
+.res-name{font-size:12px;font-weight:600;margin-bottom:3px}
+.res-desc{font-size:11px;color:#666;line-height:1.4;margin-bottom:6px}
+.res-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;display:inline-block}
+.res-badge.free{background:#D1FAE5;color:#065F46}
+.res-badge.paid{background:#FEE2E2;color:#991B1B}
+.res-badge.freemium{background:#FEF3C7;color:#92400E}
+@media(max-width:600px){.frow,.frow.t3{grid-template-columns:1fr}.check-grid{grid-template-columns:1fr 1fr}.tech-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="h-icon">🌐</div>
+  <div><div class="h-title">Stageia — Simulateur Création Site Web</div>
+  <div class="h-sub">Guide étape par étape · Devis automatique · Checklist complète · Ressources Mali</div></div>
+</div>
+
+<div class="progress-wrap">
+  <div class="prog-steps" id="progSteps"></div>
+  <div class="ps-labels" id="progLabels"></div>
+</div>
+
+<div id="mainArea"></div>
+
+<script>
+const STEPS=[
+  {num:1,title:'Définir votre projet',icon:'🎯'},
+  {num:2,title:'Choisir la technologie',icon:'⚙️'},
+  {num:3,title:'Planifier les pages',icon:'📄'},
+  {num:4,title:'Design & Identité',icon:'🎨'},
+  {num:5,title:'Fonctionnalités',icon:'⚡'},
+  {num:6,title:'Devis & Budget',icon:'💰'},
+  {num:7,title:'Plan de réalisation',icon:'📋'},
+  {num:8,title:'Ressources & Outils',icon:'🛠️'},
+];
+
+let curStep=0;
+let data={
+  typesite:'vitrine',nomSite:'',secteur:'commerce',objectif:'',cible:'',
+  techno:'wordpress',
+  pages:[],
+  couleur1:'#1877F2',couleur2:'#0D0B2E',police:'Arial',style:'moderne',
+  fonctions:[],
+  budget:0,
+  tasks:{},
+};
+
+const TECHNO=[
+  {id:'wordpress',icon:'🔵',name:'WordPress',desc:'CMS le plus utilisé au monde. Idéal pour sites vitrines, blogs, e-commerce.',diff:'easy',cout:'Gratuit + hébergement'},
+  {id:'webflow',icon:'🟣',name:'Webflow',desc:'Design professionnel sans code. Parfait pour agences et portfolios.',diff:'medium',cout:'14 $/mois'},
+  {id:'shopify',icon:'🟢',name:'Shopify',desc:'Spécialisé e-commerce. Simple à utiliser, nombreuses intégrations.',diff:'easy',cout:'29 $/mois'},
+  {id:'react',icon:'⚛️',name:'React.js',desc:'Application web moderne et performante. Nécessite un développeur.',diff:'hard',cout:'Développeur requis'},
+  {id:'html',icon:'🌐',name:'HTML/CSS/JS',desc:'Code pur. Contrôle total, léger et rapide. Bonne maîtrise du code requise.',diff:'medium',cout:'Gratuit'},
+  {id:'wix',icon:'🔷',name:'Wix',desc:'Créateur de sites drag & drop. Très facile, nombreux templates.',diff:'easy',cout:'17 $/mois'},
+];
+
+const FONCTIONS=[
+  {id:'contact',icon:'📧',label:'Formulaire de contact'},
+  {id:'reservation',icon:'📅',label:'Système de réservation'},
+  {id:'ecommerce',icon:'🛒',label:'Boutique en ligne'},
+  {id:'blog',icon:'📝',label:'Blog / Actualités'},
+  {id:'galerie',icon:'🖼️',label:'Galerie photos'},
+  {id:'avis',icon:'⭐',label:'Avis clients'},
+  {id:'chat',icon:'💬',label:'Chat WhatsApp'},
+  {id:'newsletter',icon:'📬',label:'Newsletter'},
+  {id:'carte',icon:'🗺️',label:'Carte Google Maps'},
+  {id:'multilangue',icon:'🌍',label:'Multilingue (Fr/Bamana)'},
+  {id:'paiement',icon:'💳',label:'Paiement Orange Money'},
+  {id:'recherche',icon:'🔍',label:'Moteur de recherche'},
+];
+
+const PAGES_TYPES={
+  vitrine:['Accueil','À propos','Services','Portfolio / Réalisations','Contact','Blog'],
+  ecommerce:['Accueil','Catalogue produits','Fiche produit','Panier','Paiement','Mon compte','Contact','À propos'],
+  portfolio:['Accueil','Portfolio','À propos','Services','Témoignages','Contact'],
+  blog:['Accueil','Articles','Catégories','À propos','Contact'],
+  restaurant:['Accueil','Menu','Réservation','À propos','Galerie','Contact'],
+  formation:['Accueil','Formations','Programme','Tarifs','Témoignages','Blog','Contact'],
+};
+
+const RESSOURCES=[
+  {icon:'🎨',name:'Canva',desc:'Design visuels, bannières, logos, icônes pour votre site.',badge:'Gratuit',bc:'free',url:'canva.com'},
+  {icon:'📸',name:'Unsplash',desc:'Photos professionnelles gratuites pour votre site.',badge:'Gratuit',bc:'free',url:'unsplash.com'},
+  {icon:'🔤',name:'Google Fonts',desc:'Polices gratuites et professionnelles pour votre site.',badge:'Gratuit',bc:'free',url:'fonts.google.com'},
+  {icon:'🌐',name:'Hostinger Mali',desc:'Hébergement web abordable disponible au Mali. Paiement local possible.',badge:'~5 000 F/mois',bc:'paid',url:'hostinger.com'},
+  {icon:'📊',name:'Google Analytics',desc:'Statistiques de visites gratuites pour votre site.',badge:'Gratuit',bc:'free',url:'analytics.google.com'},
+  {icon:'🔍',name:'Google Search Console',desc:'Indexation et référencement dans Google.',badge:'Gratuit',bc:'free',url:'search.google.com'},
+  {icon:'⚡',name:'PageSpeed Insights',desc:'Tester la vitesse de votre site sur mobile et desktop.',badge:'Gratuit',bc:'free',url:'pagespeed.web.dev'},
+  {icon:'🔒',name:'Let\'s Encrypt',desc:'Certificat SSL HTTPS gratuit pour sécuriser votre site.',badge:'Gratuit',bc:'free',url:'letsencrypt.org'},
+  {icon:'📱',name:'BrowserStack',desc:'Tester votre site sur tous les appareils et navigateurs.',badge:'Freemium',bc:'freemium',url:'browserstack.com'},
+  {icon:'🤖',name:'ChatGPT',desc:'Générer du contenu, des textes SEO et du code pour votre site.',badge:'Freemium',bc:'freemium',url:'chat.openai.com'},
+  {icon:'💳',name:'Orange Money API',desc:'Intégration paiement mobile pour e-commerce malien.',badge:'API gratuite',bc:'free',url:'developer.orange.com'},
+  {icon:'🎯',name:'Hotjar',desc:'Heatmaps et enregistrements pour optimiser l\'UX de votre site.',badge:'Freemium',bc:'freemium',url:'hotjar.com'},
+];
+
+function fmt(n){return Math.round(n).toLocaleString('fr-FR');}
+
+function renderProgress(){
+  const sp=document.getElementById('progSteps');
+  const sl=document.getElementById('progLabels');
+  if(!sp||!sl) return;
+  let html='';
+  STEPS.forEach((s,i)=>{
+    html+=`<div class="ps-circle ${i<curStep?'done':i===curStep?'active':'wait'}">${i<curStep?'✓':s.num}</div>`;
+    if(i<STEPS.length-1) html+=`<div class="ps-line ${i<curStep?'done':''}"></div>`;
+  });
+  sp.innerHTML=html;
+  sl.innerHTML=STEPS.map((s,i)=>`<div class="ps-lbl ${i===curStep?'active':''}">${s.icon}</div>`).join('');
+}
+
+function render(){
+  renderProgress();
+  const ma=document.getElementById('mainArea');
+  if(!ma) return;
+  switch(curStep){
+    case 0: ma.innerHTML=renderStep1();break;
+    case 1: ma.innerHTML=renderStep2();break;
+    case 2: ma.innerHTML=renderStep3();break;
+    case 3: ma.innerHTML=renderStep4();break;
+    case 4: ma.innerHTML=renderStep5();break;
+    case 5: ma.innerHTML=renderStep6();break;
+    case 6: ma.innerHTML=renderStep7();break;
+    case 7: ma.innerHTML=renderStep8();break;
+  }
+}
+
+function renderStep1(){
+  return `<div class="step-card">
+    <div class="step-top"><div class="step-title">🎯 Étape 1 — Définir votre projet</div><div class="step-sub">La base de tout site réussi : définir clairement l'objectif avant de toucher au code ou au design.</div></div>
+    <div class="step-body">
+      <div class="frow full"><div class="fg"><label class="fl">Nom de votre site / marque</label>
+      <input class="fi" id="nomSite" placeholder="Ex: Boutique Aminata, Restaurant Djenné, Stageia..." value="${data.nomSite}" oninput="data.nomSite=this.value"></div></div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Type de site</label>
+        <select class="fi" id="typesite" onchange="data.typesite=this.value;updatePages()">
+          <option value="vitrine" ${data.typesite==='vitrine'?'selected':''}>🏢 Site vitrine (présentation)</option>
+          <option value="ecommerce" ${data.typesite==='ecommerce'?'selected':''}>🛒 E-commerce (boutique en ligne)</option>
+          <option value="portfolio" ${data.typesite==='portfolio'?'selected':''}>🎨 Portfolio (présentation travaux)</option>
+          <option value="blog" ${data.typesite==='blog'?'selected':''}>📝 Blog (articles, contenu)</option>
+          <option value="restaurant" ${data.typesite==='restaurant'?'selected':''}>🍽️ Restaurant (menu, réservation)</option>
+          <option value="formation" ${data.typesite==='formation'?'selected':''}>🎓 Plateforme formation</option>
+        </select></div>
+        <div class="fg"><label class="fl">Secteur d'activité</label>
+        <select class="fi" id="secteur" onchange="data.secteur=this.value">
+          <option value="commerce" ${data.secteur==='commerce'?'selected':''}>Commerce / Retail</option>
+          <option value="tech" ${data.secteur==='tech'?'selected':''}>Tech / Digital</option>
+          <option value="restauration" ${data.secteur==='restauration'?'selected':''}>Restauration</option>
+          <option value="services" ${data.secteur==='services'?'selected':''}>Services</option>
+          <option value="artisanat" ${data.secteur==='artisanat'?'selected':''}>Artisanat / Mode</option>
+          <option value="sante" ${data.secteur==='sante'?'selected':''}>Santé / Bien-être</option>
+          <option value="edtech" ${data.secteur==='edtech'?'selected':''}>Formation / EdTech</option>
+        </select></div>
+      </div>
+      <div class="frow full"><div class="fg"><label class="fl">Objectif principal du site</label>
+      <input class="fi" id="objectif" placeholder="Ex: Générer des demandes de devis, Vendre mes produits en ligne, Partager mon portfolio..." value="${data.objectif}" oninput="data.objectif=this.value">
+      <span class="fh">Un bon site a UN seul objectif principal. Soyez précis.</span></div></div>
+      <div class="frow full"><div class="fg"><label class="fl">Cible principale (visiteurs)</label>
+      <input class="fi" id="cible" placeholder="Ex: Femmes 25-45 ans à Bamako cherchant des vêtements traditionnels modernes..." value="${data.cible}" oninput="data.cible=this.value"></div></div>
+      <div class="alert info">💡 <b>Conseil Stageia :</b> Avant de créer votre site, demandez-vous : "Quelle action je veux que le visiteur fasse après 30 secondes sur mon site ?" Tout votre design doit guider vers cette action.</div>
+      <div class="nav-btns"><button class="btn-next" onclick="next()">Choisir la technologie →</button></div>
+    </div>
+  </div>`;
+}
+
+function renderStep2(){
+  return `<div class="step-card">
+    <div class="step-top"><div class="step-title">⚙️ Étape 2 — Choisir la technologie</div><div class="step-sub">Le bon outil selon votre niveau technique, votre budget et vos besoins.</div></div>
+    <div class="step-body">
+      <div class="tech-grid">${TECHNO.map(t=>`
+        <div class="tech-card ${data.techno===t.id?'selected':''}" onclick="data.techno='${t.id}';render()">
+          <div class="tech-icon">${t.icon}</div>
+          <div class="tech-name">${t.name}</div>
+          <div class="tech-desc">${t.desc}</div>
+          <div class="tech-diff ${t.diff}">${t.diff==='easy'?'⭐ Facile':t.diff==='medium'?'⭐⭐ Moyen':'⭐⭐⭐ Expert'}</div>
+          <div style="font-size:10px;color:#888;margin-top:4px">${t.cout}</div>
+        </div>`).join('')}
+      </div>
+      ${data.techno?`<div class="alert info">✅ Technologie choisie : <b>${TECHNO.find(t=>t.id===data.techno)?.name}</b> — ${getTechAdvice(data.techno)}</div>`:''}
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="prev()">← Retour</button>
+        <button class="btn-next" onclick="next()">Planifier les pages →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function getTechAdvice(id){
+  const advices={
+    wordpress:'Idéal pour votre profil. Grande communauté, plugins pour tout. Recommandé pour les non-développeurs.',
+    webflow:'Excellent pour les designers. Permet un contrôle total du design sans coder. Coût mensuel à prévoir.',
+    shopify:'La meilleure option si vous voulez vendre en ligne. Paiement Orange Money disponible via plugin.',
+    react:'Nécessite un développeur. Pour une application complexe ou une startup tech.',
+    html:'Parfait pour un développeur qui veut un site léger et rapide. Contrôle total.',
+    wix:'Le plus simple pour débuter. Idéal si vous n\'avez aucune expérience technique.',
+  };
+  return advices[id]||'';
+}
+
+function updatePages(){
+  const type=document.getElementById('typesite')?.value||data.typesite;
+  data.pages=PAGES_TYPES[type]||PAGES_TYPES.vitrine;
+}
+
+function renderStep3(){
+  if(data.pages.length===0) data.pages=PAGES_TYPES[data.typesite]||PAGES_TYPES.vitrine;
+  const allPages=[...PAGES_TYPES[data.typesite]||PAGES_TYPES.vitrine,'Mentions légales','Politique de confidentialité','FAQ','Témoignages'];
+  return `<div class="step-card">
+    <div class="step-top"><div class="step-title">📄 Étape 3 — Planifier les pages</div><div class="step-sub">Définissez la structure de votre site. Chaque page doit avoir un objectif précis.</div></div>
+    <div class="step-body">
+      <div class="alert info" style="margin-bottom:12px">💡 Pages suggérées pour un site <b>${data.typesite}</b>. Cochez celles que vous voulez inclure.</div>
+      <div class="check-grid">
+        ${allPages.map(p=>`
+          <div class="check-item ${data.pages.includes(p)?'selected':''}">
+            <input type="checkbox" id="page_${p.replace(/\s/g,'_')}" ${data.pages.includes(p)?'checked':''} onchange="togglePage('${p}')">
+            <span class="ci-icon">📄</span>
+            <label for="page_${p.replace(/\s/g,'_')}">${p}</label>
+          </div>`).join('')}
+      </div>
+      <div class="alert ok">✅ <b>${data.pages.length} pages sélectionnées.</b> Un site de ${data.pages.length} pages nécessite environ ${data.pages.length*2} à ${data.pages.length*5} heures de travail.</div>
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="prev()">← Retour</button>
+        <button class="btn-next" onclick="next()">Design & Identité →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function togglePage(p){
+  if(data.pages.includes(p)) data.pages=data.pages.filter(x=>x!==p);
+  else data.pages.push(p);
+  render();
+}
+
+function renderStep4(){
+  return `<div class="step-card">
+    <div class="step-top"><div class="step-title">🎨 Étape 4 — Design & Identité visuelle</div><div class="step-sub">Définissez l'apparence de votre site pour qu'il reflète votre marque.</div></div>
+    <div class="step-body">
+      <div class="frow">
+        <div class="fg"><label class="fl">Couleur principale (hex)</label>
+        <input class="fi" type="color" id="couleur1" value="${data.couleur1}" oninput="data.couleur1=this.value;updateMockup()"></div>
+        <div class="fg"><label class="fl">Couleur secondaire (hex)</label>
+        <input class="fi" type="color" id="couleur2" value="${data.couleur2}" oninput="data.couleur2=this.value;updateMockup()"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Police de caractères</label>
+        <select class="fi" id="police" onchange="data.police=this.value;updateMockup()">
+          <option value="Arial" ${data.police==='Arial'?'selected':''}>Arial (classique)</option>
+          <option value="Georgia" ${data.police==='Georgia'?'selected':''}>Georgia (élégant)</option>
+          <option value="Montserrat" ${data.police==='Montserrat'?'selected':''}>Montserrat (moderne)</option>
+          <option value="Roboto" ${data.police==='Roboto'?'selected':''}>Roboto (tech)</option>
+          <option value="Playfair Display" ${data.police==='Playfair Display'?'selected':''}>Playfair Display (luxe)</option>
+        </select></div>
+        <div class="fg"><label class="fl">Style du site</label>
+        <select class="fi" id="style" onchange="data.style=this.value;updateMockup()">
+          <option value="moderne" ${data.style==='moderne'?'selected':''}>Moderne & Minimaliste</option>
+          <option value="classique" ${data.style==='classique'?'selected':''}>Classique & Professionnel</option>
+          <option value="coloré" ${data.style==='coloré'?'selected':''}>Coloré & Dynamique</option>
+          <option value="africain" ${data.style==='africain'?'selected':''}>Africain Contemporain</option>
+          <option value="luxe" ${data.style==='luxe'?'selected':''}>Luxe & Premium</option>
+        </select></div>
+      </div>
+      <div style="font-size:12px;color:#666;font-weight:500;margin-bottom:8px">Aperçu de votre site :</div>
+      <div class="preview-mockup" id="mockupPreview">${getMockup()}</div>
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="prev()">← Retour</button>
+        <button class="btn-next" onclick="next()">Fonctionnalités →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function getMockup(){
+  const nom=data.nomSite||'Mon Site';
+  const c1=data.couleur1||'#1877F2';
+  const c2=data.couleur2||'#0D0B2E';
+  const pages3=data.pages.slice(0,3);
+  return `<div class="mockup-browser">
+    <div class="mockup-bar">
+      <div class="mockup-dots"><div class="mockup-dot" style="background:#EF4444"></div><div class="mockup-dot" style="background:#F59E0B"></div><div class="mockup-dot" style="background:#10B981"></div></div>
+      <div class="mockup-url">www.${nom.toLowerCase().replace(/\s+/g,'')}.com</div>
+    </div>
+    <div class="mockup-nav">
+      <div class="mockup-logo" style="color:${c1}">${nom}</div>
+      <div class="mockup-links">${data.pages.slice(0,4).map(p=>`<span>${p}</span>`).join('')}</div>
+    </div>
+    <div class="mockup-hero" style="background:linear-gradient(135deg,${c1}15,${c2}15)">
+      <div class="mockup-title" style="color:${c2}">${data.objectif||'Bienvenue sur '+nom}</div>
+      <div class="mockup-sub">${data.cible||'Découvrez nos services et produits'}</div>
+      <div class="mockup-btn" style="background:${c1}">Découvrir →</div>
+    </div>
+    <div class="mockup-sections">
+      ${pages3.map(p=>`<div class="mockup-section"><div class="mockup-section-icon">📄</div><div class="mockup-section-title">${p}</div><div class="mockup-section-text">Contenu de la page</div></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function updateMockup(){
+  const mp=document.getElementById('mockupPreview');
+  if(mp) mp.innerHTML=getMockup();
+}
+
+function renderStep5(){
+  return `<div class="step-card">
+    <div class="step-top"><div class="step-title">⚡ Étape 5 — Fonctionnalités</div><div class="step-sub">Sélectionnez les fonctionnalités à intégrer. Chaque fonction impacte le coût et le délai.</div></div>
+    <div class="step-body">
+      <div class="check-grid">
+        ${FONCTIONS.map(f=>`
+          <div class="check-item ${data.fonctions.includes(f.id)?'selected':''}">
+            <input type="checkbox" id="fn_${f.id}" ${data.fonctions.includes(f.id)?'checked':''} onchange="toggleFn('${f.id}')">
+            <span class="ci-icon">${f.icon}</span>
+            <label for="fn_${f.id}">${f.label}</label>
+          </div>`).join('')}
+      </div>
+      ${data.fonctions.length>0?`<div class="alert ok">✅ <b>${data.fonctions.length} fonctionnalité(s) sélectionnée(s).</b> Impact sur le délai : +${data.fonctions.length*2} à ${data.fonctions.length*5} jours supplémentaires.</div>`:''}
+      <div class="alert info">💡 <b>Conseil :</b> Pour un premier site, commencez avec le minimum (formulaire contact + galerie). Ajoutez des fonctionnalités progressivement selon les retours clients.</div>
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="prev()">← Retour</button>
+        <button class="btn-next" onclick="next()">Voir le devis →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleFn(id){
+  if(data.fonctions.includes(id)) data.fonctions=data.fonctions.filter(x=>x!==id);
+  else data.fonctions.push(id);
+  render();
+}
+
+function calcDevis(){
+  const techCouts={wordpress:0,webflow:0,shopify:0,react:200000,html:50000,wix:0};
+  const techHeures={wordpress:20,webflow:25,react:60,html:30,shopify:15,wix:10};
+  const fnCouts={contact:5000,reservation:20000,ecommerce:50000,blog:10000,galerie:8000,avis:10000,chat:5000,newsletter:8000,carte:3000,multilangue:25000,paiement:30000,recherche:15000};
+  const txHoraire=15000;
+  const heuresBase=techHeures[data.techno]||20;
+  const heuresPages=data.pages.length*3;
+  const heuresFn=data.fonctions.length*4;
+  const totalHeures=heuresBase+heuresPages+heuresFn;
+  const coutDev=totalHeures*txHoraire;
+  const coutFn=data.fonctions.reduce((s,f)=>s+(fnCouts[f]||0),0);
+  const coutTechno=techCouts[data.techno]||0;
+  const coutHebergement=60000;
+  const coutDomaine=15000;
+  const coutMaintenance=50000;
+  const sousTotal=coutDev+coutFn+coutTechno;
+  const total=sousTotal+coutHebergement+coutDomaine;
+  return{heures:totalHeures,coutDev,coutFn,coutTechno,coutHebergement,coutDomaine,coutMaintenance,sousTotal,total};
+}
+
+function renderStep6(){
+  const d=calcDevis();
+  const lignes=[
+    {desc:'Développement et intégration ('+d.heures+'h × 15 000 FCFA)',montant:d.coutDev},
+    {desc:'Fonctionnalités spécifiques ('+data.fonctions.length+' modules)',montant:d.coutFn},
+    {desc:'Licence / Abonnement technologie (an 1)',montant:d.coutTechno},
+    {desc:'Hébergement web (1 an)',montant:d.coutHebergement},
+    {desc:'Nom de domaine .com ou .ml (1 an)',montant:d.coutDomaine},
+  ].filter(l=>l.montant>0);
+  return `<div class="step-card">
+    <div class="step-top"><div class="step-title">💰 Étape 6 — Devis & Budget estimatif</div><div class="step-sub">Estimation du coût de votre projet selon vos choix.</div></div>
+    <div class="step-body">
+      <div class="devis-card">
+        <div style="font-size:13px;font-weight:600;margin-bottom:12px">📋 Devis — ${data.nomSite||'Mon Site Web'}</div>
+        <table class="devis-table">
+          <thead><tr><th>Poste</th><th style="text-align:right">Montant (FCFA)</th></tr></thead>
+          <tbody>
+            ${lignes.map(l=>`<tr><td>${l.desc}</td><td style="text-align:right">${fmt(l.montant)}</td></tr>`).join('')}
+            <tr style="font-weight:600;background:#f5f5f5"><td>TOTAL CRÉATION</td><td style="text-align:right">${fmt(d.total)}</td></tr>
+            <tr style="color:#666"><td>Maintenance mensuelle (optionnel)</td><td style="text-align:right">${fmt(d.coutMaintenance)}/mois</td></tr>
+          </tbody>
+        </table>
+        <div class="devis-total">
+          <div class="devis-total-lbl">INVESTISSEMENT TOTAL AN 1</div>
+          <div class="devis-total-val">${fmt(d.total)} FCFA</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:4px">Soit ~${fmt(Math.round(d.total/12))} FCFA/mois</div>
+        </div>
+        <div class="alert info">💡 <b>Pour réduire le budget :</b> Commencez avec WordPress + thème gratuit + 3 pages essentielles. Budget minimum viable : ~75 000 FCFA (domaine + hébergement + temps personnel).</div>
+        <div class="conseil"><span>🎯</span><span><b>ROI estimé :</b> Si votre site génère 2 clients/mois supplémentaires avec un panier moyen de 50 000 FCFA, le ROI est atteint en ${Math.ceil(d.total/100000)} mois.</span></div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="prev()">← Retour</button>
+        <button class="btn-next" onclick="next()">Plan de réalisation →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderStep7(){
+  const d=calcDevis();
+  const totalJours=Math.ceil(d.heures/6)+data.fonctions.length*2;
+  const phases=[
+    {num:1,titre:'Préparation & Brief',duree:'2-3 jours',color:'#1877F2',taches:[
+      'Finaliser le brief client (objectifs, cible, concurrents)',
+      'Rassembler tous les contenus (textes, photos, logo)',
+      'Choisir l\'hébergement et acheter le nom de domaine',
+      'Installer et configurer la technologie choisie',
+      'Créer un dossier de travail organisé (Drive/Dropbox)',
+    ]},
+    {num:2,titre:'Design & Maquettes',duree:'3-5 jours',color:'#8B5CF6',taches:[
+      'Créer la maquette de la page d\'accueil sur Figma ou Canva',
+      'Définir la palette de couleurs et les polices',
+      'Valider le design avec le client avant de coder',
+      'Créer les maquettes mobile et desktop',
+      'Préparer le kit UI (boutons, cartes, formulaires)',
+    ]},
+    {num:3,titre:'Développement',duree:`${Math.ceil(d.heures/6)-3} jours`,color:'#10B981',taches:[
+      'Intégrer la page d\'accueil',
+      ...data.pages.slice(1,4).map(p=>`Développer la page : ${p}`),
+      'Intégrer les fonctionnalités sélectionnées',
+      'Optimiser les images (compression WebP)',
+      'Tester sur mobile (Android prioritaire au Mali)',
+    ]},
+    {num:4,titre:'Tests & Optimisation',duree:'2-3 jours',color:'#F59E0B',taches:[
+      'Tester sur Chrome, Firefox, Edge',
+      'Tester sur mobile (Android + iOS)',
+      'Vérifier la vitesse (Google PageSpeed > 70/100)',
+      'Tester tous les formulaires et boutons',
+      'Corriger les bugs identifiés',
+    ]},
+    {num:5,titre:'Mise en ligne',duree:'1-2 jours',color:'#EC4899',taches:[
+      'Configurer le SSL HTTPS (certificat Let\'s Encrypt)',
+      'Déployer sur le serveur de production',
+      'Connecter Google Analytics et Search Console',
+      'Soumettre le sitemap à Google',
+      'Former le client à la gestion du site',
+      'Documenter les accès (hébergement, admin, FTP)',
+    ]},
+  ];
+  const phaseHTML=phases.map((p,i)=>`
+    <div class="cl-step">
+      <div class="cl-step-header" onclick="toggleStep(${i})">
+        <div class="cl-step-num" style="background:${p.color}22;color:${p.color}">${p.num}</div>
+        <div class="cl-step-title">${p.titre}</div>
+        <div style="font-size:11px;color:#888;margin-right:8px">${p.duree}</div>
+        <div class="cl-step-status todo" id="stepStatus${i}">0/${p.taches.length}</div>
+      </div>
+      <div class="cl-step-body" id="stepBody${i}">
+        ${p.taches.map((t,j)=>`
+          <div class="cl-task">
+            <input type="checkbox" id="task_${i}_${j}" onchange="updateTaskStatus(${i},${p.taches.length})">
+            <label for="task_${i}_${j}">${t}</label>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+  return `<div class="step-card">
+    <div class="step-top"><div class="step-title">📋 Étape 7 — Plan de réalisation</div><div class="step-sub">Votre roadmap complète. Durée estimée : ${totalJours} jours ouvrés.</div></div>
+    <div class="step-body">
+      <div class="alert info" style="margin-bottom:12px">🗓️ Durée totale estimée : <b>${totalJours} jours ouvrés</b> (${Math.ceil(totalJours/5)} semaines). Cochez les tâches au fur et à mesure de votre progression.</div>
+      <div class="checklist-steps">${phaseHTML}</div>
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="prev()">← Retour</button>
+        <button class="btn-next" onclick="next()">Ressources & Outils →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleStep(i){
+  const b=document.getElementById('stepBody'+i);
+  if(b) b.classList.toggle('open');
+}
+
+function updateTaskStatus(stepIdx,total){
+  const checked=document.querySelectorAll(`[id^="task_${stepIdx}_"]:checked`).length;
+  const s=document.getElementById('stepStatus'+stepIdx);
+  if(s){s.textContent=checked+'/'+total;s.className='cl-step-status '+(checked===total?'done':'todo');}
+}
+
+function renderStep8(){
+  return `<div class="step-card">
+    <div class="step-top"><div class="step-title">🛠️ Étape 8 — Ressources & Outils</div><div class="step-sub">Tous les outils dont vous avez besoin pour créer et gérer votre site web au Mali.</div></div>
+    <div class="step-body">
+      <div class="alert ok" style="margin-bottom:14px">🎉 Félicitations ! Votre plan de site web est complet. Voici les ressources pour le réaliser.</div>
+      <div class="ressources-grid">
+        ${RESSOURCES.map(r=>`
+          <div class="res-card">
+            <div class="res-icon">${r.icon}</div>
+            <div class="res-name">${r.name}</div>
+            <div class="res-desc">${r.desc}</div>
+            <div class="res-badge ${r.bc}">${r.badge}</div>
+          </div>`).join('')}
+      </div>
+      <div style="margin-top:14px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:10px">📊 Résumé de votre projet :</div>
+        <div class="conseil"><span>🌐</span><span><b>Site :</b> ${data.nomSite||'Mon Site'} — ${data.typesite} — ${TECHNO.find(t=>t.id===data.techno)?.name||data.techno}</span></div>
+        <div class="conseil"><span>📄</span><span><b>Pages :</b> ${data.pages.join(', ')}</span></div>
+        <div class="conseil"><span>⚡</span><span><b>Fonctionnalités :</b> ${data.fonctions.length>0?data.fonctions.map(f=>FONCTIONS.find(x=>x.id===f)?.label||f).join(', '):'Aucune fonctionnalité avancée'}</span></div>
+        <div class="conseil"><span>💰</span><span><b>Budget estimé :</b> ${fmt(calcDevis().total)} FCFA</span></div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="prev()">← Retour</button>
+        <button class="btn-next" onclick="restart()" style="background:#10B981">🔄 Nouveau projet</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function next(){curStep=Math.min(curStep+1,STEPS.length-1);render();}
+function prev(){curStep=Math.max(curStep-1,0);render();}
+function restart(){curStep=0;data={typesite:'vitrine',nomSite:'',secteur:'commerce',objectif:'',cible:'',techno:'wordpress',pages:[],couleur1:'#1877F2',couleur2:'#0D0B2E',police:'Arial',style:'moderne',fonctions:{},budget:0,tasks:{}};render();}
+
+render();
+</script>
+</body>
+</html>
