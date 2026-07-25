@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Développement International CEDEAO</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#065F46);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#6EE7B7;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#10B981;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+label{font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:4px}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;font-family:Arial;background:#fff}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#10B981}
+.hint{font-size:10px;color:#888;margin-top:3px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin:12px 0}
+.kpi{background:#f5f5f5;border-radius:8px;padding:10px;text-align:center;border:1px solid #e0e0e0}
+.kpi b{display:block;font-size:17px;color:#059669;margin-bottom:2px}
+.kpi span{font-size:10px;color:#666}
+.box{background:#ECFDF5;border-left:3px solid #10B981;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.warn{background:#FEF3C7;border-left-color:#F59E0B;color:#92400E}
+.err{background:#FEE2E2;border-left-color:#EF4444;color:#991B1B}
+.info{background:#DBEAFE;border-left-color:#3B82F6;color:#1E40AF}
+.purple{background:#F5F3FF;border-left-color:#8B5CF6;color:#5B21B6}
+table{width:100%;border-collapse:collapse;font-size:11px;margin:10px 0}
+th{background:#ECFDF5;padding:8px;text-align:left;font-weight:600;color:#065F46}
+td{padding:8px;border-bottom:1px solid #eee}
+tr.hl td{background:#ECFDF5;font-weight:700;color:#065F46}
+.pays-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.pays-card{border:2px solid #ddd;border-radius:10px;padding:12px;cursor:pointer;text-align:center;transition:all .15s}
+.pays-card:hover{border-color:#10B981;transform:translateY(-2px)}
+.pays-card.sel{border-color:#10B981;background:#ECFDF5}
+.pays-flag{font-size:28px;margin-bottom:4px}
+.pays-nom{font-size:12px;font-weight:700;margin-bottom:3px}
+.pays-info{font-size:10px;color:#666;line-height:1.4}
+.etape{border:1px solid #e0e0e0;border-radius:10px;overflow:hidden;margin-bottom:8px}
+.etape-header{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#f8f8f8;cursor:pointer}
+.etape-num{width:28px;height:28px;border-radius:50%;background:#10B981;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.etape-title{font-size:13px;font-weight:600;flex:1}
+.etape-dur{font-size:11px;color:#888}
+.etape-body{padding:12px 14px;border-top:1px solid #eee;display:none}
+.etape-body.open{display:block}
+.etape-item{font-size:12px;padding:5px 0;border-bottom:1px solid #f5f5f5;display:flex;gap:8px;line-height:1.5}
+.etape-item:last-child{border-bottom:none}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px}
+.bar-lbl{width:120px;flex-shrink:0;color:#555}
+.bar-track{flex:1;height:16px;background:#eee;border-radius:8px;overflow:hidden}
+.bar-fill{height:100%;background:#10B981;border-radius:8px;display:flex;align-items:center;padding-left:6px;font-size:9px;color:#fff;font-weight:600}
+.budget-table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0}
+.budget-table th{background:#ECFDF5;padding:8px;font-weight:600;color:#065F46;text-align:left}
+.budget-table td{padding:8px;border-bottom:1px solid #eee}
+.budget-table tr.tot td{background:#ECFDF5;font-weight:700;color:#065F46}
+@media(max-width:550px){.row{grid-template-columns:1fr}.pays-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<h1>🌍 Simulateur Développement International — CEDEAO
+<small>Expansion en Afrique de l'Ouest · Guide pays · Budget · Formalités · Plan d'action</small></h1>
+
+<div class="tabs">
+  <button class="tab on" onclick="show(0)">🏢 Profil</button>
+  <button class="tab" onclick="show(1)">🗺️ Choisir Pays</button>
+  <button class="tab" onclick="show(2)">📋 Formalités</button>
+  <button class="tab" onclick="show(3)">💰 Budget</button>
+  <button class="tab" onclick="show(4)">📊 Marché</button>
+  <button class="tab" onclick="show(5)">🗓️ Plan Action</button>
+  <button class="tab" onclick="show(6)">⚠️ Risques</button>
+</div>
+
+<!-- PANE 0: PROFIL -->
+<div class="pane on" id="p0">
+  <div class="row">
+    <div><label>Nom de votre entreprise</label><input id="entreprise" placeholder="Ex: Stageia, Boutique Aminata..." oninput="calc()"></div>
+    <div><label>Secteur d'activité</label>
+    <select id="secteur" onchange="calc()">
+      <option value="tech">Tech / Digital / EdTech</option>
+      <option value="commerce">Commerce / Distribution</option>
+      <option value="services">Services aux entreprises</option>
+      <option value="agroalim">Agroalimentaire / Agriculture</option>
+      <option value="mode">Mode / Artisanat / Textile</option>
+      <option value="sante">Santé / Pharmacie</option>
+      <option value="formation">Formation / Éducation</option>
+      <option value="finance">Finance / Fintech</option>
+    </select></div>
+  </div>
+  <div class="row">
+    <div><label>Stade de développement</label>
+    <select id="stade" onchange="calc()">
+      <option value="mvp">MVP / Prototype</option>
+      <option value="local">Établi localement (Mali)</option>
+      <option value="regional">Déjà présent dans 1 pays</option>
+      <option value="multi">Multi-pays</option>
+    </select></div>
+    <div><label>Budget expansion disponible (FCFA)</label>
+    <input type="number" id="budget" value="5000000" oninput="calc()"></div>
+  </div>
+  <div class="row">
+    <div><label>CA mensuel actuel Mali (FCFA)</label>
+    <input type="number" id="caMali" value="1000000" oninput="calc()"></div>
+    <div><label>Objectif CA mensuel cible pays (FCFA)</label>
+    <input type="number" id="caObjectif" value="2000000" oninput="calc()"></div>
+  </div>
+  <div class="row">
+    <div><label>Taille équipe actuelle</label>
+    <select id="equipe" onchange="calc()">
+      <option value="1">Solo / 1-2 personnes</option>
+      <option value="5">Petite équipe (3-10)</option>
+      <option value="20">Équipe moyenne (11-50)</option>
+      <option value="50">Grande équipe (50+)</option>
+    </select></div>
+    <div><label>Délai souhaité pour lancer (mois)</label>
+    <input type="number" id="delai" value="6" min="1" max="24" oninput="calc()"></div>
+  </div>
+  <div class="kpis" id="kp0"></div>
+  <div id="readiness"></div>
+</div>
+
+<!-- PANE 1: CHOISIR PAYS -->
+<div class="pane" id="p1">
+  <div class="box info">💡 Cliquez sur un ou plusieurs pays CEDEAO pour voir l'analyse détaillée. Commencez par 1 pays — maîtrisez-le avant de vous étendre.</div>
+  <div class="pays-grid" id="paysGrid"></div>
+  <div id="paysDetail"></div>
+</div>
+
+<!-- PANE 2: FORMALITÉS -->
+<div class="pane" id="p2">
+  <div id="formalitesBox"></div>
+</div>
+
+<!-- PANE 3: BUDGET -->
+<div class="pane" id="p3">
+  <div id="budgetBox"></div>
+</div>
+
+<!-- PANE 4: MARCHÉ -->
+<div class="pane" id="p4">
+  <div id="marcheBox"></div>
+</div>
+
+<!-- PANE 5: PLAN ACTION -->
+<div class="pane" id="p5">
+  <div id="planBox"></div>
+</div>
+
+<!-- PANE 6: RISQUES -->
+<div class="pane" id="p6">
+  <div id="risquesBox"></div>
+</div>
+
+<script>
+var paysSelectionnes=[];
+var etapesOpen={};
+
+var PAYS=[
+  {id:'senegal',flag:'🇸🇳',nom:'Sénégal',capitale:'Dakar',pop:'17M',pib:'27Mds$',langue:'Français',monnaie:'FCFA',facilite:8,marche:9,infra:8,
+   atouts:['1ère économie UEMOA','Hub financier Afrique de l\'Ouest','Port autonome de Dakar','Pôle tech (Dakar InnoCity)','Accords commerciaux solides'],
+   defis:['Coût de la vie élevé à Dakar','Concurrence intense','Marché saturé dans certains secteurs'],
+   formalites:['Immatriculation RCCM Dakar : 3-7 jours','Capital minimum : 100 000 FCFA (SARL)','NINEA (numéro fiscal) : 5 jours','Compte bancaire professionnel : 1-2 semaines'],
+   budget_min:3000000,budget_rec:8000000,
+   secteurs_porteurs:['Tech / Fintech','Agroalimentaire','BTP / Immobilier','Formation professionnelle'],
+   score:9},
+  {id:'cotedivoire',flag:'🇨🇮',nom:"Côte d'Ivoire",capitale:'Abidjan',pop:'27M',pib:'70Mds$',langue:'Français',monnaie:'FCFA',facilite:8,marche:10,infra:8,
+   atouts:['1ère économie CEDEAO francophone','Croissance 6-8%/an','Hub logistique majeur','Marché consommateurs large','BRVM — Bourse régionale'],
+   defis:['Coût immobilier très élevé à Abidjan','Bouchons et infrastructure routière','Formalités parfois longues'],
+   formalites:['CEPICI (guichet unique) : 24-48h','Capital : 100 000 FCFA (SARL)','DGI enregistrement fiscal : 1 semaine','Autorisation spécifique selon secteur'],
+   budget_min:5000000,budget_rec:12000000,
+   secteurs_porteurs:['Commerce / Distribution','Finance / Assurance','Tech / Mobile money','Cosmétiques / Mode'],
+   score:10},
+  {id:'ghana',flag:'🇬🇭',nom:'Ghana',capitale:'Accra',pop:'33M',pib:'72Mds$',langue:'Anglais',monnaie:'Cedi (GHS)',facilite:9,marche:9,infra:9,
+   atouts:['Économie la plus stable CEDEAO','Classe moyenne forte','Langue anglaise = accès international','Infrastructure excellente','Démocratie stable'],
+   defis:['Langue anglaise requise','Monnaie différente (Cedi)','Réglementation import/export stricte'],
+   formalites:['Ghana Investment Promotion Centre','Capital min : 500$ (étranger)','Registrar General : 3-5 jours','Permis de travail si expatrié'],
+   budget_min:4000000,budget_rec:10000000,
+   secteurs_porteurs:['Tech / Startups','Or / Mines','Cacao / Agriculture','Télécom'],
+   score:8},
+  {id:'nigeria',flag:'🇳🇬',nom:'Nigéria',capitale:'Lagos',pop:'220M',pib:'477Mds$',langue:'Anglais',monnaie:'Naira (NGN)',facilite:5,marche:10,infra:6,
+   atouts:['Plus grande économie Afrique','220M consommateurs','Hub tech africain (Lagos)','Pétrole + diversification','Diaspora très active'],
+   defis:['Instabilité monétaire (Naira)','Corruption perçue élevée','Coupures électriques fréquentes','Insécurité dans certaines régions'],
+   formalites:['CAC (Corporate Affairs Commission)','Capital min : 10M Naira (étranger)','FIRS enregistrement fiscal','DPR si secteur pétrolier'],
+   budget_min:10000000,budget_rec:25000000,
+   secteurs_porteurs:['Tech / Fintech (Lagos)','E-commerce','Alimentation / FMCG','Médias / Divertissement'],
+   score:7},
+  {id:'guinee',flag:'🇬🇳',nom:'Guinée',capitale:'Conakry',pop:'13M',pib:'16Mds$',langue:'Français',monnaie:'Franc guinéen',facilite:5,marche:6,infra:5,
+   atouts:['Richesses minières considérables','Proximité géographique Mali','Langue française','Marché peu concurrentiel'],
+   defis:['Infrastructure limitée','Instabilité politique récurrente','Accès financement difficile'],
+   formalites:['APIP-Guinée (guichet unique)','Capital minimum variable','Enregistrement fiscal : DGI','Autorisation sectorielle requise'],
+   budget_min:2000000,budget_rec:6000000,
+   secteurs_porteurs:['Mines / BTP','Agriculture','Commerce import-export','Télécommunications'],
+   score:5},
+  {id:'burkina',flag:'🇧🇫',nom:'Burkina Faso',capitale:'Ouagadougou',pop:'22M',pib:'18Mds$',langue:'Français',monnaie:'FCFA',facilite:6,marche:6,infra:5,
+   atouts:['Même monnaie FCFA','Facilité administrative UEMOA','Langue française','Marché agricole fort'],
+   defis:['Insécurité au Nord du pays','Infrastructure routière limitée','Économie très dépendante de l\'or'],
+   formalites:['CEFORE (Centre de Formalités)','Capital : 1 000 000 FCFA (SA)','IFU (numéro fiscal) : 48h','Attestation d\'immatriculation'],
+   budget_min:2000000,budget_rec:5000000,
+   secteurs_porteurs:['Agriculture / Agro','Mines','Artisanat / Export','Formation professionnelle'],
+   score:5},
+  {id:'togo',flag:'🇹🇬',nom:'Togo',capitale:'Lomé',pop:'8M',pib:'8Mds$',langue:'Français',monnaie:'FCFA',facilite:8,marche:7,infra:7,
+   atouts:['Port de Lomé — hub transit CEDEAO','Réformes économiques actives','Zone franche industrielle','Facilité de faire des affaires en hausse'],
+   defis:['Petit marché intérieur','Dépendance au transit','Tension politique occasionnelle'],
+   formalites:['APIF (Agence de Promotion)','Capital : 100 000 FCFA','Immatriculation RCCM : 72h','NIF fiscal en ligne'],
+   budget_min:1500000,budget_rec:4000000,
+   secteurs_porteurs:['Transit / Logistique','Agriculture / Phosphates','Télécoms','Commerce régional'],
+   score:7},
+  {id:'benin',flag:'🇧🇯',nom:'Bénin',capitale:'Cotonou',pop:'13M',pib:'17Mds$',langue:'Français',monnaie:'FCFA',facilite:7,marche:7,infra:7,
+   atouts:['Démocratie stable reconnue','Réformes pro-business (2020-2025)','Port de Cotonou','Programme "Bénin Révélé"'],
+   defis:['Petit marché intérieur','Dépendance réexportation Nigeria','Infrastructures en développement'],
+   formalites:['APIEX (Agence investissements)','Capital : 100 000 FCFA (SARL)','Identifiant Fiscal Unique','Autorisation spécifique secteur'],
+   budget_min:2000000,budget_rec:5000000,
+   secteurs_porteurs:['Agro-industrie','Commerce / Transit','Numérique / Tech','Tourisme'],
+   score:7},
+];
+
+var PLAN_ETAPES=[
+  {num:1,titre:'Étude de marché terrain',dur:'Mois 1-2',color:'#10B981',items:[
+    'Voyager dans le pays cible — minimum 2 semaines',
+    'Interviewer 20-30 clients potentiels locaux',
+    'Analyser les 3 principaux concurrents locaux',
+    'Identifier un partenaire local de confiance',
+    'Évaluer les canaux de distribution disponibles',
+  ]},
+  {num:2,titre:'Constitution juridique',dur:'Mois 2-3',color:'#3B82F6',items:[
+    'Choisir la forme juridique adaptée (filiale, bureau de liaison, joint-venture)',
+    'Recruter un avocat local spécialisé droit des affaires',
+    'Immatriculation RCCM / registre commerce local',
+    'Ouverture compte bancaire professionnel',
+    'Obtention des autorisations sectorielles',
+  ]},
+  {num:3,titre:'Recrutement équipe locale',dur:'Mois 3-4',color:'#8B5CF6',items:[
+    'Recruter un directeur pays (obligatoire pour les étrangers)',
+    'Identifier les talents locaux dans votre domaine',
+    'Former l\'équipe aux processus et valeurs de votre entreprise',
+    'Définir la structure salariale adaptée au marché local',
+    'Mettre en place les outils de travail collaboratif',
+  ]},
+  {num:4,titre:'Adaptation produit/service',dur:'Mois 3-5',color:'#F59E0B',items:[
+    'Adapter votre offre aux besoins et habitudes locales',
+    'Traduire/localiser tous les supports marketing',
+    'Ajuster les prix selon le pouvoir d\'achat local',
+    'Tester avec 10 premiers clients locaux',
+    'Recueillir les feedbacks et itérer rapidement',
+  ]},
+  {num:5,titre:'Lancement commercial',dur:'Mois 5-6',color:'#EC4899',items:[
+    'Lancer une campagne de communication locale (Facebook, radio)',
+    'Participer à 2-3 événements professionnels locaux',
+    'Activer le réseau de partenaires identifiés',
+    'Premier objectif : 10 clients payants en 30 jours',
+    'Mettre en place le service client en langue locale',
+  ]},
+  {num:6,titre:'Consolidation et croissance',dur:'Mois 6-12',color:'#6366F1',items:[
+    'Atteindre le seuil de rentabilité local',
+    'Renforcer l\'équipe selon la croissance',
+    'Développer des partenariats stratégiques locaux',
+    'Explorer l\'expansion vers un 2ème pays CEDEAO',
+    'Reporting mensuel à la maison mère au Mali',
+  ]},
+];
+
+function show(i){
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+  document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+  calc();
+}
+
+function g(id,d){var e=document.getElementById(id);if(!e)return d||'';return e.value||d||'';}
+function gn(id,d){return parseFloat(g(id))||d||0;}
+function fm(n){return Math.round(n).toLocaleString('fr-FR');}
+
+function togglePays(id){
+  var idx=paysSelectionnes.indexOf(id);
+  if(idx>=0) paysSelectionnes.splice(idx,1);
+  else paysSelectionnes.push(id);
+  renderPaysGrid();
+  renderPaysDetail();
+  calc();
+}
+
+function toggleEtape(i){
+  etapesOpen[i]=!etapesOpen[i];
+  renderPlan();
+}
+
+function renderPaysGrid(){
+  var el=document.getElementById('paysGrid');
+  if(!el) return;
+  el.innerHTML=PAYS.map(function(p){
+    var sel=paysSelectionnes.indexOf(p.id)>=0;
+    var stars='';
+    for(var i=0;i<5;i++) stars+=(i<Math.round(p.score/2)?'⭐':'☆');
+    return '<div class="pays-card'+(sel?' sel':'')+'" onclick="togglePays(\''+p.id+'\')">'+
+      '<div class="pays-flag">'+p.flag+'</div>'+
+      '<div class="pays-nom">'+p.nom+'</div>'+
+      '<div class="pays-info">'+p.pop+' hab. · '+p.pib+'<br>'+p.langue+' · '+p.monnaie+'<br>'+stars+'</div>'+
+      '</div>';
+  }).join('');
+}
+
+function renderPaysDetail(){
+  var el=document.getElementById('paysDetail');
+  if(!el) return;
+  if(paysSelectionnes.length===0){el.innerHTML='<div class="box info" style="margin-top:10px">👆 Sélectionnez un ou plusieurs pays pour voir l\'analyse détaillée.</div>';return;}
+  el.innerHTML=paysSelectionnes.map(function(id){
+    var p=PAYS.find(function(x){return x.id===id;});
+    if(!p) return '';
+    return '<div style="margin-top:14px;border:2px solid #10B981;border-radius:10px;overflow:hidden">'+
+      '<div style="background:#10B981;padding:12px 16px;display:flex;align-items:center;gap:10px">'+
+      '<span style="font-size:24px">'+p.flag+'</span>'+
+      '<div style="color:#fff"><div style="font-size:15px;font-weight:700">'+p.nom+'</div>'+
+      '<div style="font-size:11px;color:#D1FAE5">Capitale : '+p.capitale+' · Pop : '+p.pop+' · PIB : '+p.pib+'</div></div>'+
+      '</div>'+
+      '<div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+      '<div><div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">✅ Atouts</div>'+
+      p.atouts.map(function(a){return '<div class="box" style="padding:5px 8px;font-size:11px;margin-bottom:4px">'+a+'</div>';}).join('')+
+      '</div>'+
+      '<div><div style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:6px">⚠️ Défis</div>'+
+      p.defis.map(function(d){return '<div class="box warn" style="padding:5px 8px;font-size:11px;margin-bottom:4px">'+d+'</div>';}).join('')+
+      '</div></div>'+
+      '<div style="padding:0 14px 14px">'+
+      '<div style="font-size:11px;font-weight:700;color:#065F46;margin-bottom:6px">🚀 Secteurs porteurs</div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:6px">'+
+      p.secteurs_porteurs.map(function(s){return '<span style="padding:3px 10px;background:#D1FAE5;color:#065F46;border-radius:12px;font-size:11px;font-weight:500">'+s+'</span>';}).join('')+
+      '</div></div>'+
+      '<div style="padding:0 14px 14px">'+
+      '<div style="font-size:11px;font-weight:700;color:#185FA5;margin-bottom:6px">📊 Indicateurs</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'+
+      '<div class="kpi"><b>'+p.facilite+'/10</b><span>Facilité affaires</span></div>'+
+      '<div class="kpi"><b>'+p.marche+'/10</b><span>Attractivité marché</span></div>'+
+      '<div class="kpi"><b>'+p.infra+'/10</b><span>Infrastructure</span></div>'+
+      '</div></div></div>';
+  }).join('');
+}
+
+function renderFormalites(){
+  var el=document.getElementById('formalitesBox');
+  if(!el) return;
+  if(paysSelectionnes.length===0){
+    el.innerHTML='<div class="box info">🗺️ Sélectionnez d\'abord un pays dans l\'onglet "Choisir Pays".</div>';return;
+  }
+  var html='<div class="box info" style="margin-bottom:12px">📋 Voici les étapes administratives pour chaque pays sélectionné.</div>';
+  paysSelectionnes.forEach(function(id){
+    var p=PAYS.find(function(x){return x.id===id;});
+    if(!p) return;
+    html+='<div style="border:1px solid #e0e0e0;border-radius:10px;margin-bottom:12px;overflow:hidden">'+
+      '<div style="background:#ECFDF5;padding:10px 14px;display:flex;align-items:center;gap:8px">'+
+      '<span style="font-size:18px">'+p.flag+'</span>'+
+      '<span style="font-size:13px;font-weight:700;color:#065F46">'+p.nom+' — Formalités de création</span>'+
+      '</div>'+
+      '<div style="padding:14px">'+
+      p.formalites.map(function(f,i){
+        return '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:12px">'+
+          '<span style="width:22px;height:22px;border-radius:50%;background:#10B981;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">'+(i+1)+'</span>'+
+          '<span>'+f+'</span></div>';
+      }).join('')+
+      '<div class="box" style="margin-top:10px">💰 Budget minimum estimé : <b>'+fm(p.budget_min)+'</b> FCFA · Budget recommandé : <b>'+fm(p.budget_rec)+'</b> FCFA</div>'+
+      '</div></div>';
+  });
+  el.innerHTML=html;
+}
+
+function renderBudget(){
+  var el=document.getElementById('budgetBox');
+  if(!el) return;
+  var budget=gn('budget',5000000);
+  var pays=paysSelectionnes.length>0?PAYS.find(function(x){return x.id===paysSelectionnes[0];}):null;
+  var budgetMin=pays?pays.budget_min:2000000;
+  var budgetRec=pays?pays.budget_rec:8000000;
+  var postes=[
+    {poste:'Frais juridiques et immatriculation',min:300000,rec:800000,max:2000000},
+    {poste:'Loyer bureau / espace de travail (6 mois)',min:500000,rec:1500000,max:4000000},
+    {poste:'Recrutement et salaires (3 mois)',min:600000,rec:2000000,max:6000000},
+    {poste:'Marketing et communication lancement',min:300000,rec:1000000,max:3000000},
+    {poste:'Déplacements et missions terrain',min:400000,rec:800000,max:2000000},
+    {poste:'Adaptation produit / tech',min:200000,rec:600000,max:2000000},
+    {poste:'Fonds de roulement (trésorerie 3 mois)',min:500000,rec:1500000,max:5000000},
+    {poste:'Imprévus (15% du total)',min:300000,rec:900000,max:2500000},
+  ];
+  var totMin=postes.reduce(function(s,p){return s+p.min;},0);
+  var totRec=postes.reduce(function(s,p){return s+p.rec;},0);
+  var statut=budget>=totRec?'ok':budget>=totMin?'warn':'err';
+  var msg=budget>=totRec?'✅ Budget suffisant pour une expansion solide.':
+          budget>=totMin?'⚠️ Budget minimum atteint. Expansion possible mais risquée — limitez les dépenses.':
+          '🚨 Budget insuffisant. Cherchez du financement additionnel avant de vous lancer.';
+
+  el.innerHTML='<div class="box '+statut+'" style="margin-bottom:12px">'+msg+'</div>'+
+    '<div class="kpis"><div class="kpi"><b>'+fm(budget)+'</b><span>Votre budget (F)</span></div>'+
+    '<div class="kpi"><b>'+fm(totMin)+'</b><span>Budget minimum (F)</span></div>'+
+    '<div class="kpi"><b>'+fm(totRec)+'</b><span>Budget recommandé (F)</span></div>'+
+    '<div class="kpi"><b>'+(budget>=totMin?'✅ OK':'❌ Insuffisant')+'</b><span>Statut</span></div></div>'+
+    '<table class="budget-table"><thead><tr><th>Poste de dépense</th><th>Minimum (F)</th><th>Recommandé (F)</th></tr></thead><tbody>'+
+    postes.map(function(p){
+      return '<tr><td>'+p.poste+'</td><td>'+fm(p.min)+'</td><td>'+fm(p.rec)+'</td></tr>';
+    }).join('')+
+    '<tr class="tot"><td><b>TOTAL</b></td><td><b>'+fm(totMin)+'</b></td><td><b>'+fm(totRec)+'</b></td></tr>'+
+    '</tbody></table>'+
+    '<div class="box purple">💡 <b>Sources de financement :</b> POESAM Orange Mali · BOAD (Banque Ouest-Africaine) · BAD Innov\'Africa · AFD · Partenariats locaux · Investisseurs diaspora</div>';
+}
+
+function renderMarche(){
+  var el=document.getElementById('marcheBox');
+  if(!el) return;
+  var sect=g('secteur','tech');
+  var sectNom={tech:'Tech / Digital / EdTech',commerce:'Commerce / Distribution',services:'Services B2B',agroalim:'Agroalimentaire',mode:'Mode / Artisanat',sante:'Santé',formation:'Formation',finance:'Finance / Fintech'}[sect]||sect;
+  var opportunites={
+    tech:['Mobile money en explosion (+40%/an CEDEAO)','Taux de pénétration smartphone 60-80% dans les capitales','Gouvernements digitalisent leurs services','Startups bien accueillies par les incubateurs locaux'],
+    commerce:['Classe moyenne CEDEAO en forte croissance','E-commerce naissant = peu de concurrence','Grandes surfaces rares = opportunité distribution','Foires commerciales régionales (FIDAK, SIAO)'],
+    services:['PME locales cherchent services professionnels','Peu de fournisseurs qualifiés dans certains pays','B2B = tickets élevés et fidélité client forte','ONG et projets internationaux = clients fiables'],
+    agroalim:['70% de la population active en agriculture','Transformation locale très sous-développée','Export vers Europe possible (ACP-UE)','Label "Fait en Afrique" valorisé'],
+    mode:['Mode africaine tendance sur marché international','Artisanat local à forte valeur ajoutée','Diaspora = canal de distribution naturel','Réseaux sociaux = vitrine internationale gratuite'],
+    sante:['Déficit énorme en offre de soins','OMS et bailleurs financent fortement','Télémédecine en développement','Médicaments génériques très demandés'],
+    formation:['Taux d\'alphabétisation en hausse','Demande forte en formation professionnelle','Peu d\'offres de qualité disponibles','Partenariats avec universités possibles'],
+    finance:['70% non-bancarisés = marché immense','Mobile money intégré dans tous les pays','Microfinance et épargne très demandées','Réglementation BCEAO favorable à l\'innovation'],
+  };
+  var opps=opportunites[sect]||opportunites.tech;
+  el.innerHTML='<div class="box" style="margin-bottom:12px">📊 Analyse marché pour le secteur : <b>'+sectNom+'</b></div>'+
+    '<div style="margin-bottom:14px"><div style="font-size:12px;font-weight:700;color:#065F46;margin-bottom:8px">🚀 Opportunités identifiées</div>'+
+    opps.map(function(o){return '<div class="box" style="margin-bottom:6px">✅ '+o+'</div>';}).join('')+'</div>'+
+    '<div style="font-size:12px;font-weight:700;color:#065F46;margin-bottom:8px">📈 Indicateurs CEDEAO clés</div>'+
+    '<div class="kpis">'+
+    '<div class="kpi"><b>400M</b><span>Population CEDEAO</span></div>'+
+    '<div class="kpi"><b>6%</b><span>Croissance moyenne/an</span></div>'+
+    '<div class="kpi"><b>70%</b><span>Population -30 ans</span></div>'+
+    '<div class="kpi"><b>60%</b><span>Pénétration mobile</span></div>'+
+    '<div class="kpi"><b>8</b><span>Pays francophones</span></div>'+
+    '<div class="kpi"><b>FCFA</b><span>Monnaie commune (UEMOA)</span></div>'+
+    '</div>'+
+    '<div class="box info">🌍 <b>Avantage UEMOA :</b> Mali, Sénégal, Côte d\'Ivoire, Burkina, Togo, Bénin, Niger, Guinée-Bissau partagent le FCFA. Pas de risque de change entre ces pays !</div>';
+}
+
+function renderPlan(){
+  var el=document.getElementById('planBox');
+  if(!el) return;
+  var delai=gn('delai',6);
+  el.innerHTML='<div class="box info" style="margin-bottom:12px">🗓️ Plan d\'action sur <b>'+delai+' mois</b> pour votre expansion CEDEAO. Cliquez sur chaque étape pour les détails.</div>'+
+    PLAN_ETAPES.map(function(e,i){
+      return '<div class="etape">'+
+        '<div class="etape-header" onclick="toggleEtape('+i+')">'+
+        '<div class="etape-num" style="background:'+e.color+'">'+e.num+'</div>'+
+        '<div class="etape-title">'+e.titre+'</div>'+
+        '<div class="etape-dur">'+e.dur+'</div>'+
+        '<span style="color:#999">'+(etapesOpen[i]?'▲':'▼')+'</span>'+
+        '</div>'+
+        '<div class="etape-body'+(etapesOpen[i]?' open':'')+'">'+
+        e.items.map(function(it){return '<div class="etape-item"><span style="color:'+e.color+';font-weight:700">→</span><span>'+it+'</span></div>';}).join('')+
+        '</div></div>';
+    }).join('');
+}
+
+function renderRisques(){
+  var el=document.getElementById('risquesBox');
+  if(!el) return;
+  var risques=[
+    {niveau:'🔴',titre:'Risque politique et sécuritaire',desc:'Instabilité politique dans certains pays (Burkina, Mali Nord, etc.). Surveiller les alertes du MAE.',mitigation:'Choisir des capitales stables. Souscrire une assurance risques pays. Avoir un plan de contingence evacuation.'},
+    {niveau:'🔴',titre:'Risque de change (hors UEMOA)',desc:'Pour Ghana (Cedi) et Nigeria (Naira), la dévaluation peut réduire vos revenus de 20-40% en quelques mois.',mitigation:'Facturer en FCFA ou USD quand possible. Couvrir les risques via une banque internationale. Limiter les stocks locaux.'},
+    {niveau:'🟠',titre:'Risque réglementaire',desc:'Les lois changent sans préavis. Un secteur peut devenir réglementé du jour au lendemain.',mitigation:'Recruter un avocat local avant de se lancer. Rejoindre l\'association professionnelle du secteur. Surveiller le journal officiel local.'},
+    {niveau:'🟠',titre:'Risque culturel',desc:'Ce qui fonctionne au Mali peut ne pas fonctionner au Sénégal ou en Côte d\'Ivoire malgré la même langue.',mitigation:'Toujours tester avec 10 clients locaux avant de déployer. Recruter une équipe 100% locale. Adapter le produit, pas seulement la langue.'},
+    {niveau:'🟡',titre:'Risque de recrutement',desc:'Trouver des talents locaux fiables et compétents peut prendre 3-6 mois.',mitigation:'Utiliser LinkedIn, Jobafrica, AfriTalent. Recommandations via réseau. Prévoir 20% de turnover la 1ère année.'},
+    {niveau:'🟡',titre:'Risque financier (cash flow)',desc:'Les délais de paiement en Afrique peuvent atteindre 60-90 jours, créant des tensions de trésorerie.',mitigation:'Exiger 30-50% d\'acompte. Facturer régulièrement. Avoir 3 mois de trésorerie de réserve. Utiliser des solutions Mobile Money.'},
+  ];
+  el.innerHTML='<div class="box warn" style="margin-bottom:12px">⚠️ Identifiez et anticipez ces risques avant de vous lancer. Un bon plan de gestion des risques est aussi important que le business plan.</div>'+
+    risques.map(function(r){
+      return '<div style="border:1px solid #e0e0e0;border-radius:8px;padding:12px;margin-bottom:8px">'+
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+
+        '<span style="font-size:16px">'+r.niveau+'</span>'+
+        '<span style="font-size:13px;font-weight:700">'+r.titre+'</span>'+
+        '</div>'+
+        '<div style="font-size:12px;color:#444;margin-bottom:6px">'+r.desc+'</div>'+
+        '<div class="box" style="font-size:11px;padding:7px 10px">💡 <b>Mitigation :</b> '+r.mitigation+'</div>'+
+        '</div>';
+    }).join('');
+}
+
+function calc(){
+  var budget=gn('budget',5000000);
+  var caMali=gn('caMali',1000000);
+  var caObjectif=gn('caObjectif',2000000);
+  var delai=gn('delai',6);
+  var stade=g('stade','local');
+  var score=0;
+  if(stade==='local'||stade==='regional'||stade==='multi') score+=30;
+  if(budget>=5000000) score+=25;
+  if(caMali>=1000000) score+=20;
+  if(delai>=6) score+=15;
+  score=Math.min(100,score+10);
+
+  var kp=document.getElementById('kp0');
+  if(kp) kp.innerHTML=
+    '<div class="kpi"><b>'+score+'%</b><span>Score readiness</span></div>'+
+    '<div class="kpi"><b>'+fm(budget)+'</b><span>Budget dispo (F)</span></div>'+
+    '<div class="kpi"><b>'+delai+' mois</b><span>Délai prévu</span></div>'+
+    '<div class="kpi"><b>'+paysSelectionnes.length+'</b><span>Pays ciblés</span></div>';
+
+  var rd=document.getElementById('readiness');
+  if(rd){
+    var cl=score>=70?'ok':score>=50?'warn':'err';
+    var msg=score>=70?'✅ Vous êtes prêt(e) pour une expansion CEDEAO. Bonne préparation !':
+            score>=50?'⚠️ Préparation partielle. Renforcez votre budget et votre expérience locale avant de vous lancer.':
+            '❌ Trop tôt pour s\'internationaliser. Consolidez d\'abord votre position au Mali.';
+    rd.innerHTML='<div class="box '+cl+'">'+msg+'</div>'+
+      '<div class="box">💡 <b>Recommandation :</b> Commencez par le Sénégal ou la Côte d\'Ivoire — les marchés les plus accessibles et les plus rentables pour une PME malienne.</div>';
+  }
+
+  renderPaysGrid();
+  renderPaysDetail();
+  renderFormalites();
+  renderBudget();
+  renderMarche();
+  renderPlan();
+  renderRisques();
+}
+
+calc();
+</script>
+</body>
+</html>
