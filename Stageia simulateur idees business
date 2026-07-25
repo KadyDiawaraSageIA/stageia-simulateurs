@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stageia — Générateur d'Idées Business Mali</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f0;padding:12px;color:#1a1a1a}
+h1{background:linear-gradient(135deg,#0D0B2E,#7C3AED);color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:14px;font-size:15px}
+h1 small{display:block;font-size:11px;color:#DDD6FE;font-weight:400;margin-top:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tab{padding:7px 13px;border:none;background:#ddd;color:#555;border-radius:7px;cursor:pointer;font-size:12px;font-family:Arial;font-weight:500}
+.tab.on{background:#7C3AED;color:#fff}
+.pane{display:none;background:#fff;border-radius:10px;padding:16px;border:1px solid #ddd}
+.pane.on{display:block}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+label{font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:4px}
+input,select{width:100%;padding:8px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;font-family:Arial;background:#fff}
+input:focus,select:focus{outline:none;border-color:#7C3AED}
+.hint{font-size:10px;color:#888;margin-top:3px}
+.box{background:#F5F3FF;border-left:3px solid #7C3AED;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.ok{background:#D1FAE5;border-left-color:#10B981;color:#065F46}
+.warn{background:#FEF3C7;border-left-color:#F59E0B;color:#92400E}
+.err{background:#FEE2E2;border-left-color:#EF4444;color:#991B1B}
+.info{background:#DBEAFE;border-left-color:#3B82F6;color:#1E40AF}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin:12px 0}
+.kpi{background:#f5f5f5;border-radius:8px;padding:10px;text-align:center;border:1px solid #e0e0e0}
+.kpi b{display:block;font-size:17px;color:#7C3AED;margin-bottom:2px}
+.kpi span{font-size:10px;color:#666}
+.idea-card{border:2px solid #e0e0e0;border-radius:12px;padding:14px;margin-bottom:12px;cursor:pointer;transition:all .2s}
+.idea-card:hover{border-color:#7C3AED;transform:translateY(-2px);box-shadow:0 4px 14px rgba(124,58,237,.15)}
+.idea-card.sel{border-color:#7C3AED;background:#F5F3FF}
+.idea-emoji{font-size:28px;margin-bottom:6px}
+.idea-nom{font-size:14px;font-weight:700;color:#0D0B2E;margin-bottom:4px}
+.idea-desc{font-size:11px;color:#666;line-height:1.5;margin-bottom:8px}
+.idea-tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500}
+.ideas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:12px 0}
+.score-bar{height:8px;background:#e0e0e0;border-radius:4px;overflow:hidden;margin:4px 0 8px}
+.score-fill{height:100%;background:#7C3AED;border-radius:4px;transition:width .4s}
+.section-title{font-size:13px;font-weight:700;color:#0D0B2E;margin:14px 0 8px;border-bottom:2px solid #7C3AED;padding-bottom:6px}
+.checklist-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid #f5f5f5;font-size:12px;line-height:1.5}
+.checklist-item:last-child{border-bottom:none}
+.btn-gen{width:100%;padding:12px;background:#7C3AED;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:Arial;margin-top:10px;transition:all .2s}
+.btn-gen:hover{background:#6D28D9}
+.filtre-btns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.filtre-btn{padding:6px 12px;border:1px solid #ddd;border-radius:20px;background:#fff;color:#555;font-size:11px;cursor:pointer;font-family:Arial}
+.filtre-btn.on{background:#7C3AED;color:#fff;border-color:#7C3AED}
+table{width:100%;border-collapse:collapse;font-size:11px;margin:10px 0}
+th{background:#F5F3FF;padding:8px;text-align:left;font-weight:600;color:#5B21B6}
+td{padding:8px;border-bottom:1px solid #eee}
+tr.hl td{background:#F5F3FF;font-weight:700;color:#7C3AED}
+@media(max-width:550px){.row{grid-template-columns:1fr}.ideas-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<h1>💡 Générateur d'Idées Business — Mali
+<small>Trouvez votre idée · Analysez le potentiel · Plan de démarrage · Opportunités 2025</small></h1>
+
+<div class="tabs">
+  <button class="tab on" onclick="show(0)">🎯 Mon Profil</button>
+  <button class="tab" onclick="show(1)">💡 Idées Générées</button>
+  <button class="tab" onclick="show(2)">🔍 Analyse Détaillée</button>
+  <button class="tab" onclick="show(3)">📊 Comparaison</button>
+  <button class="tab" onclick="show(4)">🚀 Plan Démarrage</button>
+  <button class="tab" onclick="show(5)">🌟 Tendances Mali</button>
+</div>
+
+<!-- PANE 0: PROFIL -->
+<div class="pane on" id="p0">
+  <div class="box info" style="margin-bottom:12px">💡 Répondez à ces questions pour recevoir des idées business personnalisées selon votre profil.</div>
+  <div class="row">
+    <div><label>Votre budget de départ (FCFA)</label>
+    <select id="budget" onchange="genIdees()">
+      <option value="0">Zéro budget (compétences seulement)</option>
+      <option value="100000">Moins de 100 000 FCFA</option>
+      <option value="500000">100 000 — 500 000 FCFA</option>
+      <option value="1000000">500 000 — 1 000 000 FCFA</option>
+      <option value="5000000">1 — 5 millions FCFA</option>
+      <option value="10000000">Plus de 5 millions FCFA</option>
+    </select></div>
+    <div><label>Votre niveau d'expérience</label>
+    <select id="experience" onchange="genIdees()">
+      <option value="debutant">Débutant — Aucune expérience</option>
+      <option value="etudiant">Étudiant / Lycéen</option>
+      <option value="salarie">Salarié cherchant à se lancer</option>
+      <option value="pro">Professionnel avec expertise</option>
+      <option value="serial">Serial entrepreneur</option>
+    </select></div>
+  </div>
+  <div class="row">
+    <div><label>Vos compétences principales</label>
+    <select id="competences" onchange="genIdees()">
+      <option value="tech">Tech / Informatique / Digital</option>
+      <option value="design">Design / Créativité / Art</option>
+      <option value="commerce">Commerce / Vente / Négociation</option>
+      <option value="cuisine">Cuisine / Alimentation</option>
+      <option value="artisanat">Artisanat / Couture / Fabrication</option>
+      <option value="enseignement">Enseignement / Formation</option>
+      <option value="sante">Santé / Bien-être</option>
+      <option value="agriculture">Agriculture / Élevage</option>
+      <option value="communication">Communication / Marketing</option>
+      <option value="management">Management / Gestion</option>
+    </select></div>
+    <div><label>Ville de lancement</label>
+    <select id="ville" onchange="genIdees()">
+      <option value="bamako">Bamako</option>
+      <option value="sikasso">Sikasso</option>
+      <option value="mopti">Mopti</option>
+      <option value="segou">Ségou</option>
+      <option value="kayes">Kayes</option>
+      <option value="autre">Autre ville Mali</option>
+    </select></div>
+  </div>
+  <div class="row">
+    <div><label>Temps disponible</label>
+    <select id="temps" onchange="genIdees()">
+      <option value="partiel">Temps partiel (week-end / soirs)</option>
+      <option value="plein">Temps plein dédié</option>
+      <option value="flexible">Flexible selon les missions</option>
+    </select></div>
+    <div><label>Votre secteur de passion</label>
+    <select id="passion" onchange="genIdees()">
+      <option value="tech">Tech / Innovation</option>
+      <option value="social">Impact social / Éducation</option>
+      <option value="mode">Mode / Beauté</option>
+      <option value="food">Food / Gastronomie</option>
+      <option value="media">Médias / Contenu</option>
+      <option value="sport">Sport / Bien-être</option>
+      <option value="agri">Agriculture / Environnement</option>
+      <option value="finance">Finance / Investissement</option>
+    </select></div>
+  </div>
+  <div class="kpis" id="kp0"></div>
+  <button class="btn-gen" onclick="genIdees();show(1)">🎲 Générer mes idées business personnalisées →</button>
+</div>
+
+<!-- PANE 1: IDÉES GÉNÉRÉES -->
+<div class="pane" id="p1">
+  <div class="filtre-btns" id="filtreBox"></div>
+  <div class="ideas-grid" id="ideasGrid"></div>
+</div>
+
+<!-- PANE 2: ANALYSE -->
+<div class="pane" id="p2">
+  <div id="analyseBox"></div>
+</div>
+
+<!-- PANE 3: COMPARAISON -->
+<div class="pane" id="p3">
+  <div id="comparBox"></div>
+</div>
+
+<!-- PANE 4: PLAN -->
+<div class="pane" id="p4">
+  <div id="planBox"></div>
+</div>
+
+<!-- PANE 5: TENDANCES -->
+<div class="pane" id="p5">
+  <div id="tendancesBox"></div>
+</div>
+
+<script>
+var ideeSelectionnee=null;
+var filtreCourant='tous';
+var ideesFiltrees=[];
+
+var TOUTES_IDEES=[
+  {id:'dev_web',emoji:'💻',nom:'Agence Web / Dev Freelance',secteur:'tech',budget:0,desc:'Créer des sites web et apps pour PME maliennes. Forte demande, peu d\'offres qualifiées.',revMin:150000,revMax:800000,difficulte:6,potentiel:9,delai:1,competences:['tech'],passion:['tech'],villes:['bamako','sikasso','segou'],tags:['Digital','Freelance','B2B'],avantages:['Faible investissement','Marché en croissance','Travail à distance possible'],inconvenients:['Compétences techniques requises','Concurrence internationale'],etapes:['Formation HTML/CSS/JS (3 mois)','Créer 3 projets portfolio','Prospecter 10 PME locales','Premier client sous 2 mois'],financement:['Auto-financement','POESAM si agence']},
+
+  {id:'formation_digit',emoji:'🎓',nom:'Centre de Formation Digitale',secteur:'education',budget:500000,desc:'Former les jeunes maliens aux compétences numériques : Word, Excel, réseaux sociaux, comptabilité.',revMin:200000,revMax:600000,difficulte:5,potentiel:9,delai:2,competences:['tech','enseignement','management'],passion:['tech','social'],villes:['bamako','sikasso','mopti','segou','kayes'],tags:['Formation','Impact','Local'],avantages:['Forte demande','Impact social','Peu de concurrence qualifiée'],inconvenients:['Local nécessaire','Recrutement formateurs'],etapes:['Louer un espace 2-3 salles','Acheter 10 ordinateurs','Recruter 1-2 formateurs','Lancer publicité Facebook'],financement:['POESAM','ODC Start','BMS Pro Jeunes']},
+
+  {id:'traiteur',emoji:'🍽️',nom:'Traiteur / Restauration Événementielle',secteur:'food',budget:300000,desc:'Service traiteur pour mariages, baptêmes, fêtes d\'entreprise. Marché immense au Mali.',revMin:150000,revMax:500000,difficulte:5,potentiel:8,delai:1,competences:['cuisine','commerce'],passion:['food'],villes:['bamako','sikasso','mopti','segou','kayes','autre'],tags:['Food','Événementiel','Local'],avantages:['Marché récurrent','Faible concurrence formelle','Bouche-à-oreille efficace'],inconvenients:['Travail le week-end','Gestion stocks périssables'],etapes:['Équipement cuisine professionnel','Page Facebook + WhatsApp Business','3 premiers événements test','Réseau prescripteurs (Imams, DJ...)'],financement:['Épargne personnelle','Tontine familiale']},
+
+  {id:'boutique_mode',emoji:'👗',nom:'Boutique Mode Africaine en ligne',secteur:'mode',budget:200000,desc:'Vendre des tenues en bogolan, bazin, wax via Instagram, Facebook et WhatsApp. Marché en explosion.',revMin:100000,revMax:400000,difficulte:4,potentiel:8,delai:1,competences:['artisanat','commerce','design'],passion:['mode'],villes:['bamako','sikasso','kayes','autre'],tags:['Mode','E-commerce','Artisanat'],avantages:['Faible stock initial','Marché diaspora','Instagram = vitrine gratuite'],inconvenients:['Logistique livraison','Photos professionnelles nécessaires'],etapes:['Sourcer 20-30 articles artisans','Compte Instagram pro + catalogue','10 premières ventes amis/famille','Publicité Facebook 20 000 F/mois'],financement:['Épargne personnelle','Tontine']},
+
+  {id:'agri_maraichage',emoji:'🥬',nom:'Maraîchage / Agriculture Urbaine',secteur:'agriculture',budget:500000,desc:'Culture de légumes (tomates, oignons, salades) pour restaurants et marchés de Bamako. Forte demande.',revMin:150000,revMax:400000,difficulte:6,potentiel:7,delai:3,competences:['agriculture'],passion:['agri'],villes:['bamako','sikasso','segou','mopti'],tags:['Agriculture','Local','Impact'],avantages:['Marché captif','Subventions disponibles','Faible compétition formelle'],inconvenients:['Dépendance météo','Travail physique','Délais avant revenus'],etapes:['Louer terrain péri-urbain','Formation technique culture','Contrats avec 3 restaurants','Livraison hebdomadaire régulière'],financement:['FIDA','APCAM','Microfinance Kafo Jiginew']},
+
+  {id:'pharmacie_plante',emoji:'🌿',nom:'Produits Cosmétiques Naturels Mali',secteur:'sante',budget:200000,desc:'Fabriquer et vendre des savons, crèmes et huiles à base de plantes maliennes (karité, néré, baobab).',revMin:100000,revMax:350000,difficulte:5,potentiel:8,delai:2,competences:['artisanat','commerce'],passion:['mode','social'],villes:['bamako','sikasso','kayes','autre'],tags:['Beauté','Naturel','Export'],avantages:['Matières premières locales abondantes','Tendance naturel mondial','Exportable en Europe/diaspora'],inconvenients:['Certification requise pour export','Stockage et conservation'],etapes:['Recette + tests produits','Design packaging professionnel','Vente marchés + Instagram','Certification MSIPC Mali'],financement:['Épargne personnelle','Artisan crédit BNDA']},
+
+  {id:'garderie',emoji:'👶',nom:'Garderie / Crèche Privée',secteur:'education',budget:1000000,desc:'Service de garde d\'enfants 0-5 ans pour familles travaillant à Bamako. Demande très forte, offre insuffisante.',revMin:300000,revMax:700000,difficulte:6,potentiel:9,delai:3,competences:['enseignement','sante','management'],passion:['social'],villes:['bamako'],tags:['Éducation','Services','Impact'],avantages:['Revenus mensuels stables','Clientèle fidèle','Secteur peu concurrentiel qualifié'],inconvenients:['Local adapté obligatoire','Autorisations MEALN','Personnel qualifié'],etapes:['Local 3-4 pièces avec cour','Autorisation Ministère Éducation','Recruter 2 éducatrices','20 enfants = seuil de rentabilité'],financement:['BMS Pro Jeunes','POESAM','Banque familiale']},
+
+  {id:'livraison',emoji:'🛵',nom:'Service de Livraison Express Bamako',secteur:'tech',budget:500000,desc:'Livraison de repas, courses, colis dans Bamako. Marché émergent, forte croissance post-COVID.',revMin:200000,revMax:600000,difficulte:7,potentiel:9,delai:2,competences:['management','commerce','tech'],passion:['tech','food'],villes:['bamako'],tags:['Tech','Logistique','Croissance'],avantages:['Marché en forte croissance','Partenariats restaurants faciles','Scalable rapidement'],inconvenients:['Moto + carburant','Gestion livreurs','Concurrence Dexxi, Yango'],etapes:['Acheter 2-3 motos','App WhatsApp Business commandes','5 restaurants partenaires','10 livreurs freelances réseau'],financement:['POESAM','Investisseur angel','BMS']},
+
+  {id:'beaute_mobile',emoji:'💅',nom:'Salon de Beauté Mobile',secteur:'sante',budget:150000,desc:'Prestation coiffure, manucure, maquillage à domicile. Pratique, pas de loyer, forte demande femmes actives.',revMin:100000,revMax:300000,difficulte:3,potentiel:7,delai:1,competences:['artisanat','sante'],passion:['mode'],villes:['bamako','sikasso','segou','kayes'],tags:['Beauté','Mobile','Services'],avantages:['Zéro loyer','Démarrage rapide','Clientèle fidèle'],inconvenients:['Revenus plafonnés','Déplacements fatiguants'],etapes:['Formation coiffure/esthétique si besoin','Kit matériel 100 000 F','Page Instagram portfolio','10 clientes de départ réseau personnel'],financement:['Épargne personnelle','Tontine féminine']},
+
+  {id:'imprimerie',emoji:'🖨️',nom:'Imprimerie Numérique / Copie',secteur:'tech',budget:1000000,desc:'Impression flyers, affiches, cartes de visite, maillots pour PME et particuliers. Forte demande constante.',revMin:200000,revMax:500000,difficulte:5,potentiel:7,delai:2,competences:['tech','commerce'],passion:['tech'],villes:['bamako','sikasso','mopti','segou','kayes'],tags:['Services','Tech','B2B'],avantages:['Demande constante','Peu de concurrence qualifiée','Marges élevées'],inconvenients:['Investissement matériel initial','Maintenance machines'],etapes:['Imprimante + traceur 800 000 F','Local proche écoles/administrations','Tarifs compétitifs affichés','Prospection PME et associations'],financement:['BMS Pro Jeunes','POESAM','Leasing équipement']},
+
+  {id:'podcast_media',emoji:'🎙️',nom:'Podcast / Média Digital Mali',secteur:'media',budget:100000,desc:'Créer un podcast ou chaîne YouTube sur l\'entrepreneuriat, la culture ou les actualités maliennes.',revMin:50000,revMax:500000,difficulte:4,potentiel:7,delai:2,competences:['communication','tech'],passion:['media','social'],villes:['bamako','autre'],tags:['Médias','Digital','Créateur'],avantages:['Investissement minimal','Revenu passif possible','Audience internationale diaspora'],inconvenients:['Délai avant monétisation (6-12 mois)','Régularité requise'],etapes:['Micro + logiciel enregistrement','100 premiers épisodes en 6 mois','Monétisation sponsoring local','YouTube + Spotify distribution'],financement:['Auto-financement','Sponsors locaux']},
+
+  {id:'superette',emoji:'🏪',nom:'Mini-Superette / Épicerie de Quartier',secteur:'commerce',budget:1000000,desc:'Épicerie de proximité bien achalandée avec produits frais, produits d\'hygiène et boissons. Revenus quotidiens.',revMin:200000,revMax:600000,difficulte:5,potentiel:7,delai:2,competences:['commerce','management'],passion:['finance'],villes:['bamako','sikasso','mopti','segou','kayes','autre'],tags:['Commerce','Local','Stable'],avantages:['Revenus quotidiens en cash','Produit de première nécessité','Peu de saisonnalité'],inconvenients:['Stock important à financer','Gestion des périmés','Travail 7j/7'],etapes:['Local stratégique quartier résidentiel','Stock initial 500 000 F','Référencement fournisseurs locaux','Paiement Orange Money'],financement:['Épargne + tontine','BMS crédit commerce']},
+
+  {id:'conseil_rh',emoji:'🤝',nom:'Cabinet Conseil RH / Recrutement',secteur:'education',budget:100000,desc:'Aider les PME maliennes à recruter et gérer leurs RH. Marché sous-servi, forte valeur ajoutée.',revMin:200000,revMax:800000,difficulte:6,potentiel:8,delai:2,competences:['management','communication'],passion:['social','finance'],villes:['bamako'],tags:['B2B','Conseil','RH'],avantages:['Peu d\'investissement','Marché sous-servi','Réseau = capital principal'],inconvenients:['Construction crédibilité lente','Cycles de vente longs'],etapes:['Site web + LinkedIn professionnel','5 premiers clients à prix réduit','Témoignages + références','Offre mensuelle 150 000 F/client'],financement:['Auto-financement','Réseau professionnel']},
+
+  {id:'solaire',emoji:'☀️',nom:'Installation Panneaux Solaires',secteur:'tech',budget:2000000,desc:'Vente et installation de systèmes solaires pour maisons, commerces et villages. Forte croissance au Mali.',revMin:300000,revMax:1000000,difficulte:7,potentiel:10,delai:3,competences:['tech','management'],passion:['agri','tech'],villes:['bamako','sikasso','mopti','segou','kayes','autre'],tags:['Énergie','Impact','Croissance'],avantages:['Marché immense','Délestage = demande forte','Financement bailleurs disponible'],inconvenients:['Compétences techniques','Import matériel','Capital initial élevé'],etapes:['Formation technique solaire','Partenariat fournisseur Chine/Maroc','10 premières installations','Certification et agrément AMADER'],financement:['AMADER','AFD','BMS Équipement','ARIZ']},
+
+  {id:'ecommerce_local',emoji:'🛒',nom:'Marketplace / E-commerce Local',secteur:'tech',budget:500000,desc:'Plateforme en ligne pour vendre produits locaux maliens. Connecter artisans et acheteurs urbains.',revMin:100000,revMax:600000,difficulte:8,potentiel:9,delai:4,competences:['tech','management','commerce'],passion:['tech','mode'],villes:['bamako'],tags:['Tech','E-commerce','Impact'],avantages:['Scalable','Marché untouched','Diaspora = client naturel'],inconvenients:['Tech complexe','Mobile money intégration','Bootstrap difficile'],etapes:['MVP WhatsApp catalog d\'abord','20 artisans référencés','Orange Money intégré','Application mobile mois 6'],financement:['POESAM','ODC Start','Angel investor']},
+];
+
+function show(i){
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('on',i===j);});
+  document.querySelectorAll('.pane').forEach(function(p,j){p.classList.toggle('on',i===j);});
+  if(i===1) renderIdees();
+  if(i===2) renderAnalyse();
+  if(i===3) renderCompar();
+  if(i===4) renderPlan();
+  if(i===5) renderTendances();
+}
+
+function g(id,d){var e=document.getElementById(id);if(!e)return d||'';return e.value||d||'';}
+function gn(id,d){return parseFloat(g(id))||d||0;}
+function fm(n){return Math.round(n).toLocaleString('fr-FR');}
+
+function scoreIdee(idee){
+  var budget=gn('budget',0);
+  var comp=g('competences','tech');
+  var passion=g('passion','tech');
+  var ville=g('ville','bamako');
+  var temps=g('temps','plein');
+  var score=0;
+  if(idee.budget<=budget||(budget===0&&idee.budget===0)) score+=25;
+  else if(idee.budget<=budget*2) score+=10;
+  if(idee.competences.indexOf(comp)>=0) score+=20;
+  if(idee.passion.indexOf(passion)>=0) score+=15;
+  if(idee.villes.indexOf(ville)>=0||idee.villes.indexOf('autre')>=0) score+=20;
+  if(temps==='plein') score+=10;
+  else if(temps==='partiel'&&idee.difficulte<=5) score+=10;
+  score+=idee.potentiel;
+  return Math.min(100,score);
+}
+
+function genIdees(){
+  var scored=TOUTES_IDEES.map(function(id){
+    return {idee:id,score:scoreIdee(id)};
+  });
+  scored.sort(function(a,b){return b.score-a.score;});
+  ideesFiltrees=scored.map(function(s){return s.idee;});
+  var budget=gn('budget',0);
+  var nb=ideesFiltrees.length;
+  var kp=document.getElementById('kp0');
+  if(kp) kp.innerHTML=
+    '<div class="kpi"><b>'+nb+'</b><span>Idées trouvées</span></div>'+
+    '<div class="kpi"><b>'+ideesFiltrees.filter(function(i){return i.budget<=budget;}).length+'</b><span>Dans votre budget</span></div>'+
+    '<div class="kpi"><b>'+Math.round(scored[0]?scored[0].score:0)+'%</b><span>Meilleur match</span></div>'+
+    '<div class="kpi"><b>'+(ideesFiltrees[0]?ideesFiltrees[0].nom.split(' ').slice(0,2).join(' '):'—')+'</b><span>N°1 recommandé</span></div>';
+}
+
+function setFiltre(f){
+  filtreCourant=f;
+  document.querySelectorAll('.filtre-btn').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-f')===f);});
+  renderIdees();
+}
+
+function renderIdees(){
+  var fb=document.getElementById('filtreBox');
+  if(fb) fb.innerHTML=['tous','tech','education','food','mode','agriculture','sante','commerce','media'].map(function(f){
+    var label={tous:'🔍 Tous',tech:'💻 Tech',education:'🎓 Formation',food:'🍽️ Food',mode:'👗 Mode',agriculture:'🌾 Agri',sante:'💊 Santé',commerce:'🏪 Commerce',media:'🎙️ Médias'}[f]||f;
+    return '<button class="filtre-btn'+(filtreCourant===f?' on':'')+'" data-f="'+f+'" onclick="setFiltre(\''+f+'\')">'+label+'</button>';
+  }).join('');
+
+  var liste=filtreCourant==='tous'?ideesFiltrees:ideesFiltrees.filter(function(i){return i.secteur===filtreCourant;});
+  var el=document.getElementById('ideasGrid');
+  if(!el) return;
+  if(liste.length===0){el.innerHTML='<div class="box warn">Aucune idée dans cette catégorie pour votre profil. Essayez "Tous".</div>';return;}
+  el.innerHTML=liste.map(function(id,idx){
+    var sc=scoreIdee(id);
+    var sel=ideeSelectionnee&&ideeSelectionnee.id===id.id;
+    return '<div class="idea-card'+(sel?' sel':'')+'" onclick="selIdee(\''+id.id+'\')">'+ 
+      '<div class="idea-emoji">'+id.emoji+'</div>'+
+      '<div class="idea-nom">'+(idx===0&&filtreCourant==='tous'?'⭐ ':'')+id.nom+'</div>'+
+      '<div style="font-size:10px;color:#7C3AED;font-weight:600;margin-bottom:4px">Match : '+sc+'%</div>'+
+      '<div class="score-bar"><div class="score-fill" style="width:'+sc+'%"></div></div>'+
+      '<div class="idea-desc">'+id.desc+'</div>'+
+      '<div class="idea-tags">'+id.tags.map(function(t){return '<span class="tag" style="background:#F5F3FF;color:#5B21B6">'+t+'</span>';}).join('')+'</div>'+
+      '<div style="font-size:11px;color:#065F46;margin-top:6px;font-weight:500">💰 '+fm(id.revMin)+' — '+fm(id.revMax)+' F/mois</div>'+
+      '</div>';
+  }).join('');
+}
+
+function selIdee(id){
+  ideeSelectionnee=TOUTES_IDEES.find(function(i){return i.id===id;});
+  renderIdees();
+  renderAnalyse();
+  renderPlan();
+}
+
+function renderAnalyse(){
+  var el=document.getElementById('analyseBox');
+  if(!el) return;
+  if(!ideeSelectionnee){el.innerHTML='<div class="box info">👆 Sélectionnez d\'abord une idée dans l\'onglet "Idées Générées".</div>';return;}
+  var id=ideeSelectionnee;
+  var sc=scoreIdee(id);
+  el.innerHTML='<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:14px;background:#F5F3FF;border-radius:10px">'+
+    '<span style="font-size:36px">'+id.emoji+'</span>'+
+    '<div><div style="font-size:16px;font-weight:700;color:#0D0B2E">'+id.nom+'</div>'+
+    '<div style="font-size:12px;color:#666;margin-top:3px">'+id.desc+'</div></div>'+
+    '</div>'+
+    '<div class="kpis">'+
+    '<div class="kpi"><b>'+sc+'%</b><span>Match profil</span></div>'+
+    '<div class="kpi"><b>'+id.potentiel+'/10</b><span>Potentiel marché</span></div>'+
+    '<div class="kpi"><b>'+id.difficulte+'/10</b><span>Difficulté</span></div>'+
+    '<div class="kpi"><b>'+id.delai+' mois</b><span>Avant 1ers revenus</span></div>'+
+    '<div class="kpi"><b>'+fm(id.revMin)+'</b><span>Revenu min (F)</span></div>'+
+    '<div class="kpi"><b>'+fm(id.revMax)+'</b><span>Revenu max (F)</span></div>'+
+    '</div>'+
+    '<div class="section-title">✅ Avantages</div>'+
+    id.avantages.map(function(a){return '<div class="box ok" style="margin-bottom:5px">✅ '+a+'</div>';}).join('')+
+    '<div class="section-title">⚠️ Inconvénients</div>'+
+    id.inconvenients.map(function(i){return '<div class="box warn" style="margin-bottom:5px">⚠️ '+i+'</div>';}).join('')+
+    '<div class="section-title">💰 Sources de financement</div>'+
+    id.financement.map(function(f){return '<div class="box info" style="margin-bottom:5px">🏦 '+f+'</div>';}).join('');
+}
+
+function renderCompar(){
+  var el=document.getElementById('comparBox');
+  if(!el) return;
+  var top5=ideesFiltrees.slice(0,5);
+  if(top5.length===0){el.innerHTML='<div class="box info">Générez d\'abord des idées dans l\'onglet Profil.</div>';return;}
+  el.innerHTML='<div class="box info" style="margin-bottom:12px">📊 Comparaison des 5 meilleures idées pour votre profil.</div>'+
+    '<table><thead><tr><th>Idée</th><th>Match</th><th>Potentiel</th><th>Difficulté</th><th>Budget min</th><th>Revenu max</th></tr></thead><tbody>'+
+    top5.map(function(id,i){
+      var sc=scoreIdee(id);
+      return '<tr class="'+(i===0?'hl':'')+'"><td>'+id.emoji+' '+id.nom+'</td><td>'+sc+'%</td><td>'+id.potentiel+'/10</td><td>'+id.difficulte+'/10</td><td>'+fm(id.budget)+' F</td><td>'+fm(id.revMax)+' F</td></tr>';
+    }).join('')+
+    '</tbody></table>'+
+    '<div class="box" style="margin-top:12px">💡 <b>Recommandation :</b> L\'idée n°1 '+top5[0].emoji+' <b>'+top5[0].nom+'</b> est la mieux adaptée à votre profil. Cliquez dessus dans "Idées Générées" pour l\'analyse complète.</div>';
+}
+
+function renderPlan(){
+  var el=document.getElementById('planBox');
+  if(!el) return;
+  if(!ideeSelectionnee){el.innerHTML='<div class="box info">👆 Sélectionnez d\'abord une idée dans "Idées Générées".</div>';return;}
+  var id=ideeSelectionnee;
+  el.innerHTML='<div style="font-size:14px;font-weight:700;color:#0D0B2E;margin-bottom:12px">'+id.emoji+' Plan de démarrage — '+id.nom+'</div>'+
+    '<div class="box" style="margin-bottom:12px">⏱️ <b>Délai avant premiers revenus :</b> '+id.delai+' mois · <b>Budget minimum :</b> '+fm(id.budget)+' FCFA</div>'+
+    '<div class="section-title">📋 Étapes concrètes</div>'+
+    id.etapes.map(function(e,i){
+      return '<div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #f5f5f5">'+
+        '<span style="width:24px;height:24px;border-radius:50%;background:#7C3AED;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">'+(i+1)+'</span>'+
+        '<span style="font-size:12px;line-height:1.5">'+e+'</span></div>';
+    }).join('')+
+    '<div class="section-title">💰 Financement recommandé</div>'+
+    id.financement.map(function(f){return '<div class="box info" style="margin-bottom:5px">🏦 '+f+'</div>';}).join('')+
+    '<div class="section-title">📱 Actions immédiates cette semaine</div>'+
+    '<div class="checklist-item"><span style="color:#7C3AED;font-size:16px">☐</span><span>Parler de cette idée à 5 personnes de votre entourage — recueillez leurs réactions</span></div>'+
+    '<div class="checklist-item"><span style="color:#7C3AED;font-size:16px">☐</span><span>Chercher 3 concurrents existants et analyser leurs prix et services</span></div>'+
+    '<div class="checklist-item"><span style="color:#7C3AED;font-size:16px">☐</span><span>Identifier votre 1er client potentiel et le contacter cette semaine</span></div>'+
+    '<div class="checklist-item"><span style="color:#7C3AED;font-size:16px">☐</span><span>Calculer précisément votre budget de démarrage réel</span></div>'+
+    '<div class="checklist-item"><span style="color:#7C3AED;font-size:16px">☐</span><span>Rejoindre 2 groupes Facebook d\'entrepreneurs maliens pour votre secteur</span></div>';
+}
+
+function renderTendances(){
+  var el=document.getElementById('tendancesBox');
+  if(!el) return;
+  var tendances=[
+    {emoji:'☀️',titre:'Énergie Solaire',score:10,desc:'Délestage chronique + gouvernement pro-solaire = marché de 10 milliards FCFA/an. Croissance +40%/an.'},
+    {emoji:'📱',titre:'Mobile Money & Fintech',score:10,desc:'70% non-bancarisés. Orange Money + Moov = infrastructure. Fintech est le secteur le plus chaud de la CEDEAO.'},
+    {emoji:'🎓',titre:'Formation Digitale',score:9,desc:'1 million de jeunes diplômés sans emploi numérique. EdTech = secteur à impact et à croissance. POESAM prioritaire.'},
+    {emoji:'🛵',titre:'Livraison / Logistique',score:9,desc:'E-commerce naissant = besoin livraison. Bamako saturée en trafic = opportunité livraison vélo/moto.'},
+    {emoji:'🌾',titre:'Agro-transformation',score:9,desc:'Mali produit énormément mais transforme peu. Jus de fruits, farines locales, conserves = valeur ajoutée × 5.'},
+    {emoji:'🏗️',titre:'Construction / BTP',score:8,desc:'Urbanisation rapide de Bamako (+5%/an). Matériaux locaux, finitions, rénovation = marché immense.'},
+    {emoji:'💻',titre:'Tech / SaaS pour PME',score:8,desc:'Les PME maliennes cherchent des logiciels simples (caisse, stock, RH). Peu d\'offres locales adaptées.'},
+    {emoji:'🏥',titre:'Santé / Télémédecine',score:8,desc:'Déficit médical fort. Téléconsultation, pharmacies en ligne, diagnostic mobile = secteur d\'avenir.'},
+    {emoji:'🎨',titre:'Économie Créative',score:7,desc:'Musique, art, design, mode africaine. Exportable internationalement. NFT et marchés numériques émergents.'},
+    {emoji:'♻️',titre:'Recyclage / Environnement',score:7,desc:'Bamako produit 1 500 tonnes de déchets/jour. Peu de recyclage organisé. Subventions ONU disponibles.'},
+  ];
+  el.innerHTML='<div class="box info" style="margin-bottom:12px">🔥 Secteurs en forte croissance au Mali en 2025. Basé sur les données marché, les financements disponibles et la demande terrain.</div>'+
+    tendances.map(function(t){
+      var bars='';
+      for(var i=0;i<10;i++) bars+='<span style="display:inline-block;width:14px;height:14px;border-radius:2px;margin-right:2px;background:'+(i<t.score?'#7C3AED':'#e0e0e0')+'"></span>';
+      return '<div style="border:1px solid #e0e0e0;border-radius:10px;padding:12px;margin-bottom:8px">'+
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">'+
+        '<span style="font-size:22px">'+t.emoji+'</span>'+
+        '<div><div style="font-size:13px;font-weight:700">'+t.titre+'</div>'+
+        '<div style="margin-top:3px">'+bars+'</div></div>'+
+        '</div>'+
+        '<div style="font-size:12px;color:#444;line-height:1.5">'+t.desc+'</div>'+
+        '</div>';
+    }).join('');
+}
+
+genIdees();
+</script>
+</body>
+</html>
